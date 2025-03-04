@@ -39,6 +39,15 @@ CREATE TABLE professors (
                             CONSTRAINT fk_professors_users FOREIGN KEY (id) REFERENCES users(id)
 );
 
+CREATE TABLE committee (
+                           id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                           user_id BIGINT UNIQUE NOT NULL,
+                           committee_name VARCHAR(100) NOT NULL,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Create the TRAINEESHIP_POSITIONS table
 CREATE TABLE traineeship_positions (
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
