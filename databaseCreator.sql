@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS `myy803_traineshipApp`;
+USE `myy803_traineshipApp`;
+
 -- Create the USERS table
 CREATE TABLE users (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
