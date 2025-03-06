@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.entity;
+package org.softwareretards.lobotomisedapp.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.softwareretards.lobotomisedapp.entity.Role;
 
 /**
  * Entity class representing a Committee member.

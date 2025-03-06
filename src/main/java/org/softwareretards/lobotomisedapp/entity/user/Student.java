@@ -1,9 +1,10 @@
-package org.softwareretards.lobotomisedapp.entity;
+package org.softwareretards.lobotomisedapp.entity.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.softwareretards.lobotomisedapp.entity.Role;
 
 /**
  * Entity class representing a Student.
@@ -34,7 +35,13 @@ public class Student extends User {
     @Column(name = "preferred_location")
     private String preferredLocation;
 
-    public Student(String username, String password, String fullName, String universityId, String interests, String skills, String preferredLocation) {
+    public Student(String username,
+                   String password,
+                   String fullName,
+                   String universityId,
+                   String interests,
+                   String skills,
+                   String preferredLocation) {
         super(username, password, Role.STUDENT);
         this.fullName = fullName;
         this.universityId = universityId;

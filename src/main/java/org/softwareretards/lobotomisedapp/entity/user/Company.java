@@ -1,9 +1,10 @@
-package org.softwareretards.lobotomisedapp.entity;
+package org.softwareretards.lobotomisedapp.entity.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.softwareretards.lobotomisedapp.entity.Role;
 
 /**
  * Entity class representing a Company.
@@ -21,7 +22,7 @@ import lombok.Setter;
 
 public class Company extends User {
 
-    @Column(name="companyName", nullable = false)
+    @Column(name="company_name", nullable = false)
     private String companyName;
 
     @Column(name="location")
