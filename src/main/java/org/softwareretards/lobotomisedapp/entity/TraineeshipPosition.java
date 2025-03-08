@@ -4,26 +4,19 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.softwareretards.lobotomisedapp.entity.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
 
-import java.sql.Date;
-
-/**
- * Entity class representing a Traineeship Positions.
- * <p>
- * It includes the required fields and default values for variables such as Student, Professor and Status
- * </p>
- */
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "traineeship_positions")
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class TraineeshipPosition {
 
     @Id
@@ -36,60 +29,48 @@ public class TraineeshipPosition {
     private Company company;
 
     @OneToOne
-    @JoinColumn(name = "student_id", unique = true)
+    @JoinColumn(name = "student_id")
     private Student student;
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
 
-    @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    @Column(name = "start_date")
+    private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
-    private Date endDate;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "required_skills", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "required_skills", columnDefinition = "TEXT")
     private String requiredSkills;
 
-    @Column(name = "topics", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "topics", columnDefinition = "TEXT")
     private String topics;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TraineeshipStatus status = TraineeshipStatus.OPEN;
+    @Column(name = "status")
+    private PositionStatus status = PositionStatus.OPEN;
 
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LogbookEntry> logbookEntries = new ArrayList<>();
 
-
-    public TraineeshipPosition(Company company, Student student, Professor professor, Date startDate, Date endDate, String description, String requiredSkills, String topics, TraineeshipStatus status) {
-        this.company = company;
-        this.student = student;
-        this.professor = professor;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.requiredSkills = requiredSkills;
-        this.topics = topics;
-        this.status = status != null ? status : TraineeshipStatus.OPEN; // Default to OPEN if status is null
-    }
+    @OneToOne(mappedBy = "traineeshipPosition", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Evaluation evaluation;
 
     @Override
     public String toString() {
-        return "LogbookEntry{" +
+        return "TraineeshipPosition{" +
                 "id=" + id +
-                ", company=" + company +
-                ", student=" + student +
-                ", professor=" + professor +
-                ", startDate='" + startDate + '\'' +
+                ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", description=" + description  + '\''+
-                ", requiredSkills=" + requiredSkills  + '\''+
-                ", topics=" + topics  + '\''+
+                ", description='" + description + '\'' +
+                ", requiredSkills='" + requiredSkills + '\'' +
+                ", topics='" + topics + '\'' +
                 ", status=" + status +
                 '}';
     }
-
 }
