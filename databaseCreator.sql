@@ -50,7 +50,7 @@ CREATE TABLE committee (
 CREATE TABLE traineeship_positions (
                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                        company_id BIGINT NOT NULL,
-                                       student_id BIGINT, -- Nullable: position may not be assigned yet
+                                       student_id BIGINT UNIQUE , -- Nullable: position may not be assigned yet, each student can be assigned to 1 position
                                        professor_id BIGINT, -- Nullable: supervisor may not be assigned yet
                                        start_date DATE,
                                        end_date DATE,
