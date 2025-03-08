@@ -1,6 +1,6 @@
 package org.softwareretards.lobotomisedapp.repository;
 
-import org.softwareretards.lobotomisedapp.entity.Role;
+import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.entity;
+package org.softwareretards.lobotomisedapp.entity.enums;
 
 public enum PositionStatus {
     OPEN,

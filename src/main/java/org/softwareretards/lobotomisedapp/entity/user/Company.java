@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.softwareretards.lobotomisedapp.entity.Role;
+import org.softwareretards.lobotomisedapp.entity.enums.Role;
 
 /**
  * Entity class representing a Company.
@@ -16,10 +16,7 @@ import org.softwareretards.lobotomisedapp.entity.Role;
 
 @Entity
 @Table(name = "companies")
-@Getter
-@Setter
-@NoArgsConstructor
-
+@Getter @Setter @NoArgsConstructor
 public class Company extends User {
 
     @Column(name="company_name", nullable = false)

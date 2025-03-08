@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 
 @Entity
 @Table(name = "evaluations")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class Evaluation {
 
     @Id

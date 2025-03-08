@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.softwareretards.lobotomisedapp.entity.Role;
+import org.softwareretards.lobotomisedapp.entity.enums.Role;
 
 /**
  * Entity class representing a Professor.

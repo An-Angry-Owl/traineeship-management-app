@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.softwareretards.lobotomisedapp.entity.enums.PositionStatus;
 import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
@@ -14,9 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "traineeship_positions")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class TraineeshipPosition {
 
     @Id

@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.softwareretards.lobotomisedapp.entity.Role;
+import org.softwareretards.lobotomisedapp.entity.enums.Role;
 
 /**
  * Entity class representing a Committee member.
@@ -19,9 +19,7 @@ import org.softwareretards.lobotomisedapp.entity.Role;
  */
 @Entity
 @Table(name = "committee")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class Committee extends User {
 
     @Column(name = "committee_name", nullable = false)

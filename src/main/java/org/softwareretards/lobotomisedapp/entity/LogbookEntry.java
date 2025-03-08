@@ -10,9 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "logbook_entries")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class LogbookEntry {
 
     @Id
