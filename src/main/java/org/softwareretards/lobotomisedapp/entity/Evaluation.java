@@ -45,11 +45,6 @@ public class Evaluation {
     @Column(name = "final_mark")
     private FinalMark finalMark = FinalMark.PENDING;
 
-    // Enum definition
-    public enum FinalMark {
-        PASS, FAIL, PENDING
-    }
-
     @Override
     public String toString() {
         return "Evaluation{" +
