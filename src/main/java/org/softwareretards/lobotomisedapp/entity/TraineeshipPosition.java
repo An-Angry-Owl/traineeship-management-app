@@ -13,6 +13,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a traineeship position.
+ * <p>
+ * This entity is used to store information about a traineeship position, including the company offering the position,
+ * the student applying for it, the professor overseeing it, the start and end dates, a description, required skills,
+ * topics covered, and the status of the position.
+ * </p>
+ */
 @Entity
 @Table(name = "traineeship_positions")
 @Getter @Setter @NoArgsConstructor

@@ -9,6 +9,11 @@ import org.softwareretards.lobotomisedapp.entity.user.Student;
 
 import java.sql.Timestamp;
 
+/**
+ * Represents a logbook entry made by a student for a specific traineeship position.
+ * Each entry is associated with a student and a traineeship position.
+ * The entry date is automatically set to the current timestamp when the entry is created.
+ */
 @Entity
 @Table(name = "logbook_entries")
 @Getter @Setter @NoArgsConstructor

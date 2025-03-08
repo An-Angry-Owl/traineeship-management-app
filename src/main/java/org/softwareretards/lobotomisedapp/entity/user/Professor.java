@@ -16,7 +16,6 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  * This class extends the {@link User} entity and is distinguished by the role PROFESSOR.
  * </p>
  */
-
 @Entity
 @Table(name = "professors")
 @Getter

@@ -13,7 +13,6 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  * It includes additional fields specific to company, such as companyName, location.
  * </p>
  */
-
 @Entity
 @Table(name = "companies")
 @Getter @Setter @NoArgsConstructor

@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 
+/**
+ * Represents an evaluation of a traineeship position.
+ * This entity is used to store the evaluation details for a specific traineeship position.
+ * It includes ratings for both the professor and the company, as well as a final mark.
+ */
 @Entity
 @Table(name = "evaluations")
 @Getter @Setter @NoArgsConstructor
