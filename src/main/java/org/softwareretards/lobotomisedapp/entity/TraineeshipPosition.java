@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.softwareretards.lobotomisedapp.entity.enums.PositionStatus;
+import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
@@ -52,7 +52,7 @@ public class TraineeshipPosition {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private PositionStatus status = PositionStatus.OPEN;
+    private TraineeshipStatus status = TraineeshipStatus.OPEN;
 
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LogbookEntry> logbookEntries = new ArrayList<>();

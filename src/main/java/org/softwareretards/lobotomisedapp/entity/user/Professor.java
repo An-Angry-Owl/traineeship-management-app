@@ -25,14 +25,14 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
 public class Professor extends User {
 
     @Column(name = "full_name")
-    private String professionalName;
+    private String professorName;
 
     @Column(name = "interests")
     private String interests;
 
     public Professor(String username, String password, String professionalName, String interests) {
         super(username, password, Role.PROFESSOR);
-        this.professionalName = professionalName;
+        this.professorName = professionalName;
         this.interests = interests;
     }
 
@@ -45,7 +45,7 @@ public class Professor extends User {
                 ", enabled=" + isEnabled() +
                 ", createdAt=" + getCreatedAt() +
                 ", updatedAt=" + getUpdatedAt() +
-                ", professionalName='" + professionalName + '\'' +
+                ", professionalName='" + professorName + '\'' +
                 ", interests='" + interests + '\'' +
                 '}';
     }
