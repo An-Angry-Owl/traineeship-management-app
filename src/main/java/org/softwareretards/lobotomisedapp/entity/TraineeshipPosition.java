@@ -28,7 +28,7 @@ public class TraineeshipPosition {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
