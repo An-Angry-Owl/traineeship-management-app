@@ -1,6 +1,7 @@
 package org.softwareretards.lobotomisedapp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class LogbookEntry {
     private Timestamp entryDate;
 
     @Column(name = "content", columnDefinition = "TEXT")
+    @Lob @Size(max = 65535)
     private String content;
 
     public LogbookEntry(Student student,

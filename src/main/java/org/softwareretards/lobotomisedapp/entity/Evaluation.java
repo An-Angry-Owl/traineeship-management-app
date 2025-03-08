@@ -1,6 +1,8 @@
 package org.softwareretards.lobotomisedapp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,25 +22,29 @@ public class Evaluation {
     @JoinColumn(name = "traineeship_position_id", nullable = false, unique = true)
     private TraineeshipPosition traineeshipPosition;
 
-    // Professor ratings (1-5 scale)
+    @Min(1) @Max(5)
     @Column(name = "prof_motivation_rating")
-    private Integer profMotivationRating;
+    private Integer professorMotivationRating;
 
+    @Min(1) @Max(5)
     @Column(name = "prof_effectiveness_rating")
-    private Integer profEffectivenessRating;
+    private Integer professorEffectivenessRating;
 
+    @Min(1) @Max(5)
     @Column(name = "prof_efficiency_rating")
-    private Integer profEfficiencyRating;
+    private Integer professorEfficiencyRating;
 
-    // Company ratings (1-5 scale)
+    @Min(1) @Max(5)
     @Column(name = "comp_motivation_rating")
-    private Integer compMotivationRating;
+    private Integer companyMotivationRating;
 
+    @Min(1) @Max(5)
     @Column(name = "comp_effectiveness_rating")
-    private Integer compEffectivenessRating;
+    private Integer companyEffectivenessRating;
 
+    @Min(1) @Max(5)
     @Column(name = "comp_efficiency_rating")
-    private Integer compEfficiencyRating;
+    private Integer companyEfficiencyRating;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "final_mark")
@@ -48,12 +54,12 @@ public class Evaluation {
     public String toString() {
         return "Evaluation{" +
                 "id=" + id +
-                ", profMotivationRating=" + profMotivationRating +
-                ", profEffectivenessRating=" + profEffectivenessRating +
-                ", profEfficiencyRating=" + profEfficiencyRating +
-                ", compMotivationRating=" + compMotivationRating +
-                ", compEffectivenessRating=" + compEffectivenessRating +
-                ", compEfficiencyRating=" + compEfficiencyRating +
+                ", profMotivationRating=" + professorMotivationRating +
+                ", profEffectivenessRating=" + professorEffectivenessRating +
+                ", profEfficiencyRating=" + professorEfficiencyRating +
+                ", compMotivationRating=" + companyMotivationRating +
+                ", compEffectivenessRating=" + companyEffectivenessRating +
+                ", compEfficiencyRating=" + companyEfficiencyRating +
                 ", finalMark=" + finalMark +
                 '}';
     }
