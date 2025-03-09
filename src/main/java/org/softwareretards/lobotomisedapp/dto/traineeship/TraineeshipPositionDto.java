@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.dto;
+package org.softwareretards.lobotomisedapp.dto.traineeship;
 import lombok.Data;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
 import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
@@ -8,7 +8,6 @@ import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data

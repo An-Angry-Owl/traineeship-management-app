@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.repository;
+package org.softwareretards.lobotomisedapp.repository.user;
 
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.entity.user.User;

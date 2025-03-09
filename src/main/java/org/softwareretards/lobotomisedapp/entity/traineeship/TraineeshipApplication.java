@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.entity;
+package org.softwareretards.lobotomisedapp.entity.traineeship;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TraineeshipApplications {
+public class TraineeshipApplication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class TraineeshipApplications {
     private ApplicationStatus status = ApplicationStatus.PENDING;
 
     // Xriazomaste constractor? I suppose boroume na to doume kai meta afto
-    public TraineeshipApplications(Student student, TraineeshipPosition position) {
+    public TraineeshipApplication(Student student, TraineeshipPosition position) {
         this.student = student;
         this.position = position;
     }

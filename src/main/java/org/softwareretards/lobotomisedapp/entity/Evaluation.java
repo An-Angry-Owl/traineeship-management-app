@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
+import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 
 /**
  * Represents an evaluation of a traineeship position.

@@ -1,6 +1,6 @@
-package org.softwareretards.lobotomisedapp.repository;
+package org.softwareretards.lobotomisedapp.repository.traineeship;
 
-import org.softwareretards.lobotomisedapp.entity.TraineeshipPosition;
+import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
