@@ -1,8 +1,8 @@
 package org.softwareretards.lobotomisedapp.mapper;
 
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
+import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionSummaryDto;
 import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
-import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,13 +11,10 @@ import org.springframework.stereotype.Component;
 public class LogbookEntryMapper {
 
     private final StudentMapper studentMapper;
-    private final TraineeshipPositionMapper traineeshipPositionMapper;
 
     @Autowired
-    public LogbookEntryMapper(StudentMapper studentMapper,
-                              TraineeshipPositionMapper traineeshipPositionMapper) {
+    public LogbookEntryMapper(StudentMapper studentMapper) {
         this.studentMapper = studentMapper;
-        this.traineeshipPositionMapper = traineeshipPositionMapper;
     }
 
     public LogbookEntryDto toDto(LogbookEntry entity) {
@@ -27,9 +24,18 @@ public class LogbookEntryMapper {
         LogbookEntryDto dto = new LogbookEntryDto();
         dto.setId(entity.getId());
         dto.setStudent(studentMapper.toDto(entity.getStudent()));
-        dto.setPosition(traineeshipPositionMapper.toDto(entity.getPosition()));
         dto.setEntryDate(entity.getEntryDate());
         dto.setContent(entity.getContent());
+
+        // Map to Summary DTO to avoid circular dependency
+        if (entity.getPosition() != null) {
+            TraineeshipPositionSummaryDto positionSummary = new TraineeshipPositionSummaryDto();
+            positionSummary.setId(entity.getPosition().getId());
+            positionSummary.setDescription(entity.getPosition().getDescription());
+            positionSummary.setStatus(entity.getPosition().getStatus());
+            dto.setPosition(positionSummary);
+        }
+
         return dto;
     }
 
@@ -40,9 +46,10 @@ public class LogbookEntryMapper {
         LogbookEntry entity = new LogbookEntry();
         entity.setId(dto.getId());
         entity.setStudent(studentMapper.toEntity(dto.getStudent()));
-        entity.setPosition(traineeshipPositionMapper.toEntity(dto.getPosition()));
         entity.setEntryDate(dto.getEntryDate());
         entity.setContent(dto.getContent());
+
+        // No need to map full position entity (handled separately)
         return entity;
     }
 }

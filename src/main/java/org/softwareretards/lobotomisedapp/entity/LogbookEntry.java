@@ -15,6 +15,7 @@ import java.sql.Timestamp;
  * Each entry is associated with a student and a traineeship position.
  * The entry date is automatically set to the current timestamp when the entry is created.
  */
+
 @Entity
 @Table(name = "logbook_entries")
 @Getter @Setter @NoArgsConstructor
