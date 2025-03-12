@@ -3,7 +3,9 @@ package org.softwareretards.lobotomisedapp.mapper.traineeship;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.mapper.user.CompanyMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
@@ -55,7 +57,7 @@ public class TraineeshipPositionMapper {
 
         // Map collections for logbook entries if not null
         if (entity.getLogbookEntries() != null) {
-            List<?> logbookEntryDtos = entity.getLogbookEntries().stream()
+            List<LogbookEntryDto> logbookEntryDtos = entity.getLogbookEntries().stream()
                     .map(logbookEntryMapper::toDto)
                     .collect(Collectors.toList());
             dto.setLogbookEntries(logbookEntryDtos);
@@ -87,7 +89,7 @@ public class TraineeshipPositionMapper {
 
         // Map collections for logbook entries if available
         if (dto.getLogbookEntries() != null) {
-            List<?> logbookEntries = dto.getLogbookEntries().stream()
+            List<LogbookEntry> logbookEntries = dto.getLogbookEntries().stream()
                     .map(logbookEntryMapper::toEntity)
                     .collect(Collectors.toList());
             entity.setLogbookEntries(logbookEntries);
