@@ -6,7 +6,7 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import java.sql.Timestamp;
 
 @Data
-public class UserDto {
+public class UserNDto {
     private Long id;
     private String username;
     private Role role;
