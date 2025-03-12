@@ -6,24 +6,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProfessorMapper {
-    private final UserMapper userMapper;
 
-    public ProfessorMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    public ProfessorDto toDto(Professor professor) {
+    public static ProfessorDto toDto(Professor professor) {
         if (professor == null) {
             return null;
         }
         ProfessorDto dto = new ProfessorDto();
-        dto.setUserDto(userMapper.toDto(professor));
+        dto.setUserDto(UserMapper.toDto(professor)); // Convert User part
         dto.setProfessorName(professor.getProfessorName());
         dto.setInterests(professor.getInterests());
         return dto;
     }
 
-    public Professor toEntity(ProfessorDto dto) {
+    public static Professor toEntity(ProfessorDto dto) {
         if (dto == null) {
             return null;
         }

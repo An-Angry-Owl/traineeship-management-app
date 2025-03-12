@@ -6,24 +6,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CompanyMapper {
-    private final UserMapper userMapper;
 
-    public CompanyMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    public CompanyDto toDto(Company company) {
+    public static CompanyDto toDto(Company company) {
         if (company == null) {
             return null;
         }
         CompanyDto dto = new CompanyDto();
-        dto.setUserDto(userMapper.toDto(company)); // Convert User part
+        dto.setUserDto(UserMapper.toDto(company)); // Convert User part
         dto.setCompanyName(company.getCompanyName());
         dto.setLocation(company.getLocation());
         return dto;
     }
 
-    public Company toEntity(CompanyDto dto) {
+    public static Company toEntity(CompanyDto dto) {
         if (dto == null) {
             return null;
         }

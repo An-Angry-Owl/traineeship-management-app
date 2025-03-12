@@ -6,23 +6,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CommitteeMapper {
-    private final UserMapper userMapper;
 
-    public CommitteeMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    public CommitteeDto toDto(Committee committee) {
+    public static CommitteeDto toDto(Committee committee) {
         if (committee == null) {
             return null;
         }
         CommitteeDto dto = new CommitteeDto();
-        dto.setUserDto(userMapper.toDto(committee)); // Convert User part
+        dto.setUserDto(UserMapper.toDto(committee)); // Convert User part
         dto.setCommitteeName(committee.getCommitteeName());
         return dto;
     }
 
-    public Committee toEntity(CommitteeDto dto) {
+    public static Committee toEntity(CommitteeDto dto) {
         if (dto == null) {
             return null;
         }
