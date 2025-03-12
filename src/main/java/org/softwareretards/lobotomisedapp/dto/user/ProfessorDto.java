@@ -3,7 +3,7 @@ import lombok.Data;
 
 @Data
 public class ProfessorDto {
-    private UserDto user;
+    private UserDto userDto;
 
     private String professorName;
     private String interests;
