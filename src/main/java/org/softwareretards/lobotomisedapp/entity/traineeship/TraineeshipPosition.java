@@ -23,6 +23,7 @@ import java.util.List;
  * topics covered, and the status of the position.
  * </p>
  */
+
 @Entity
 @Table(name = "traineeship_positions")
 @Getter @Setter @NoArgsConstructor

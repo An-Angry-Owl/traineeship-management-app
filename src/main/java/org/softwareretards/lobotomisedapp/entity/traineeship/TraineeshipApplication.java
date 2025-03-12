@@ -13,7 +13,8 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TraineeshipApplication {
+
+public class TraineeshipApplication{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +30,16 @@ public class TraineeshipApplication {
     private TraineeshipPosition position;
 
     @Column(name = "application_date", updatable = false, nullable = false)
-    private Timestamp applicationDate = new Timestamp(System.currentTimeMillis());
+    private Timestamp applicationDate; // moved to constructor
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private ApplicationStatus status = ApplicationStatus.PENDING;
+    private ApplicationStatus status = ApplicationStatus.PENDING; // Best to set it here because it is static
 
-    // Xriazomaste constractor? I suppose boroume na to doume kai meta afto
-    public TraineeshipApplication(Student student, TraineeshipPosition position) {
+    public TraineeshipApplication(Student student, TraineeshipPosition position){
         this.student = student;
         this.position = position;
+        this.applicationDate = new Timestamp(System.currentTimeMillis()); // Best to set it here because it is dynamic (aka, every time it is called it is different)
     }
 
     @Override
