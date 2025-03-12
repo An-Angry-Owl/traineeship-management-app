@@ -2,8 +2,8 @@ package org.softwareretards.lobotomisedapp.dto.user;
 import lombok.Data;
 
 @Data
-public class CommitteeNDto {
-    private UserNDto userDto;
+public class CommitteeDto {
+    private UserDto userDto;
 
     private String committeeName;
 }

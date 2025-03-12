@@ -2,9 +2,10 @@ package org.softwareretards.lobotomisedapp.dto.user;
 import lombok.Data;
 
 @Data
-public class ProfessorNDto {
-    private UserNDto user;
+public class ProfessorDto {
+    private UserDto user;
 
     private String professorName;
     private String interests;
+
 }

@@ -3,8 +3,8 @@ package org.softwareretards.lobotomisedapp.dto.user;
 import lombok.Data;
 
 @Data
-public class StudentNDto {
-    private UserNDto userDto;
+public class StudentDto {
+    private UserDto userDto;
 
     private String fullName;
     private String universityId;
