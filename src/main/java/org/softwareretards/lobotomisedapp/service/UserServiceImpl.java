@@ -42,6 +42,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getProfile(String username) {
+        return userRepository.findByUsername(username)
+                .map(UserMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
     public UserDto findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(UserMapper::toDto)

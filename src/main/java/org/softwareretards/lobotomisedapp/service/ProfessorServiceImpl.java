@@ -50,6 +50,20 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    public ProfessorDto getProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != Role.PROFESSOR) {
+            throw new RuntimeException("User is not a professor");
+        }
+
+        return professorRepository.findById(user.getId())
+                .map(ProfessorMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Professor profile not found"));
+    }
+
+    @Override
     public List<TraineeshipPositionDto> getSupervisedPositions(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
