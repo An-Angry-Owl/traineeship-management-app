@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TraineeshipPositionRepository extends JpaRepository<TraineeshipPosition, Long> {
-    List<TraineeshipPosition> findByCompany(Company company);
+    List<TraineeshipPosition> findByCompany(Long companyID);
+    List<TraineeshipPosition> findByCompanyAndAvailability(Long companyId, Boolean availability);
 }
