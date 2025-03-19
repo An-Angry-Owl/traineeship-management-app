@@ -9,4 +9,5 @@ public interface ProfessorService {
     ProfessorDto saveProfile(ProfessorDto professorDto);
     List<TraineeshipPositionDto> getSupervisedPositions(String username);
     EvaluationDto saveEvaluation(String username, Long positionId, EvaluationDto evaluationDto);
+    ProfessorDto getProfile(String username);
 }
