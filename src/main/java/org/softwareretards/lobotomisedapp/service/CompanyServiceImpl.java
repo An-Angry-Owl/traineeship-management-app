@@ -23,16 +23,14 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final TraineeshipPositionRepository traineeshipRepository;
-    private final EvaluationRepository evaluationRepository;
     private final TraineeshipPositionRepository traineeshipPositionRepository;
+    private final EvaluationRepository evaluationRepository;
 
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository, TraineeshipPositionRepository traineeshipRepository, EvaluationRepository evaluationRepository, TraineeshipPositionRepository traineeshipPositionRepository) {
         this.companyRepository = companyRepository;
-        this.traineeshipRepository = traineeshipRepository;
+        this.traineeshipPositionRepository = traineeshipRepository;
         this.evaluationRepository = evaluationRepository;
-        this.traineeshipPositionRepository = traineeshipPositionRepository;
     }
 
     //US7 Create a Company-type User profile
