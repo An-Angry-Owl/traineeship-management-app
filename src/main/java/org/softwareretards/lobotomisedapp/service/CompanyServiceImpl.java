@@ -1,7 +1,6 @@
 package org.softwareretards.lobotomisedapp.service;
 
 import jakarta.transaction.Transactional;
-import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
@@ -90,7 +89,7 @@ public class CompanyServiceImpl implements CompanyService {
     // US8: Get list of advertised traineeships by a company
     @Override
     public List<TraineeshipPositionDto> getTraineeshipPositions(Long companyId) {
-        return traineeshipPositionRepository.findByCompany(companyId)
+        return traineeshipPositionRepository.findByCompanyId(companyId)
                 .stream()
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());
