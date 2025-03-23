@@ -11,12 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class EvaluationTest {
 
     @InjectMocks
