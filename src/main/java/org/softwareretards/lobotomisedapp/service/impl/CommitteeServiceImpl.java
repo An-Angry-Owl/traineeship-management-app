@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.service;
+package org.softwareretards.lobotomisedapp.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
@@ -12,6 +12,7 @@ import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPosi
 import org.softwareretards.lobotomisedapp.repository.user.CommitteeRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
+import org.softwareretards.lobotomisedapp.service.CommitteeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

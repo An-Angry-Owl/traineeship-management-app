@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.service;
+package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipApplicationDto;
@@ -17,11 +17,10 @@ import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipAppl
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
+import org.softwareretards.lobotomisedapp.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {

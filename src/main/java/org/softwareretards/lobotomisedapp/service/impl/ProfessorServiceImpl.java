@@ -1,4 +1,4 @@
-package org.softwareretards.lobotomisedapp.service;
+package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
@@ -15,6 +15,7 @@ import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
+import org.softwareretards.lobotomisedapp.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

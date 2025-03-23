@@ -1,9 +1,10 @@
-package org.softwareretards.lobotomisedapp.service;
+package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.user.UserDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
+import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
