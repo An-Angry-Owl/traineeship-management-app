@@ -6,12 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.softwareretards.lobotomisedapp.entity.enums.ApplicationStatus;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class TraineeshipApplicationTest {
 
     @InjectMocks
