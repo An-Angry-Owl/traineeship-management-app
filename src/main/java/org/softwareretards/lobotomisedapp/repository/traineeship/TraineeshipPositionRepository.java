@@ -12,4 +12,5 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
     List<TraineeshipPosition> findByCompanyId(Long companyID);
     List<TraineeshipPosition> findByCompanyAndAvailability(Long companyId, Boolean availability);
     List<TraineeshipPosition> findByProfessor(Professor professor);
+    List<TraineeshipPosition> findByAvailability(Boolean availability);
 }
