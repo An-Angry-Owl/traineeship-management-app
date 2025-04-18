@@ -73,7 +73,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     public List<CompanyDto> findCompanyByLocation(String location) {
-        return companyRepository.findByCompanyLocation(location)
+        return companyRepository.findByLocation(location)
                 .stream()
                 .map(CompanyMapper::toDto)
                 .collect(Collectors.toList());
