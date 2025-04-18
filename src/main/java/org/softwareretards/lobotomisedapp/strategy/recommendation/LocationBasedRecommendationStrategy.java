@@ -39,7 +39,7 @@ public class LocationBasedRecommendationStrategy extends AbstractRecommendations
         Student student = studentOpt.get();
         String preferredLocation = normalize(student.getPreferredLocation());
 
-        List<TraineeshipPosition> availablePositions = positionRepository.findByAvailability(true);
+        List<TraineeshipPosition> availablePositions = positionRepository.findAvailablePositions();
 
         List<TraineeshipPosition> matching = availablePositions.stream()
                 .filter(pos -> {

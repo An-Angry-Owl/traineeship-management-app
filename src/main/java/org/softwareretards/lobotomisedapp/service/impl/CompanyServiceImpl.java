@@ -100,7 +100,7 @@ public class CompanyServiceImpl implements CompanyService {
     // US9: Get list of assigned traineeships
     @Override
     public List<TraineeshipPositionDto> getAssignedTraineeships(Long companyId, boolean assigned) {
-        return traineeshipPositionRepository.findByCompanyAndAvailability(companyId, assigned)
+        return traineeshipPositionRepository.findAvailableByCompany(companyId)
                 .stream()
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());

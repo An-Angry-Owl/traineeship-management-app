@@ -40,7 +40,7 @@ public class InterestBasedRecommendationStrategy extends AbstractRecommendations
         Student student = studentOpt.get();
         Set<String> studentInterests = parseAndNormalize(student.getInterests());
 
-        List<TraineeshipPosition> availablePositions = positionRepository.findByAvailability(true);
+        List<TraineeshipPosition> availablePositions = positionRepository.findAvailablePositions();
 
         List<TraineeshipPosition> matching = availablePositions.stream()
                 .filter(pos -> {
