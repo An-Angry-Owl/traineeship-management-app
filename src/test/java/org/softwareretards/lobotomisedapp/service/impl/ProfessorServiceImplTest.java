@@ -123,7 +123,6 @@ class ProfessorServiceImplTest {
         }
     }
 
-    //FIXME: This test produces an error for some reason
     @Test
     void saveEvaluationShouldSaveAndReturnEvaluationDto() {
         User user = new User();
@@ -140,6 +139,8 @@ class ProfessorServiceImplTest {
 
         EvaluationDto evaluationDto = new EvaluationDto();
         evaluationDto.setProfessorMotivationRating(5);
+        evaluationDto.setProfessorEfficiencyRating(4);
+        evaluationDto.setProfessorEffectivenessRating(2);
 
         Evaluation evaluation = new Evaluation();
         evaluation.setId(3L);
