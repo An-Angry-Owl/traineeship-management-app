@@ -120,9 +120,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         validateRating(dto.getProfessorMotivationRating());
         validateRating(dto.getProfessorEffectivenessRating());
         validateRating(dto.getProfessorEfficiencyRating());
-        validateRating(dto.getCompanyMotivationRating());
-        validateRating(dto.getCompanyEffectivenessRating());
-        validateRating(dto.getCompanyEfficiencyRating());
     }
 
     private void validateRating(Integer rating) {
