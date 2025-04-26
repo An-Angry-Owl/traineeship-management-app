@@ -15,6 +15,7 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  */
 @Entity
 @Table(name = "students")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter @Setter @NoArgsConstructor
 public class Student extends User {
 
