@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 public class UserDto {
     private Long id;
     private String username;
+    private String password;
     private Role role;
     private boolean enabled;
     private Timestamp createdAt;

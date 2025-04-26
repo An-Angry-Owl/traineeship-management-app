@@ -6,6 +6,8 @@ import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +17,12 @@ public class UserServiceImpl implements UserService {
     // TODO: Add password checker and maker
 
     private final UserRepository userRepository;
-    //private final Integer password;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        //this.password = password;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
         // Create and save base User entity
         User user = new User();
         user.setUsername(userDto.getUsername());
-        //user.setPassword();
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(userDto.getRole());
         user.setEnabled(true);
 
@@ -55,4 +57,5 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toDto)
                 .orElse(null);
     }
+
 }

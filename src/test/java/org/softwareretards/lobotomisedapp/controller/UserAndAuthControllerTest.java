@@ -13,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserControllerTest {
+class UserAndAuthControllerTest {
 
     @Mock
     private UserService userService;
 
     @InjectMocks
-    private UserController userController;
+    private UserAndAuthController userAndAuthController;
 
     @Test
     void showRegistrationFormShouldAddEmptyUserDtoToModel() {
         Model model = mock(Model.class);
 
-        String viewName = userController.showRegistrationForm(model);
+        String viewName = userAndAuthController.showRegistrationForm(model);
 
         verify(model, times(1)).addAttribute(eq("user"), any(UserDto.class));
         assertEquals("user/registration-form", viewName);
@@ -38,7 +38,7 @@ class UserControllerTest {
         UserDto createdUser = new UserDto();
         when(userService.createUser(userDto)).thenReturn(createdUser);
 
-        String viewName = userController.registerUser(userDto, model);
+        String viewName = userAndAuthController.registerUser(userDto, model);
 
         verify(model, times(1)).addAttribute("user", createdUser);
         assertEquals("user/registration-confirmation", viewName);
@@ -46,14 +46,14 @@ class UserControllerTest {
 
     @Test
     void showLoginFormShouldReturnLoginFormView() {
-        String viewName = userController.showLoginForm();
+        String viewName = userAndAuthController.showLoginForm();
 
         assertEquals("user/login-form", viewName);
     }
 
     @Test
     void showLogoutConfirmationShouldReturnLogoutConfirmationView() {
-        String viewName = userController.showLogoutConfirmation();
+        String viewName = userAndAuthController.showLogoutConfirmation();
 
         assertEquals("user/logout-confirmation", viewName);
     }
@@ -65,7 +65,7 @@ class UserControllerTest {
         UserDto userDto = new UserDto();
         when(userService.getProfile(username)).thenReturn(userDto);
 
-        String viewName = userController.showUserProfile(username, model);
+        String viewName = userAndAuthController.showUserProfile(username, model);
 
         verify(model, times(1)).addAttribute("user", userDto);
         assertEquals("user/profile-view", viewName);
@@ -77,6 +77,6 @@ class UserControllerTest {
         String username = "nonExistentUser";
         when(userService.getProfile(username)).thenThrow(new RuntimeException("User not found"));
 
-        assertThrows(RuntimeException.class, () -> userController.showUserProfile(username, model));
+        assertThrows(RuntimeException.class, () -> userAndAuthController.showUserProfile(username, model));
     }
 }
