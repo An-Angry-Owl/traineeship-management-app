@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserAndAuthController {
@@ -28,10 +29,16 @@ public class UserAndAuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserDto userDto, Model model) {
-        UserDto createdUser = userService.createUser(userDto);
-        model.addAttribute("user", createdUser);
-        return "user/registration-confirmation";
+    public String registerUser(@ModelAttribute("user") UserDto userDto, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            UserDto createdUser = userService.createUser(userDto);
+            model.addAttribute("user", createdUser);
+            return "user/registration-confirmation";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("user", userDto);
+            return "redirect:/register";
+        }
     }
 
     // US2: Login (view only - actual auth handled by Spring Security)
