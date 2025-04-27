@@ -50,7 +50,7 @@ public class UserAndAuthController {
     // US3: Logout (confirmation page)
     @GetMapping("/logout-success")
     public String showLogoutConfirmation() {
-        return "user/logout-confirmation";
+        return "logout-confirmation";
     }
 
     // Profile view
