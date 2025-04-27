@@ -115,9 +115,4 @@ public class StudentController {
 
         return "students/dashboard";
     }
-
-    @GetMapping("/dashboard")
-    public String handleDashboardRedirect(@AuthenticationPrincipal User user) {
-        return "redirect:/students/" + user.getUsername() + "/dashboard";
-    }
 }
