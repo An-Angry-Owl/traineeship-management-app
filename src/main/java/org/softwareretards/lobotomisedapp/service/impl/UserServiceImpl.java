@@ -21,13 +21,15 @@ import java.sql.Timestamp;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
     private final StudentRepository studentRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
+        this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -58,6 +60,19 @@ public class UserServiceImpl implements UserService {
 
             Student savedStudent = studentRepository.save(student);
             return UserMapper.toDto(savedStudent);
+        }
+
+        if (userDto.getRole() == Role.COMPANY) {
+            Company company = new Company(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    "", ""  // Initialize empty fields
+            );
+            company.setRole(Role.COMPANY);
+            company.setEnabled(true);
+
+            Company savedCompany = companyRepository.save(company);
+            return UserMapper.toDto(savedCompany);
         }
 
         // Handle other roles if needed
