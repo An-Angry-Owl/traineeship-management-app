@@ -5,7 +5,7 @@ import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipApplication
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 
 public interface StudentService {
-    StudentDto saveProfile(StudentDto studentDto);
+    StudentDto saveProfile(String username, StudentDto studentDto);
     StudentDto retrieveProfile(String username);
     TraineeshipApplicationDto applyForTraineeship(String studentUsername, Long positionId);
     LogbookEntryDto saveLogbookEntry(String studentUsername, Long positionId, String content);

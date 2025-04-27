@@ -36,7 +36,7 @@ public class StudentController {
             @ModelAttribute("student") StudentDto studentDto,
             Model model
     ) {
-        StudentDto savedProfile = studentService.saveProfile(studentDto);
+        StudentDto savedProfile = studentService.saveProfile(username, studentDto);
         model.addAttribute("student", savedProfile);
         return "redirect:/students/" + username + "/profile";
     }

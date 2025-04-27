@@ -10,6 +10,7 @@ import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,12 +56,11 @@ public class UserServiceImpl implements UserService {
             student.setRole(Role.STUDENT);
             student.setEnabled(true);
 
-        User savedUser = userRepository.save(user);
-        return UserMapper.toDto(savedUser);
             Student savedStudent = studentRepository.save(student);
             return UserMapper.toDto(savedStudent);
         }
 
+        // Handle other roles if needed
         throw new UnsupportedOperationException("Role not yet supported");
     }
 
@@ -76,6 +76,28 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username)
                 .map(UserMapper::toDto)
                 .orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String username, String currentPassword, String newPassword, String confirmPassword) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("New passwords do not match");
+        }
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new RuntimeException("New password must be different from current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 }

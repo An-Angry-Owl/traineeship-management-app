@@ -13,6 +13,7 @@ public class StudentMapper {
         }
         StudentDto dto = new StudentDto();
         dto.setUserDto(UserMapper.toDto(student)); // Convert User part
+        dto.setUsername(student.getUsername());
         dto.setFullName(student.getFullName());
         dto.setUniversityId(student.getUniversityId());
         dto.setInterests(student.getInterests());

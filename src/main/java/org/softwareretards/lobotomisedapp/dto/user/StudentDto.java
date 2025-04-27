@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class StudentDto {
     private UserDto userDto;
-
+    private String username;
     private String fullName;
     private String universityId;
     private String interests;

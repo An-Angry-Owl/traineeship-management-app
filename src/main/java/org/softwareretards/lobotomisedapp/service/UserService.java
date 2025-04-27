@@ -6,4 +6,5 @@ public interface UserService {
     UserDto createUser(UserDto userDto);
     UserDto getProfile(String username);
     UserDto findByUsername(String username);
+    void changePassword(String username, String currentPassword, String newPassword, String confirmPassword);
 }

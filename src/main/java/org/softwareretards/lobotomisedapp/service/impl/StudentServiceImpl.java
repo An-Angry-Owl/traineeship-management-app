@@ -46,8 +46,17 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public StudentDto saveProfile(StudentDto studentDto) {
-        Student student = StudentMapper.toEntity(studentDto);
+    public StudentDto saveProfile(String username, StudentDto studentDto) {
+        Student student = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        // Update only profile fields
+        student.setFullName(studentDto.getFullName());
+        student.setUniversityId(studentDto.getUniversityId());
+        student.setInterests(studentDto.getInterests());
+        student.setSkills(studentDto.getSkills());
+        student.setPreferredLocation(studentDto.getPreferredLocation());
+
         Student savedStudent = studentRepository.save(student);
         return StudentMapper.toDto(savedStudent);
     }
