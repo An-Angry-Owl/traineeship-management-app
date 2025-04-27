@@ -25,14 +25,14 @@ public class Company extends User {
     private String location;
 
     public Company(String username, String password, String companyName, String location) {
-        super(username, password, Role.STUDENT);
+        super(username, password, Role.COMPANY);
         this.companyName = companyName;
         this.location = location;
     }
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Company{" +
                 "id=" + getId() +
                 ", username='" + getUsername() + '\'' +
                 ", role=" + getRole() +
