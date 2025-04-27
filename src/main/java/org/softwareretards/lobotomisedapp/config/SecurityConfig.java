@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/user/**").hasAuthority("USER")
                         .requestMatchers("/students/**").hasAuthority("STUDENT")
+                        .requestMatchers("/companies/**").hasAuthority("COMPANY")
                         .requestMatchers("/professors/**").hasAuthority("PROFESSOR")
                         .requestMatchers("/committee/**").hasAuthority("COMMITTEE")
                         .anyRequest().authenticated()
