@@ -3,9 +3,11 @@ package org.softwareretards.lobotomisedapp.controller;
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipApplicationDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
+import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.service.StudentService;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -97,5 +99,25 @@ public class StudentController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/students/" + username + "/profile";
+    }
+
+    @GetMapping("/students/{username}/dashboard")
+    public String showDashboard(
+            @PathVariable String username,
+            Model model
+    ) {
+        StudentDto studentDto = studentService.retrieveProfile(username);
+        model.addAttribute("student", studentDto);
+
+        // Add this mock data - you'll need to implement proper service later
+        TraineeshipApplicationDto currentTraineeship = null; // Replace with actual service call
+        model.addAttribute("currentTraineeship", currentTraineeship);
+
+        return "students/dashboard";
+    }
+
+    @GetMapping("/dashboard")
+    public String handleDashboardRedirect(@AuthenticationPrincipal User user) {
+        return "redirect:/students/" + user.getUsername() + "/dashboard";
     }
 }
