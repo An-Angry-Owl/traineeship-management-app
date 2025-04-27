@@ -2,7 +2,9 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
+import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.service.CompanyService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -155,5 +157,24 @@ public class CompanyController {
 
         companyService.evaluateTrainee(traineeshipId, motivation, effectiveness, efficiency);
         return "redirect:/companies/traineeships/" + traineeshipId;
+    }
+
+    @GetMapping("/{username}/dashboard")
+    public String companyDashboard(
+            @PathVariable String username,
+            @AuthenticationPrincipal User user,
+            Model model
+    ) {
+        // Verify username matches logged-in user
+        if (!user.getUsername().equals(username)) {
+            return "redirect:/access-denied";
+        }
+
+        CompanyDto company = companyService.findCompanyById(user.getId());
+        List<TraineeshipPositionDto> positions = companyService.getTraineeshipPositions(user.getId());
+
+        model.addAttribute("company", company);
+        model.addAttribute("traineeships", positions);
+        return "companies/dashboard";
     }
 }
