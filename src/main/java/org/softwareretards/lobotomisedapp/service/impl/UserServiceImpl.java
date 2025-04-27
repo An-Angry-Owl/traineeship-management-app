@@ -2,9 +2,11 @@ package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.user.UserDto;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
+import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
+import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.UserService;
