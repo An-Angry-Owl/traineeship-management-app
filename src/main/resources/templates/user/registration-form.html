@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script>
+        // Preload image and force cache
+        const img = new Image();
+        img.src = '/vivian.webp';
+    </script>
+    <meta charset="UTF-8">
+    <title>Register - Traineeship Application</title>
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(20%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-20%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left, .right {
+            width: 50%;
+            height: 100%;
+        }
+
+        .left {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 60%;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .right {
+            animation: slideIn 0.6s forwards;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-form {
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: black;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 5px;
+            background-color: white;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem top 50%;
+            background-size: 0.65rem auto;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .field-error {
+            border-color: #dc3545 !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <img th:src="@{/vivian.webp}" alt="Vivian">
+    </div>
+    <div class="right">
+        <div class="register-form">
+            <h1>Get Started</h1>
+
+            <div th:if="${error}" class="error-message" style="animation: shake 0.5s;">
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/register}" method="post" th:object="${user}">
+                <div class="form-group">
+                    <input type="text" th:field="*{username}"
+                           placeholder="Username"
+                           th:classappend="${#fields.hasErrors('username')} ? 'field-error'">
+                    <small th:if="${#fields.hasErrors('username')}" class="error-message">
+                        <span th:errors="*{username}"></span>
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" th:field="*{password}"
+                           placeholder="Password"
+                           th:classappend="${#fields.hasErrors('password')} ? 'field-error'">
+                    <small th:if="${#fields.hasErrors('password')}" class="error-message">
+                        <span th:errors="*{password}"></span>
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <select th:field="*{role}"
+                            th:classappend="${#fields.hasErrors('role')} ? 'field-error'">
+                        <option value="" disabled selected>Select Role</option>
+                        <option value="STUDENT">Student</option>
+                        <option value="COMPANY">Company</option>
+                        <option value="PROFESSOR">Professor</option>
+                        <option value="COMMITTEE">Committee</option>
+                    </select>
+                    <small th:if="${#fields.hasErrors('role')}" class="error-message">
+                        <span th:errors="*{role}"></span>
+                    </small>
+                </div>
+
+                <button type="submit">Create Account</button>
+            </form>
+
+            <p class="login-link">
+                Already have an account? <a href="/login">Log in</a>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

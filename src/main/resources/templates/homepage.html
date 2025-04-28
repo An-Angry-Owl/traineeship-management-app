@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script>
+        // Preload image and force cache
+        const img = new Image();
+        img.src = '/vivian.webp';
+    </script>
+    <meta charset="UTF-8">
+    <title>Traineeship Application</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            animation: slideIn 1s ease forwards;
+            opacity: 0; /* start hidden */
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .left, .right {
+            width: 50%;
+            height: 100%;
+        }
+
+        .left {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 60%;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .right {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .right h1 {
+            font-size: 48px;
+            color: black;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .right p {
+            font-size: 18px;
+            color: gray;
+            opacity: 0.7;
+            margin: 10px 0 30px 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .buttons button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .buttons .signup {
+            background-color: black;
+            color: white;
+        }
+
+        .buttons .signup:hover {
+            background-color: #333;
+        }
+
+        .buttons .login {
+            background-color: lightgray;
+            color: black;
+        }
+
+        .buttons .login:hover {
+            background-color: gray;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <img th:src="@{/vivian.webp}" alt="Vivian">
+    </div>
+    <div class="right">
+        <h1>Traineeship<br>Management</h1>
+        <p>Something something<br><br>small explanation</p>
+        <div class="buttons">
+            <form action="/register" method="get">
+                <button class="signup">Sign up</button>
+            </form>
+            <form action="/login" method="get">
+                <button class="login">Log in</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script>
+        // Preload image and force cache
+        const img = new Image();
+        img.src = '/vivian.webp';
+    </script>
+    <meta charset="UTF-8">
+    <title>Login - Traineeship Application</title>
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(20%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-20%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left, .right {
+            width: 50%;
+            height: 100%;
+        }
+
+        .left {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 60%;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .right {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s forwards;
+        }
+
+        .login-form {
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: black;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left">
+        <img th:src="@{/vivian.webp}" alt="Vivian">
+    </div>
+    <div class="right" th:classappend="${param.error == null} ? 'animate-slide-in' : ''">
+        <div class="login-form">
+            <h1>Welcome Back</h1>
+
+            <div th:if="${param.error}" class="error-message" style="animation: shake 0.5s;">
+                Invalid username or password
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+
+            <p class="signup-link">
+                Don't have an account? <a href="/register">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
