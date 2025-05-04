@@ -43,14 +43,37 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Username already taken");
         }
 
-        // Create and save base User entity
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(userDto.getRole());
-        user.setEnabled(true);
-        user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        //// Create and save base User entity
+        //User user = new User();
+        //user.setUsername(userDto.getUsername());
+        //user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        //user.setRole(userDto.getRole());
+        //user.setEnabled(true);
+        //user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        //user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+//
+        //User savedUser = userRepository.save(user);
+//
+        //// Create role-specific profile
+        //if (userDto.getRole() == Role.STUDENT) {
+        //    Student student = new Student(
+        //            userDto.getUsername(),
+        //            userDto.getPassword(),
+        //            "", // Default fullName
+        //            "", // Default universityId
+        //            "", // Default interests
+        //            "", // Default skills
+        //            ""  // Default preferredLocation
+        //    );
+        //    student.setRole(Role.STUDENT);
+        //    student.setEnabled(true);
+//
+        //    student.setId(savedUser.getId()); // Match user ID
+        //    studentRepository.save(student);
+        //}
+        //return UserMapper.toDto(savedUser);
+
+        // Create the Student entity directly
         if (userDto.getRole() == Role.STUDENT) {
             Student student = new Student(
                     userDto.getUsername(),

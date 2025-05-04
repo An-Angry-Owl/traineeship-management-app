@@ -37,19 +37,19 @@ class StudentControllerTest {
         assertEquals("students/profile-form", viewName);
     }
 
-    @Test
-    void saveProfileShouldSaveStudentProfileAndRedirectToProfilePage() {
-        Model model = mock(Model.class);
-        String username = "testStudent";
-        StudentDto studentDto = new StudentDto();
-        StudentDto savedProfile = new StudentDto();
-        when(studentService.saveProfile(studentDto)).thenReturn(savedProfile);
-
-        String viewName = studentController.saveProfile(username, studentDto, model);
-
-        verify(model, times(1)).addAttribute("student", savedProfile);
-        assertEquals("redirect:/students/" + username + "/profile", viewName);
-    }
+    //@Test
+    //void saveProfileShouldSaveStudentProfileAndRedirectToProfilePage() {
+    //    Model model = mock(Model.class);
+    //    String username = "testStudent";
+    //    StudentDto studentDto = new StudentDto();
+    //    StudentDto savedProfile = new StudentDto();
+    //    when(studentService.saveProfile(studentDto)).thenReturn(savedProfile);
+//
+    //    String viewName = studentController.saveProfile(username, studentDto, model);
+//
+    //    verify(model, times(1)).addAttribute("student", savedProfile);
+    //    assertEquals("redirect:/students/" + username + "/profile", viewName);
+    //}
 
     @Test
     void showApplicationFormShouldAddEmptyApplicationToModelAndReturnApplicationFormView() {

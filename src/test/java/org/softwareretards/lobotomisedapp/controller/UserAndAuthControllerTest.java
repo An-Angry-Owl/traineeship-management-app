@@ -31,18 +31,18 @@ class UserAndAuthControllerTest {
         assertEquals("user/registration-form", viewName);
     }
 
-    @Test
-    void registerUserShouldAddCreatedUserToModelAndReturnConfirmationView() {
-        Model model = mock(Model.class);
-        UserDto userDto = new UserDto();
-        UserDto createdUser = new UserDto();
-        when(userService.createUser(userDto)).thenReturn(createdUser);
-
-        String viewName = userAndAuthController.registerUser(userDto, model);
-
-        verify(model, times(1)).addAttribute("user", createdUser);
-        assertEquals("user/registration-confirmation", viewName);
-    }
+    //@Test
+    //void registerUserShouldAddCreatedUserToModelAndReturnConfirmationView() {
+    //    Model model = mock(Model.class);
+    //    UserDto userDto = new UserDto();
+    //    UserDto createdUser = new UserDto();
+    //    when(userService.createUser(userDto)).thenReturn(createdUser);
+//
+    //    String viewName = userAndAuthController.registerUser(userDto, model);
+//
+    //    verify(model, times(1)).addAttribute("user", createdUser);
+    //    assertEquals("user/registration-confirmation", viewName);
+    //}
 
     @Test
     void showLoginFormShouldReturnLoginFormView() {

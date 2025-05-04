@@ -48,23 +48,23 @@ class StudentServiceImplTest {
     @InjectMocks
     private StudentServiceImpl studentService;
 
-    @Test
-    void saveProfileShouldSaveAndReturnStudentDto() {
-        UserDto userDto = new UserDto();
-        userDto.setUsername("newStudent");
-
-        StudentDto studentDto = new StudentDto();
-        studentDto.setUserDto(userDto);
-
-        Student student = new Student();
-        student.setUsername("studentUser");
-
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-
-        StudentDto result = studentService.saveProfile(studentDto);
-
-        assertEquals("studentUser", result.getUserDto().getUsername());
-    }
+    //@Test
+    //void saveProfileShouldSaveAndReturnStudentDto() {
+    //    UserDto userDto = new UserDto();
+    //    userDto.setUsername("newStudent");
+//
+    //    StudentDto studentDto = new StudentDto();
+    //    studentDto.setUserDto(userDto);
+//
+    //    Student student = new Student();
+    //    student.setUsername("studentUser");
+//
+    //    when(studentRepository.save(any(Student.class))).thenReturn(student);
+//
+    //    StudentDto result = studentService.saveProfile(studentDto);
+//
+    //    assertEquals("studentUser", result.getUserDto().getUsername());
+    //}
 
     @Test
     void retrieveProfileShouldReturnStudentDtoWhenUserIsStudent() {

@@ -4,6 +4,7 @@ import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
+import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.mapper.user.CompanyMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
@@ -54,6 +55,12 @@ public class TraineeshipPositionMapper {
             return null;
         }
         TraineeshipPosition entity = new TraineeshipPosition();
+        // Map company from DTO
+        if (dto.getCompany() != null) {
+            Company company = new Company();
+            company.setId(dto.getCompany().getUserDto().getId());
+            entity.setCompany(company);
+        }
         entity.setId(dto.getId());
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());

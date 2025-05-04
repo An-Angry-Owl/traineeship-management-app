@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 33.33%;
+            height: 100vh;
+            background-color: white;
+            padding: 2rem;
+            box-sizing: border-box;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .main-content {
+            width: 66.67%;
+            height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .return-button {
+            padding: 0.5rem 1rem;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            margin: 2rem auto;
+        }
+
+        .nav-box {
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .nav-button.active {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            color: #2575fc;
+            border-left: 4px solid #2575fc;
+        }
+
+        .form-section {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .account-section {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .form-actions button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .save-button {
+            background-color: black;
+            color: white;
+        }
+
+        .discard-button {
+            background-color: #e0e0e0;
+            color: black;
+        }
+
+        .password-form {
+            display: none;
+        }
+
+        .password-form.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="profile-header">
+        <a th:href="@{/students/{username}/dashboard(username=${student.userDto.username})}"
+           class="return-button">
+            Return to Dashboard
+        </a>
+    </div>
+
+    <div class="avatar" th:text="${#strings.substring(student.userDto.username, 0, 1).toUpperCase()}">
+        <!-- Initial will be inserted here -->
+    </div>
+
+    <div class="nav-box">
+        <button class="nav-button active" onclick="showSection('account')">Account Details</button>
+        <button class="nav-button" onclick="showSection('password')">Change Password</button>
+        <form th:action="@{/logout}" method="post">
+            <button class="nav-button" type="submit">Log Out</button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Account Details Section -->
+    <div class="form-section account-section">
+        <form th:action="@{/students/{username}/profile(username=${student.userDto.username})}"
+              th:object="${student}"
+              method="post">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" th:field="*{fullName}">
+            </div>
+
+            <div class="form-group">
+                <label>University ID</label>
+                <input type="text" th:field="*{universityId}">
+            </div>
+
+            <div class="form-group">
+                <label>Interests</label>
+                <textarea th:field="*{interests}" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Skills</label>
+                <textarea th:field="*{skills}" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Location</label>
+                <input type="text" th:field="*{preferredLocation}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="save-button">Save Changes</button>
+                <button type="reset" class="discard-button">Discard</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Change Password Section -->
+    <div class="form-section password-section">
+        <form th:action="@{/students/{username}/change-password(username=${student.username})}" method="post">
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" name="currentPassword" required>
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="newPassword" required>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" name="confirmPassword" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="save-button">Change Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize the default section
+    document.addEventListener('DOMContentLoaded', function() {
+        // Remove active class from all buttons first
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Activate account button and show section
+        document.querySelector('.nav-button:first-child').classList.add('active');
+        document.querySelector('.account-section').style.display = 'block';
+    });
+
+    function showSection(section) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Hide all sections
+        document.querySelectorAll('.form-section').forEach(div => {
+            div.style.display = 'none';
+        });
+
+        // Show selected section and activate button
+        const sectionElement = document.querySelector(`.${section}-section`);
+        if (sectionElement) {
+            sectionElement.style.display = 'block';
+            event.target.classList.add('active');
+        }
+    }
+
+    // Password validation
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const currentPass = this.elements[0].value;
+        const newPass = this.elements[1].value;
+        const confirmPass = this.elements[2].value;
+
+        if (newPass !== confirmPass) {
+            alert('New passwords do not match!');
+            return;
+        }
+
+        if (newPass === currentPass) {
+            alert('New password must be different from current password!');
+            return;
+        }
+
+        // Here you would typically make an AJAX call to update password
+        alert('Password changed successfully!');
+        this.reset();
+    });
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const successMessage = /*[[${success}]]*/ null;
+    const errorMessage = /*[[${error}]]*/ null;
+
+    if (successMessage) {
+        alert(successMessage);
+        // Switch back to account section after success
+        showSection('account');
+    }
+    if (errorMessage) {
+        alert(errorMessage);
+        // Stay on password section to fix errors
+        document.querySelector('.password-section').style.display = 'block';
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            if (btn.textContent.includes('Password')) btn.classList.add('active');
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

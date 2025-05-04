@@ -2,7 +2,10 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
+import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.User;
+import org.softwareretards.lobotomisedapp.mapper.user.CompanyMapper;
+import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
 import org.softwareretards.lobotomisedapp.service.CompanyService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,9 +21,11 @@ import java.util.List;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final CompanyRepository companyRepository;
 
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(CompanyService companyService, CompanyRepository companyRepository) {
         this.companyService = companyService;
+        this.companyRepository = companyRepository;
     }
 
     //Display all companies
@@ -28,7 +33,7 @@ public class CompanyController {
     public String listCompanies(Model model) {
         List<CompanyDto> companies = companyService.getAllCompanies();
         model.addAttribute("companies", companies);
-        return "company/list";
+        return "companies/list";
     }
 
     //Find company by ID
@@ -36,7 +41,7 @@ public class CompanyController {
     public String getCompanyById(@PathVariable Long id, Model model) {
         CompanyDto company = companyService.findCompanyById(id);
         model.addAttribute("company", company);
-        return "company/details";
+        return "companies/details";
     }
 
     //Find company by name
@@ -44,7 +49,7 @@ public class CompanyController {
     public String findCompanyByName(@RequestParam String name, Model model) {
         List<CompanyDto> companies = companyService.findCompanyByName(name);
         model.addAttribute("companies", companies);
-        return "company/list";
+        return "companies/list";
     }
 
     //Find company by location
@@ -52,21 +57,21 @@ public class CompanyController {
     public String findCompanyByLocation(@RequestParam String location, Model model) {
         List<CompanyDto> companies = companyService.findCompanyByLocation(location);
         model.addAttribute("companies", companies);
-        return "company/list";
+        return "companies/list";
     }
 
     //Show form to create a new company
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("company", new CompanyDto());
-        return "company/form"; // Returns company/form.html
+        return "companies/form"; // Returns company/form.html
     }
 
     //Process new company submission
     @PostMapping
     public String createCompany(@Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult result) {
         if (result.hasErrors()) {
-            return "company/form";
+            return "companies/form";
         }
         CompanyDto savedCompany = companyService.createCompany(companyDto); // Use returned value
         return "redirect:/companies/" + savedCompany.getUserDto().getId();
@@ -77,14 +82,14 @@ public class CompanyController {
     public String showEditForm(@PathVariable Long id, Model model) {
         CompanyDto company = companyService.findCompanyById(id);
         model.addAttribute("company", company);
-        return "company/form";
+        return "companies/form";
     }
 
     //Process company update
     @PostMapping("/update/{id}")
     public String updateCompany(@PathVariable Long id, @Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult result) {
         if (result.hasErrors()) {
-            return "company/form";
+            return "companies/form";
         }
         CompanyDto savedCompany = companyService.updateCompany(id, companyDto);
         return "redirect:/companies" + savedCompany.getUserDto().getId();
@@ -176,5 +181,21 @@ public class CompanyController {
         model.addAttribute("company", company);
         model.addAttribute("traineeships", positions);
         return "companies/dashboard";
+    }
+
+    @PostMapping("/{companyId}/traineeships/new")
+    public String handleNewPosition(
+            @PathVariable Long companyId,
+            @ModelAttribute TraineeshipPositionDto positionDto
+    ) {
+        // Get the company entity from the ID
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        // Set the company in the DTO
+        positionDto.setCompany(CompanyMapper.toDto(company));
+
+        companyService.announceTraineeship(positionDto);
+        return "redirect:/companies/" + companyId + "/dashboard";
     }
 }
