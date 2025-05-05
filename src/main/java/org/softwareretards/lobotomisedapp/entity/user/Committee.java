@@ -2,6 +2,7 @@ package org.softwareretards.lobotomisedapp.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +20,11 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  */
 @Entity
 @Table(name = "committee")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter @Setter @NoArgsConstructor
 public class Committee extends User {
 
-    @Column(name = "committee_name", nullable = false)
+    @Column(name = "committee_name", nullable = true, length = 50)
     private String committeeName;
 
     public Committee(String username, String password, String committeeName) {

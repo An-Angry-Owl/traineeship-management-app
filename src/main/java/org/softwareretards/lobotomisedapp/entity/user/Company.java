@@ -14,6 +14,7 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  * </p>
  */
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 @Table(name = "companies")
 @Getter @Setter @NoArgsConstructor
 public class Company extends User {

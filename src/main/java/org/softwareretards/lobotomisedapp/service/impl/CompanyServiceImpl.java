@@ -33,13 +33,20 @@ public class CompanyServiceImpl implements CompanyService {
         this.evaluationRepository = evaluationRepository;
     }
 
-    //US7 Create a Company-type User profile
+    @Override
     public CompanyDto createCompany(CompanyDto companyDto) {
         Company company = CompanyMapper.toEntity(companyDto);
         Company savedCompany = companyRepository.save(company);
         return CompanyMapper.toDto(savedCompany);
     }
 
+    @Override
+    public Optional<CompanyDto> findCompanyByUsername(String username) {
+        return companyRepository.findByUsername(username)
+                .map(CompanyMapper::toDto);
+    }
+
+    @Override
     public CompanyDto updateCompany(Long companyId, CompanyDto companyDto) {
         Optional<Company> existingCompanyOpt = companyRepository.findById(companyId);
         if (existingCompanyOpt.isEmpty()) {
@@ -49,22 +56,30 @@ public class CompanyServiceImpl implements CompanyService {
         Company existingCompany = existingCompanyOpt.get();
         existingCompany.setCompanyName(companyDto.getCompanyName());
         existingCompany.setLocation(companyDto.getLocation());
+        existingCompany.setUsername(companyDto.getUsername());
+        existingCompany.setPassword(companyDto.getPassword());
+        existingCompany.setRole(companyDto.getRole());
+        existingCompany.setEnabled(companyDto.isEnabled());
+        existingCompany.setCreatedAt(companyDto.getCreatedAt());
+        existingCompany.setUpdatedAt(companyDto.getUpdatedAt());
 
         Company updatedCompany = companyRepository.save(existingCompany);
         return CompanyMapper.toDto(updatedCompany);
     }
 
+    @Override
     public void deleteCompany(Long companyId) {
         companyRepository.deleteById(companyId);
     }
 
-    // TODO: Possibly will be used in strategies thus determine and delete unnecessary
+    @Override
     public CompanyDto findCompanyById(Long companyId) {
         return companyRepository.findById(companyId)
                 .map(CompanyMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Company not found with ID: " + companyId));
     }
 
+    @Override
     public List<CompanyDto> findCompanyByName(String companyName) {
         return companyRepository.findByCompanyName(companyName)
                 .stream()
@@ -72,6 +87,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CompanyDto> findCompanyByLocation(String location) {
         return companyRepository.findByLocation(location)
                 .stream()
@@ -79,6 +95,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CompanyDto> getAllCompanies() {
         return companyRepository.findAll()
                 .stream()
@@ -86,8 +103,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .toList();
     }
 
-
-    // US8: Get list of advertised traineeships by a company
     @Override
     public List<TraineeshipPositionDto> getTraineeshipPositions(Long companyId) {
         return traineeshipPositionRepository.findByCompanyId(companyId)
@@ -96,8 +111,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect(Collectors.toList());
     }
 
-
-    // US9: Get list of assigned traineeships
     @Override
     public List<TraineeshipPositionDto> getAssignedTraineeships(Long companyId, boolean assigned) {
         return traineeshipPositionRepository.findAvailableByCompany(companyId)
@@ -106,24 +119,26 @@ public class CompanyServiceImpl implements CompanyService {
                 .collect(Collectors.toList());
     }
 
-    // US10: Announce a new traineeship position
     @Override
     @Transactional
     public TraineeshipPositionDto announceTraineeship(TraineeshipPositionDto traineeshipPositionDto) {
-        TraineeshipPosition traineeship = TraineeshipPositionMapper.toEntity(traineeshipPositionDto);
-        TraineeshipPosition savedTraineeship = traineeshipPositionRepository.save(traineeship);
+        TraineeshipPosition traineeshipPosition = TraineeshipPositionMapper.toEntity(traineeshipPositionDto);
+        TraineeshipPosition savedTraineeship = traineeshipPositionRepository.save(traineeshipPosition);
         return TraineeshipPositionMapper.toDto(savedTraineeship);
     }
 
-    // US11: Delete a traineeship position
     @Override
     @Transactional
-    public void deleteTraineeship(Long traineeshipId) {
-        traineeshipPositionRepository.deleteById(traineeshipId);
+    public void deleteTraineeship(Long traineeshipPositionId) {
+        Optional<TraineeshipPosition> traineeshipOpt = traineeshipPositionRepository.findById(traineeshipPositionId);
+        if (traineeshipOpt.isPresent()) {
+            TraineeshipPosition traineeship = traineeshipOpt.get();
+            traineeshipPositionRepository.delete(traineeship);
+        } else {
+            throw new RuntimeException("Traineeship position not found with ID: " + traineeshipPositionId);
+        }
     }
 
-    // TODO: Check whether this is correct
-    // US12: Fill in an evaluation for a traineeship (Company Side)
     @Override
     @Transactional
     public Evaluation evaluateTrainee(Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency) {

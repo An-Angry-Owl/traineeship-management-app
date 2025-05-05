@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Traineeship Positions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2575fc;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        table th, table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .edit-button {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .add-button {
+            background-color: #28a745;
+            color: white;
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Traineeship Positions</h1>
+
+    <a th:href="@{/companies/{username}/traineeships/new(username=${company.username})}" class="add-button">
+        Add New Position
+    </a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Position Name</th>
+            <th>Status</th>
+            <th>Student</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody th:if="${traineeships != null and !traineeships.isEmpty()}" th:each="traineeship : ${traineeships}">
+        <tr>
+            <td th:text="${traineeship.positionName}"></td>
+            <td th:text="${traineeship.status?.name()}"></td>
+            <td th:if="${traineeship.student != null}" th:text="${traineeship.student.fullName}">N/A</td>
+            <td>
+                <a th:href="@{/positions/{id}/settings(id=${traineeship.id})}" class="action-button edit-button">
+                    Edit
+                </a>
+                <a th:href="@{/traineeships/delete/{id}(id=${traineeship.id})}" class="action-button delete-button">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+        <tbody th:if="${traineeships == null or traineeships.isEmpty()}">
+        <tr>
+            <td colspan="4" style="text-align: center;">No traineeship positions available.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

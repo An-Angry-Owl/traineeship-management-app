@@ -2,9 +2,7 @@ package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.user.UserDto;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
-import org.softwareretards.lobotomisedapp.entity.user.Company;
-import org.softwareretards.lobotomisedapp.entity.user.Student;
-import org.softwareretards.lobotomisedapp.entity.user.User;
+import org.softwareretards.lobotomisedapp.entity.user.*;
 import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
 import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
@@ -100,8 +98,36 @@ public class UserServiceImpl implements UserService {
             return UserMapper.toDto(savedCompany);
         }
 
-        // Handle other roles if needed
-        throw new UnsupportedOperationException("Role not yet supported");
+        if (userDto.getRole() == Role.PROFESSOR) {
+            Professor professor = new Professor(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    "", ""  // Initialize empty fields
+            );
+            professor.setRole(Role.PROFESSOR);
+            professor.setEnabled(true);
+            professor.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            professor.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            Professor savedProfessor = userRepository.save(professor);
+            return UserMapper.toDto(savedProfessor);
+        }
+
+        if (userDto.getRole() == Role.COMMITTEE) {
+            Committee committee = new Committee(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    ""   // Initialize empty fields
+            );
+            committee.setRole(Role.COMMITTEE);
+            committee.setEnabled(true);
+            committee.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            committee.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            Committee savedCommittee = userRepository.save(committee);
+            return UserMapper.toDto(savedCommittee);
+        }
+
+        // Default case for unsupported roles
+        throw new IllegalArgumentException("Role not yet supported");
     }
 
     @Override

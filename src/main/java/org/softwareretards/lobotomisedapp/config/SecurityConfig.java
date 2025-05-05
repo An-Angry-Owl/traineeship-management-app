@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
@@ -20,6 +21,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/vivian.webp", "/register", "/login", "/save", "/logout-success").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
@@ -39,6 +43,13 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/logout-success")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .expiredUrl("/login?expired=true")
                 );
 
         return http.build();

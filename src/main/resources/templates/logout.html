@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+
+        .logout-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .message {
+            font-size: 1.5rem;
+            color: #2575fc;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #2575fc;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="logout-container">
+    <p class="message">You have been successfully logged out.</p>
+    <a href="/login" class="login-link">Go to Login</a>
+</div>
+</body>
+</html>

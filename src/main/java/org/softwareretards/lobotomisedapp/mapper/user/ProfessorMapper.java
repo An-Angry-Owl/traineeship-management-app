@@ -12,7 +12,13 @@ public class ProfessorMapper {
             return null;
         }
         ProfessorDto dto = new ProfessorDto();
-        dto.setUserDto(UserMapper.toDto(professor)); // Convert User part
+        dto.setId(professor.getId());
+        dto.setUsername(professor.getUsername());
+        dto.setPassword(professor.getPassword());
+        dto.setRole(professor.getRole());
+        dto.setEnabled(professor.isEnabled());
+        dto.setCreatedAt(professor.getCreatedAt());
+        dto.setUpdatedAt(professor.getUpdatedAt());
         dto.setProfessorName(professor.getProfessorName());
         dto.setInterests(professor.getInterests());
         return dto;
@@ -23,12 +29,13 @@ public class ProfessorMapper {
             return null;
         }
         Professor professor = new Professor();
-        professor.setId(dto.getUserDto().getId());  // ID from UserDto
-        professor.setUsername(dto.getUserDto().getUsername());
-        professor.setRole(dto.getUserDto().getRole());
-        professor.setEnabled(dto.getUserDto().isEnabled());
-        professor.setCreatedAt(dto.getUserDto().getCreatedAt());
-        professor.setUpdatedAt(dto.getUserDto().getUpdatedAt());
+        professor.setId(dto.getId());
+        professor.setUsername(dto.getUsername());
+        professor.setPassword(dto.getPassword());
+        professor.setRole(dto.getRole());
+        professor.setEnabled(dto.isEnabled());
+        professor.setCreatedAt(dto.getCreatedAt());
+        professor.setUpdatedAt(dto.getUpdatedAt());
         professor.setProfessorName(dto.getProfessorName());
         professor.setInterests(dto.getInterests());
         return professor;

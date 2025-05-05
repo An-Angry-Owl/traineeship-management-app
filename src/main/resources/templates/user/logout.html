@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged Out Successfully</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .logout-container {
+            text-align: center;
+            background-color: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logout-icon {
+            font-size: 4rem;
+            color: #20c997;
+            margin-bottom: 1.5rem;
+        }
+
+        .logout-title {
+            font-size: 2rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+
+        .logout-message {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .login-button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #20c997;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .login-button:hover {
+            background-color: #17a2b8;
+        }
+
+        .countdown {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="logout-container">
+    <div class="logout-icon">👋</div>
+    <h1 class="logout-title">You've been logged out</h1>
+    <p class="logout-message">
+        Thank you for using our platform. Your session has been securely terminated.
+        Please login again to continue accessing your account.
+    </p>
+    <a th:href="@{/login}" class="login-button">Return to Login Page</a>
+    <div class="countdown" id="countdown">Redirecting to login page in 10 seconds...</div>
+</div>
+
+<script>
+    // Countdown timer for automatic redirect
+    let seconds = 10;
+    const countdownElement = document.getElementById('countdown');
+    const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = `Redirecting to login page in ${seconds} seconds...`;
+
+        if (seconds <= 0) {
+            clearInterval(countdownInterval);
+            window.location.href = '/login';
+        }
+    }, 1000);
+</script>
+</body>
+</html>

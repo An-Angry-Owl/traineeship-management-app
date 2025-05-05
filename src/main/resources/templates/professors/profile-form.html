@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Professor Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #6f42c1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+        }
+
+        .interests-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background-color: #e9ecef;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .save-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .save-button:hover {
+            background-color: #5a32a3;
+        }
+
+        .cancel-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .cancel-button:hover {
+            background-color: #5a6268;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .password-form {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+    </style>
+</head>
+<body>
+<div class="profile-header">
+    <div class="profile-icon"
+         th:text="${#strings.substring(professor.username, 0, 1).toUpperCase()}">
+    </div>
+    <h1>Professor Profile</h1>
+</div>
+
+<div class="profile-container">
+    <form th:action="@{/professors/{username}/profile(username=${professor.username})}"
+          th:object="${professor}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" th:field="*{professorName}" required>
+            <div th:if="${#fields.hasErrors('professorName')}" class="error-message" th:errors="*{professorName}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" th:field="*{username}" readonly>
+            <div th:if="${#fields.hasErrors('username')}" class="error-message" th:errors="*{username}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="interests">Research Interests (comma separated)</label>
+            <textarea id="interests" th:field="*{interests}" placeholder="e.g., Machine Learning, Data Science, Algorithms"></textarea>
+            <div class="interests-tags" th:if="${professor.interests != null and !professor.interests.isEmpty()}">
+                <span th:each="interest : ${#strings.arraySplit(professor.interests, ',')}" class="tag" th:text="${interest.trim()}"></span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="save-button">Save Profile</button>
+            <a th:href="@{/professors/{username}/positions(username=${professor.username})}" class="cancel-button">View Positions</a>
+        </div>
+    </form>
+</div>
+<div class="password-form">
+    <h3>Change Password</h3>
+    <form th:action="@{/professors/{username}/change-password(username=${professor.username})}" method="post">
+        <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}"/>
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" required
+                   minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+                   title="Must contain at least 8 characters, one uppercase, one lowercase, and one number">
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+
+        <button type="submit" class="save-button">Change Password</button>
+    </form>
+</div>
+</body>
+</html>

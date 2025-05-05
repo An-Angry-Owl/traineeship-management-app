@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluate Traineeship</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #6f42c1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .evaluation-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .position-info {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .position-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #6f42c1;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .rating-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .rating-options {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .rating-option {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .rating-option.selected {
+            background-color: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
+        }
+
+        .rating-description {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .submit-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .cancel-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="profile-icon"
+         th:text="${#strings.substring(#authentication.principal.username, 0, 1).toUpperCase()}">
+    </div>
+    <a th:href="@{/professors/{username}/positions(username=${#authentication.principal.username})}"
+       class="cancel-button">
+        Back to Positions
+    </a>
+</div>
+
+<div class="evaluation-container">
+    <div class="position-info">
+        <div class="position-name" th:text="'Evaluate: ' + ${positionName}"></div>
+        <div>Please rate the student and company for this traineeship position.</div>
+    </div>
+
+    <form th:action="@{/professors/{username}/positions/{positionId}/evaluate(username=${#authentication.principal.username}, positionId=${positionId})}"
+          th:object="${evaluation}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-group">
+            <div class="section-title">Student Evaluation</div>
+
+            <div class="rating-section">
+                <label>Motivation</label>
+                <div class="rating-options" id="motivationRating">
+                    <div class="rating-option" onclick="selectRating(this, 'motivation')">1</div>
+                    <div class="rating-option" onclick="selectRating(this, 'motivation')">2</div>
+                    <div class="rating-option" onclick="selectRating(this, 'motivation')">3</div>
+                    <div class="rating-option" onclick="selectRating(this, 'motivation')">4</div>
+                    <div class="rating-option" onclick="selectRating(this, 'motivation')">5</div>
+                </div>
+                <input type="hidden" th:field="*{motivation}" id="motivationInput" required>
+                <div class="rating-description">1 (Low) - 5 (High)</div>
+            </div>
+
+            <div class="rating-section">
+                <label>Effectiveness</label>
+                <div class="rating-options" id="effectivenessRating">
+                    <div class="rating-option" onclick="selectRating(this, 'effectiveness')">1</div>
+                    <div class="rating-option" onclick="selectRating(this, 'effectiveness')">2</div>
+                    <div class="rating-option" onclick="selectRating(this, 'effectiveness')">3</div>
+                    <div class="rating-option" onclick="selectRating(this, 'effectiveness')">4</div>
+                    <div class="rating-option" onclick="selectRating(this, 'effectiveness')">5</div>
+                </div>
+                <input type="hidden" th:field="*{effectiveness}" id="effectivenessInput" required>
+                <div class="rating-description">1 (Low) - 5 (High)</div>
+            </div>
+
+            <div class="rating-section">
+                <label>Efficiency</label>
+                <div class="rating-options" id="efficiencyRating">
+                    <div class="rating-option" onclick="selectRating(this, 'efficiency')">1</div>
+                    <div class="rating-option" onclick="selectRating(this, 'efficiency')">2</div>
+                    <div class="rating-option" onclick="selectRating(this, 'efficiency')">3</div>
+                    <div class="rating-option" onclick="selectRating(this, 'efficiency')">4</div>
+                    <div class="rating-option" onclick="selectRating(this, 'efficiency')">5</div>
+                </div>
+                <input type="hidden" th:field="*{efficiency}" id="efficiencyInput" required>
+                <div class="rating-description">1 (Low) - 5 (High)</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="section-title">Company Evaluation</div>
+
+            <div class="rating-section">
+                <label>Facilities Provided</label>
+                <div class="rating-options" id="facilitiesRating">
+                    <div class="rating-option" onclick="selectRating(this, 'facilities')">1</div>
+                    <div class="rating-option" onclick="selectRating(this, 'facilities')">2</div>
+                    <div class="rating-option" onclick="selectRating(this, 'facilities')">3</div>
+                    <div class="rating-option" onclick="selectRating(this, 'facilities')">4</div>
+                    <div class="rating-option" onclick="selectRating(this, 'facilities')">5</div>
+                </div>
+                <input type="hidden" th:field="*{facilitiesRating}" id="facilitiesInput" required>
+                <div class="rating-description">1 (Poor) - 5 (Excellent)</div>
+            </div>
+
+            <div class="rating-section">
+                <label>Guidance Quality</label>
+                <div class="rating-options" id="guidanceRating">
+                    <div class="rating-option" onclick="selectRating(this, 'guidance')">1</div>
+                    <div class="rating-option" onclick="selectRating(this, 'guidance')">2</div>
+                    <div class="rating-option" onclick="selectRating(this, 'guidance')">3</div>
+                    <div class="rating-option" onclick="selectRating(this, 'guidance')">4</div>
+                    <div class="rating-option" onclick="selectRating(this, 'guidance')">5</div>
+                </div>
+                <input type="hidden" th:field="*{guidanceRating}" id="guidanceInput" required>
+                <div class="rating-description">1 (Poor) - 5 (Excellent)</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="submit-button">Submit Evaluation</button>
+            <a th:href="@{/professors/{username}/positions(username=${#authentication.principal.username})}" class="cancel-button">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function selectRating(element, type) {
+        // Remove selected class from all options in this group
+        const options = document.getElementById(`${type}Rating`).children;
+        for (let option of options) {
+            option.classList.remove('selected');
+        }
+
+        // Add selected class to clicked option
+        element.classList.add('selected');
+
+        // Set the hidden input value
+        document.getElementById(`${type}Input`).value = element.textContent;
+    }
+</script>
+</body>
+</html>

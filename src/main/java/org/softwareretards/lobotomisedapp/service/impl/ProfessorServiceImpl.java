@@ -6,7 +6,6 @@ import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
-import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
@@ -14,7 +13,6 @@ import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
-import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,17 +25,14 @@ import java.util.stream.Collectors;
 public class ProfessorServiceImpl implements ProfessorService {
 
     private final ProfessorRepository professorRepository;
-    private final UserRepository userRepository;
     private final TraineeshipPositionRepository traineeshipPositionRepository;
     private final EvaluationRepository evaluationRepository;
 
     @Autowired
     public ProfessorServiceImpl(ProfessorRepository professorRepository,
-                                UserRepository userRepository,
                                 TraineeshipPositionRepository traineeshipPositionRepository,
                                 EvaluationRepository evaluationRepository) {
         this.professorRepository = professorRepository;
-        this.userRepository = userRepository;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.evaluationRepository = evaluationRepository;
     }
@@ -45,36 +40,27 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     @Transactional
     public ProfessorDto saveProfile(ProfessorDto professorDto) {
-        Professor professor = ProfessorMapper.toEntity(professorDto);
-        Professor savedProfessor = professorRepository.save(professor);
-        return ProfessorMapper.toDto(savedProfessor);
+        Professor professor = professorRepository.findByUsername(professorDto.getUsername())
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
+        // Update only profile fields
+        professor.setProfessorName(professorDto.getProfessorName());
+        professor.setInterests(professorDto.getInterests());
+
+        return ProfessorMapper.toDto(professorRepository.save(professor));
     }
 
     @Override
     public ProfessorDto getProfile(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Professor professor = professorRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
 
-        if (user.getRole() != Role.PROFESSOR) {
-            throw new RuntimeException("User is not a professor");
-        }
-
-        return professorRepository.findById(user.getId())
-                .map(ProfessorMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Professor profile not found"));
+        return ProfessorMapper.toDto(professor);
     }
 
     @Override
     public List<TraineeshipPositionDto> getSupervisedPositions(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user.getRole() != Role.PROFESSOR) {
-            throw new RuntimeException("User is not a professor");
-        }
-
-        Professor professor = professorRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Professor profile not found"));
+        Professor professor = professorRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
 
         return traineeshipPositionRepository.findByProfessor(professor).stream()
                 .map(TraineeshipPositionMapper::toDto)
@@ -85,18 +71,14 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Transactional
     public EvaluationDto saveEvaluation(String username, Long positionId, EvaluationDto evaluationDto) {
         // Validate professor
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user.getRole() != Role.PROFESSOR) {
-            throw new RuntimeException("User is not a professor");
-        }
+        Professor professor = professorRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
 
         // Validate position ownership
         TraineeshipPosition position = traineeshipPositionRepository.findById(positionId)
                 .orElseThrow(() -> new RuntimeException("Position not found"));
 
-        if (!position.getProfessor().getId().equals(user.getId())) {
+        if (!position.getProfessor().getId().equals(professor.getId())) {
             throw new RuntimeException("Professor does not supervise this position");
         }
 

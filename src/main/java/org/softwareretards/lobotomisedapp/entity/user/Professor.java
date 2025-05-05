@@ -2,6 +2,7 @@ package org.softwareretards.lobotomisedapp.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import org.softwareretards.lobotomisedapp.entity.enums.Role;
  * </p>
  */
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 @Table(name = "professors")
 @Getter
 @Setter

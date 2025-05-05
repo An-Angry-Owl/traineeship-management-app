@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Profile</title>
+    <style>
+        /* Reuse dashboard styles */
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2575fc;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            font-weight: bold;
+            width: 200px;
+            color: #555;
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .edit-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .change-password-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-header">
+    <div class="profile-icon"
+         th:text="${#strings.substring(company.username, 0, 1).toUpperCase()}">
+    </div>
+    <h1>Company Profile</h1>
+</div>
+
+<div class="profile-container">
+    <div class="profile-section">
+        <h2 class="section-title">Basic Information</h2>
+        <div class="info-row">
+            <div class="info-label">Company Name:</div>
+            <div class="info-value" th:text="${company.username}"></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Location:</div>
+            <div class="info-value" th:text="${company.location}"></div>
+        </div>
+    </div>
+
+    <div class="profile-section">
+        <h2 class="section-title">Contact Information</h2>
+    </div>
+
+    <div class="action-buttons">
+        <a th:href="@{/companies/{username}/profile/edit-profile(username=${company.username})}"
+           class="edit-button">
+            Edit Profile
+        </a>
+        <a th:href="@{/companies/{username}/change-password(username=${company.username})}"
+              th:if="${company.password != null}"
+           class="change-password-button">
+            Change Password
+        </a>
+    </div>
+</div>
+</body>
+</html>

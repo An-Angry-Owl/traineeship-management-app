@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CommitteeRepository extends JpaRepository<Committee, Long> {
     List<Committee> findByCommitteeName(String name);
+    List<Committee> findByUsername(String username);
 }

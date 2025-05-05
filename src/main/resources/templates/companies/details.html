@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Details</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .company-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .company-detail {
+            margin-bottom: 0.8rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .edit-button {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .traineeships-button {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="company-header">
+    <h1>Company Details</h1>
+    <a href="/companies" class="action-button back-button">Back to List</a>
+</div>
+
+<div class="company-info">
+    <div class="company-name" th:text="${company.username}"></div>
+
+    <div class="company-detail">
+        <span class="detail-label">Location:</span>
+        <span th:text="${company.location}"></span>
+    </div>
+
+    <div class="company-detail">
+        <span class="detail-label">Email:</span>
+        <span th:text="${company}"></span>
+    </div>
+
+    <div class="action-buttons">
+        <a th:href="@{/companies/edit/{id}(id=${company.id})}" class="action-button edit-button">Edit</a>
+        <a th:href="@{/companies/delete/{id}(id=${company.id})}" class="action-button delete-button">Delete</a>
+        <a th:href="@{/companies/{id}/traineeships(id=${company.id})}" class="action-button traineeships-button">View Traineeships</a>
+    </div>
+</div>
+</body>
+</html>

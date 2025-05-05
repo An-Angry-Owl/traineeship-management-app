@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 300px;
+        }
+
+        .search-bar button {
+            padding: 0.8rem 1.5rem;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .company-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .company-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-location {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .view-button {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        .edit-button {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Companies</h1>
+    <a href="/companies/new" style="padding: 0.8rem 1.5rem; background-color: #28a745; color: white; text-decoration: none; border-radius: 6px;">Add New Company</a>
+</div>
+
+<div class="search-bar">
+    <input type="text" id="nameSearch" placeholder="Search by name...">
+    <button onclick="searchByName()">Search</button>
+    <input type="text" id="locationSearch" placeholder="Search by location...">
+    <button onclick="searchByLocation()">Search</button>
+</div>
+
+<div th:each="company : ${companies}">
+    <div class="company-card">
+        <div class="company-name" th:text="${company.username}"></div>
+        <div class="company-location" th:text="${company.location}"></div>
+        <div class="action-buttons">
+            <a th:href="@{/companies/{id}(id=${company.id})}" class="action-button view-button">View</a>
+            <a th:href="@{/companies/edit/{id}(id=${company.id})}" class="action-button edit-button">Edit</a>
+            <a th:href="@{/companies/delete/{id}(id=${company.id})}" class="action-button delete-button">Delete</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function searchByName() {
+        const name = document.getElementById('nameSearch').value;
+        window.location.href = `/companies/searchByName?name=${encodeURIComponent(name)}`;
+    }
+
+    function searchByLocation() {
+        const location = document.getElementById('locationSearch').value;
+        window.location.href = `/companies/searchByLocation?location=${encodeURIComponent(location)}`;
+    }
+</script>
+</body>
+</html>

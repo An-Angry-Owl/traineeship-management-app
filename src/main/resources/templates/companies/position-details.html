@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${position.positionName} + ' Details'"></title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .details-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .position-title {
+            font-size: 1.5rem;
+            color: #2575fc;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-available {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-assigned {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .details-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #2575fc;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .student-info {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .primary-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .secondary-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="details-container">
+    <div class="details-header">
+        <h1 class="position-title" th:text="${position.positionName}"></h1>
+        <span class="status-badge"
+              th:classappend="${position.status?.name() == 'ASSIGNED'} ? 'status-assigned' : 'status-available'"
+              th:text="${position.status?.name()}"></span>
+    </div>
+
+    <div class="details-section">
+        <h2 class="section-title">Position Details</h2>
+        <p><strong>Location:</strong> <span th:text="${position.location}"></span></p>
+        <p><strong>Duration:</strong>
+            <span th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></span> -
+            <span th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></span>
+        </p>
+    </div>
+
+    <div class="details-section">
+        <h2 class="section-title">Description</h2>
+        <p th:text="${position.description}"></p>
+    </div>
+
+    <div class="details-section">
+        <h2 class="section-title">Requirements</h2>
+        <p th:text="${position.requirements}"></p>
+    </div>
+
+    <div th:if="${position.status?.name() == 'ASSIGNED'}" class="details-section">
+        <h2 class="section-title">Assigned Student</h2>
+        <div class="student-info">
+            <p><strong>Name:</strong> <span th:text="${position.student.fullName}"></span></p>
+            <p><strong>University:</strong> <span th:text="${position.student.university}"></span></p>
+            <p><strong>Contact:</strong> <span th:text="${position.student.email}"></span></p>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a th:href="@{/companies/{username}/traineeships/{id}/edit(username=${company.username}, id=${position.id})}"
+           class="primary-button">
+            Edit Position
+        </a>
+        <a th:href="@{/companies/{username}/traineeships(username=${company.username})}"
+           class="secondary-button">
+            Back to Positions
+        </a>
+    </div>
+</div>
+</body>
+</html>

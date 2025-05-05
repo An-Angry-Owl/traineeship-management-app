@@ -12,8 +12,13 @@ public class StudentMapper {
             return null;
         }
         StudentDto dto = new StudentDto();
-        dto.setUserDto(UserMapper.toDto(student)); // Convert User part
+        dto.setId(student.getId());
         dto.setUsername(student.getUsername());
+        dto.setPassword(student.getPassword());
+        dto.setRole(student.getRole());
+        dto.setEnabled(student.isEnabled());
+        dto.setCreatedAt(student.getCreatedAt());
+        dto.setUpdatedAt(student.getUpdatedAt());
         dto.setFullName(student.getFullName());
         dto.setUniversityId(student.getUniversityId());
         dto.setInterests(student.getInterests());
@@ -27,12 +32,13 @@ public class StudentMapper {
             return null;
         }
         Student student = new Student();
-        student.setId(dto.getUserDto().getId());  // ID from UserDto
-        student.setUsername(dto.getUserDto().getUsername());
-        student.setRole(dto.getUserDto().getRole());
-        student.setEnabled(dto.getUserDto().isEnabled());
-        student.setCreatedAt(dto.getUserDto().getCreatedAt());
-        student.setUpdatedAt(dto.getUserDto().getUpdatedAt());
+        student.setId(dto.getId());
+        student.setUsername(dto.getUsername());
+        student.setPassword(dto.getPassword());
+        student.setRole(dto.getRole());
+        student.setEnabled(dto.isEnabled());
+        student.setCreatedAt(dto.getCreatedAt());
+        student.setUpdatedAt(dto.getUpdatedAt());
         student.setFullName(dto.getFullName());
         student.setUniversityId(dto.getUniversityId());
         student.setInterests(dto.getInterests());

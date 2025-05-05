@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Committee Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #17a2b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #17a2b8;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #17a2b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+        }
+
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        .primary-button {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .secondary-button {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .quick-action {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #17a2b8;
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #17a2b8;
+        }
+
+        .action-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .pending-list {
+            margin-top: 1.5rem;
+        }
+
+        .pending-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pending-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .application-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .review-button {
+            padding: 0.5rem 1rem;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-header">
+    <div class="profile-icon"
+         th:text="${#strings.substring(committee.username, 0, 1).toUpperCase()}">
+    </div>
+    <a th:href="@{/committee/profile}"
+       class="action-button secondary-button">
+        Profile Settings
+    </a>
+</div>
+
+<div class="dashboard-container">
+    <div class="welcome-message">
+        Welcome, Committee Member <span th:text="${committee.username}"></span>!
+    </div>
+
+    <div class="dashboard-card">
+        <h2 class="card-title">Traineeship Overview</h2>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${pendingApplications}"></div>
+                <div class="stat-label">Pending Applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${activeTraineeships}"></div>
+                <div class="stat-label">Active Traineeships</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${completedTraineeships}"></div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <a th:href="@{/committee/applications}"
+           class="action-button primary-button">
+            Manage Applications
+        </a>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 class="card-title">Quick Actions</h2>
+
+        <div class="quick-actions">
+            <a th:href="@{/committee/applications}" class="quick-action">
+                <div class="action-icon">📝</div>
+                <div class="action-title">Review Applications</div>
+                <div>Process student traineeship applications</div>
+            </a>
+
+            <a th:href="@{/committee/assignments}" class="quick-action">
+                <div class="action-icon">👥</div>
+                <div class="action-title">Manage Assignments</div>
+                <div>Assign students to positions and professors</div>
+            </a>
+
+            <a th:href="@{/committee/evaluations}" class="quick-action">
+                <div class="action-icon">📊</div>
+                <div class="action-title">Monitor Evaluations</div>
+                <div>Review traineeship evaluations</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="dashboard-card" th:if="${!pendingApplicationsList.isEmpty()}">
+        <h2 class="card-title">Pending Applications</h2>
+
+        <div class="pending-list">
+            <div class="pending-item" th:each="application : ${pendingApplicationsList}">
+                <div class="pending-info">
+                    <div class="student-name" th:text="${application.student.fullName}"></div>
+                    <div class="application-date">
+                        Applied for: <span th:text="${application.position.positionName}"></span>
+                    </div>
+                </div>
+                <a th:href="@{/committee/application/${application.id}}" class="review-button">
+                    Review
+                </a>
+            </div>
+        </div>
+
+        <a th:href="@{/committee/applications}"
+           class="action-button primary-button">
+            View All Applications
+        </a>
+    </div>
+</div>
+</body>
+</html>

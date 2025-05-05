@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 public class UserAndAuthController {
@@ -49,8 +50,8 @@ public class UserAndAuthController {
 
     // US3: Logout (confirmation page)
     @GetMapping("/logout-success")
-    public String showLogoutConfirmation() {
-        return "logout-confirmation";
+    public String showLogoutPage() {
+        return "logout";
     }
 
     // Profile view

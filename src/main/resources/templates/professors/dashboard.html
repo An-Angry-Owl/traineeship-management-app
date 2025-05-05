@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard</title>
+    <title>Professor Dashboard</title>
     <style>
         body {
             margin: 0;
@@ -22,7 +22,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background-color: #20c997;
+            background-color: #6f42c1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,12 +53,12 @@
             font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 1.5rem;
-            color: #20c997;
+            color: #6f42c1;
             border-bottom: 2px solid #f0f0f0;
             padding-bottom: 0.5rem;
         }
 
-        .traineeship-status {
+        .supervision-status {
             display: flex;
             align-items: center;
             margin-bottom: 1.5rem;
@@ -78,18 +78,8 @@
         }
 
         .status-icon.active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-icon.pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-icon.inactive {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #e2d4f0;
+            color: #6f42c1;
         }
 
         .status-text {
@@ -113,7 +103,7 @@
         }
 
         .primary-button {
-            background-color: #20c997;
+            background-color: #6f42c1;
             color: white;
         }
 
@@ -141,13 +131,13 @@
         .quick-action:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-color: #20c997;
+            border-color: #6f42c1;
         }
 
         .action-icon {
             font-size: 2rem;
             margin-bottom: 1rem;
-            color: #20c997;
+            color: #6f42c1;
         }
 
         .action-title {
@@ -155,34 +145,52 @@
             margin-bottom: 0.5rem;
         }
 
-        .recent-entries {
+        .supervised-positions {
             margin-top: 1.5rem;
         }
 
-        .entry {
+        .position {
             background-color: #f8f9fa;
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .entry-date {
+        .position-info {
+            flex: 1;
+        }
+
+        .position-name {
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
-        .entry-content {
-            color: #555;
+        .position-student {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .evaluate-button {
+            padding: 0.5rem 1rem;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 <div class="dashboard-header">
     <div class="profile-icon"
-         th:text="${#strings.substring(student.username, 0, 1).toUpperCase()}">
+         th:text="${#strings.substring(professor.username, 0, 1).toUpperCase()}">
     </div>
-    <div style="display: flex; gap: 1rem;">
-        <a th:href="@{/students/{username}/profile(username=${student.username})}"
+    <div style="display: flex; gap: 1rem; align-items: center;">
+        <a th:href="@{/professors/{username}/profile(username=${professor.username})}"
            class="action-button secondary-button">
             Profile Settings
         </a>
@@ -194,86 +202,74 @@
         </form>
     </div>
 </div>
-
 <div class="dashboard-container">
     <div class="welcome-message">
-        Welcome back, <span th:text="${student.fullName}"></span>!
+        Welcome, Professor <span th:text="${professor.professorName}"></span>!
     </div>
 
-    <div class="dashboard-card">
-        <h2 class="card-title">My Traineeship</h2>
+    <div class="dashboard-card" th:if="${supervisedPositions != null and !supervisedPositions.isEmpty()}">
+        <h2 class="card-title">Recent Supervisions</h2>
 
-        <div class="traineeship-status">
-            <div class="status-icon" th:classappend="${currentTraineeship != null} ? 'active' : 'inactive'">
-                <span th:text="${currentTraineeship != null} ? '✓' : '✗'"></span>
-            </div>
-            <div class="status-text">
-                <div class="status-title" th:text="${currentTraineeship != null} ?
-                        'Active Traineeship' : 'No Active Traineeship'"></div>
-                <div th:text="${currentTraineeship != null} ?
-                        currentTraineeship.position.positionName : 'Apply for a traineeship position'"></div>
+        <div class="supervised-positions">
+            <div class="position" th:each="position : ${supervisedPositions}">
+                <div class="position-info">
+                    <div class="position-name" th:text="${position.positionName}"></div>
+                    <div class="position-student">
+                        Student: <span th:text="${position.student?.fullName} ?: 'Not assigned'"></span>
+                    </div>
+                </div>
+                <a th:href="@{/professors/{username}/positions/{positionId}/evaluate(username=${professor.username}, positionId=${position.id})}"
+                   class="evaluate-button">
+                    Evaluate
+                </a>
             </div>
         </div>
 
-        <div th:if="${currentTraineeship != null}">
-            <a th:href="@{/students/{username}/logbook(username=${student.username})}"
-               class="action-button primary-button">
-                Add Logbook Entry
-            </a>
-        </div>
-        <div th:unless="${currentTraineeship != null}">
-            <a th:href="@{/students/{username}/apply(username=${student.username})}"
-               class="action-button primary-button">
-                Apply for Traineeship
-            </a>
-        </div>
+        <a th:href="@{/professors/{username}/positions(username=${professor.username})}"
+           class="action-button primary-button">
+            View All Positions
+        </a>
     </div>
 
     <div class="dashboard-card">
         <h2 class="card-title">Quick Actions</h2>
 
         <div class="quick-actions">
-            <a th:href="@{/students/{username}/apply(username=${student.username})}" class="quick-action">
-                <div class="action-icon">📝</div>
-                <div class="action-title">Apply for Traineeship</div>
-                <div>Submit an application for a traineeship position</div>
+            <a th:href="@{/professors/{username}/positions(username=${professor.username})}" class="quick-action">
+                <div class="action-icon">📋</div>
+                <div class="action-title">Supervised Positions</div>
+                <div>View all traineeships you're supervising</div>
             </a>
 
-            <a th:href="@{/students/{username}/logbook(username=${student.username})}" class="quick-action">
-                <div class="action-icon">📓</div>
-                <div class="action-title">Logbook</div>
-                <div>Record your daily activities and progress</div>
-            </a>
-
-            <a th:href="@{/students/{username}/profile(username=${student.username})}" class="quick-action">
+            <a th:href="@{/professors/{username}/profile(username=${professor.username})}" class="quick-action">
                 <div class="action-icon">👤</div>
                 <div class="action-title">Update Profile</div>
-                <div>Edit your skills, interests, and preferences</div>
+                <div>Edit your research interests and information</div>
             </a>
         </div>
     </div>
 
-    <div class="dashboard-card" th:if="${currentTraineeship != null}">
-        <h2 class="card-title">Recent Logbook Entries</h2>
+    <div class="dashboard-card" th:if="${!supervisedPositions.isEmpty()}">
+        <h2 class="card-title">Recent Supervisions</h2>
 
-        <div class="recent-entries">
-            <div class="entry">
-                <div class="entry-date">Today</div>
-                <div class="entry-content">Worked on implementing the user authentication module.</div>
-            </div>
-            <div class="entry">
-                <div class="entry-date">Yesterday</div>
-                <div class="entry-content">Attended team meeting and reviewed project requirements.</div>
-            </div>
-            <div class="entry">
-                <div class="entry-date">2 days ago</div>
-                <div class="entry-content">Completed initial setup of development environment.</div>
+        <div class="supervised-positions">
+            <div class="position" th:each="position : ${supervisedPositions}">
+                <div class="position-info">
+                    <div class="position-name" th:text="${position.positionName}"></div>
+                    <div class="position-student">
+                        Student: <span th:text="${position.student.fullName} ?: 'Not assigned'"></span>
+                    </div>
+                </div>
+                <a th:href="@{/professors/{username}/positions/{positionId}/evaluate(username=${professor.username}, positionId=${position.id})}"
+                   class="evaluate-button">
+                    Evaluate
+                </a>
             </div>
         </div>
 
-        <a th:href="@{/students/{username}/logbook(username=${student.username})}"
+        <a th:href="@{/professors/{username}/positions(username=${professor.username})}"
            class="action-button primary-button">
-            View All Entries
+            View All Positions
         </a>
     </div>
 </div>

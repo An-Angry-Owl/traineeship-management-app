@@ -3,6 +3,7 @@ package org.softwareretards.lobotomisedapp.service.impl;
 import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
@@ -38,39 +39,58 @@ public class CommitteeServiceImpl implements CommitteeService {
         this.professorRepository = professorRepository;
     }
 
+    @Override
     public List<CommitteeDto> getAllCommittees() {
         return committeeRepository.findAll().stream()
                 .map(CommitteeMapper::toDto)
                 .toList();
     }
 
+    @Override
     public CommitteeDto getCommitteeById(Long id) {
-        Optional<Committee> committee = committeeRepository.findById(id);
-        return committee.map(CommitteeMapper::toDto).orElse(null);
+        return committeeRepository.findById(id)
+                .map(CommitteeMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Committee not found with ID: " + id));
     }
 
+    @Override
     public CommitteeDto createCommittee(CommitteeDto committeeDto) {
-        Committee committee = CommitteeMapper.toEntity(committeeDto);
-        Committee savedCommittee = committeeRepository.save(committee);
-        return CommitteeMapper.toDto(savedCommittee);
-    }
-
-    public CommitteeDto updateCommittee(Long id, CommitteeDto committeeDto) {
-        Optional<Committee> existingCommitteeOpt = committeeRepository.findById(id);
-        if (existingCommitteeOpt.isPresent()) {
-            Committee existingCommittee = existingCommitteeOpt.get();
-            existingCommittee.setUsername(committeeDto.getUserDto().getUsername());
-            existingCommittee.setCommitteeName(committeeDto.getCommitteeName());
-            Committee updatedCommittee = committeeRepository.save(existingCommittee);
-            return CommitteeMapper.toDto(updatedCommittee);
+        Committee committee = committeeRepository.findByUsername(committeeDto.getUsername())
+                .stream()
+                .filter(c -> c.getUsername().equals(committeeDto.getUsername()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Committee already exists with username: " + committeeDto.getUsername()));
+        if (committee != null) {
+            throw new RuntimeException("Committee already exists with username: " + committeeDto.getUsername());
+        } else {
+            Committee newCommittee = CommitteeMapper.toEntity(committeeDto);
+            newCommittee.setRole(Role.COMMITTEE);
+            Committee savedCommittee = committeeRepository.save(newCommittee);
+            return CommitteeMapper.toDto(savedCommittee);
         }
-        return null;
     }
 
+    @Override
+    public CommitteeDto updateCommittee(Long id, CommitteeDto committeeDto) {
+        Committee existingCommittee = committeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Committee not found with ID: " + id));
+
+        existingCommittee.setUsername(committeeDto.getUsername());
+        existingCommittee.setCommitteeName(committeeDto.getCommitteeName());
+        existingCommittee.setEnabled(committeeDto.isEnabled());
+        existingCommittee.setCreatedAt(committeeDto.getCreatedAt());
+        existingCommittee.setUpdatedAt(committeeDto.getUpdatedAt());
+
+        Committee updatedCommittee = committeeRepository.save(existingCommittee);
+        return CommitteeMapper.toDto(updatedCommittee);
+    }
+
+    @Override
     public void deleteCommittee(Long id) {
         committeeRepository.deleteById(id);
     }
 
+    @Override
     public List<CommitteeDto> getCommitteesByCommitteeName(String committeeName) {
         return committeeRepository.findByCommitteeName(committeeName).stream()
                 .map(CommitteeMapper::toDto)
@@ -80,60 +100,35 @@ public class CommitteeServiceImpl implements CommitteeService {
     @Override
     @Transactional
     public void assignTraineeshipToStudent(Long committeeId, Long studentId, Long traineeshipId) {
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
-        Optional<TraineeshipPosition> traineeshipOpt = traineeshipPositionRepository.findById(traineeshipId);
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+        TraineeshipPosition traineeship = traineeshipPositionRepository.findById(traineeshipId)
+                .orElseThrow(() -> new RuntimeException("Traineeship not found with ID: " + traineeshipId));
 
-        if (studentOpt.isPresent() && traineeshipOpt.isPresent()) {
-            Student student = studentOpt.get();
-            TraineeshipPosition traineeship = traineeshipOpt.get();
-
-            // Assign the student to the traineeship
-            traineeship.setStudent(student);
-            traineeshipPositionRepository.save(traineeship);
-        } else {
-            throw new RuntimeException("Student or Traineeship not found");
-        }
+        traineeship.setStudent(student);
+        traineeshipPositionRepository.save(traineeship);
     }
-
 
     @Override
     @Transactional
     public void assignSupervisingProfessor(Long committeeId, Long traineeshipId, Long professorId) {
-        // Fetch the traineeship and professor entities
-        Optional<TraineeshipPosition> traineeshipOpt = traineeshipPositionRepository.findById(traineeshipId);
-        Optional<Professor> professorOpt = professorRepository.findById(professorId);
+        TraineeshipPosition traineeship = traineeshipPositionRepository.findById(traineeshipId)
+                .orElseThrow(() -> new RuntimeException("Traineeship not found with ID: " + traineeshipId));
+        Professor professor = professorRepository.findById(professorId)
+                .orElseThrow(() -> new RuntimeException("Professor not found with ID: " + professorId));
 
-        if (traineeshipOpt.isPresent() && professorOpt.isPresent()) {
-            TraineeshipPosition traineeship = traineeshipOpt.get();
-            Professor professor = professorOpt.get();
-
-            // Assign the professor to the traineeship
-            traineeship.setProfessor(professor);
-            traineeshipPositionRepository.save(traineeship);
-        } else {
-            //TODO: This should be handled better with a custom exception
-            throw new RuntimeException("Traineeship or Professor not found");
-        }
+        traineeship.setProfessor(professor);
+        traineeshipPositionRepository.save(traineeship);
     }
 
     @Override
     public void monitorTraineeshipEvaluations(Long committeeId, Long traineeshipId) {
-        Optional<TraineeshipPosition> traineeshipOpt = traineeshipPositionRepository.findById(traineeshipId);
-        Optional<Evaluation> evaluationOpt = traineeshipOpt.map(TraineeshipPosition::getEvaluation);
+        TraineeshipPosition traineeship = traineeshipPositionRepository.findById(traineeshipId)
+                .orElseThrow(() -> new RuntimeException("Traineeship not found with ID: " + traineeshipId));
+        Evaluation evaluation = Optional.ofNullable(traineeship.getEvaluation())
+                .orElseThrow(() -> new RuntimeException("No evaluation found for traineeship"));
 
-        if (traineeshipOpt.isPresent()) {
-            TraineeshipPosition traineeship = traineeshipOpt.get();
-            Evaluation evaluation = evaluationOpt.orElse(null);
-
-            if (evaluation != null) {
-                //FIXME: This is a security issue, we should not print the final mark
-                System.out.println("Traineeship evaluation: " + evaluation.getFinalMark());
-            } else {
-                System.out.println("No evaluation found for traineeship");
-            }
-
-        } else {
-            throw new RuntimeException("Traineeship not found");
-        }
+        // Handle evaluation monitoring logic here
+        System.out.println("Traineeship evaluation: " + evaluation.getFinalMark());
     }
 }

@@ -12,7 +12,13 @@ public class CompanyMapper {
             return null;
         }
         CompanyDto dto = new CompanyDto();
-        dto.setUserDto(UserMapper.toDto(company)); // Convert User part
+        dto.setId(company.getId());
+        dto.setUsername(company.getUsername());
+        dto.setPassword(company.getPassword());
+        dto.setRole(company.getRole());
+        dto.setEnabled(company.isEnabled());
+        dto.setCreatedAt(company.getCreatedAt());
+        dto.setUpdatedAt(company.getUpdatedAt());
         dto.setCompanyName(company.getCompanyName());
         dto.setLocation(company.getLocation());
         return dto;
@@ -23,12 +29,13 @@ public class CompanyMapper {
             return null;
         }
         Company company = new Company();
-        company.setId(dto.getUserDto().getId());  // ID from UserDto
-        company.setUsername(dto.getUserDto().getUsername());
-        company.setRole(dto.getUserDto().getRole());
-        company.setEnabled(dto.getUserDto().isEnabled());
-        company.setCreatedAt(dto.getUserDto().getCreatedAt());
-        company.setUpdatedAt(dto.getUserDto().getUpdatedAt());
+        company.setId(dto.getId());
+        company.setUsername(dto.getUsername());
+        company.setPassword(dto.getPassword());
+        company.setRole(dto.getRole());
+        company.setEnabled(dto.isEnabled());
+        company.setCreatedAt(dto.getCreatedAt());
+        company.setUpdatedAt(dto.getUpdatedAt());
         company.setCompanyName(dto.getCompanyName());
         company.setLocation(dto.getLocation());
         return company;

@@ -12,7 +12,13 @@ public class CommitteeMapper {
             return null;
         }
         CommitteeDto dto = new CommitteeDto();
-        dto.setUserDto(UserMapper.toDto(committee)); // Convert User part
+        dto.setId(committee.getId());
+        dto.setUsername(committee.getUsername());
+        dto.setPassword(committee.getPassword());
+        dto.setRole(committee.getRole());
+        dto.setEnabled(committee.isEnabled());
+        dto.setCreatedAt(committee.getCreatedAt());
+        dto.setUpdatedAt(committee.getUpdatedAt());
         dto.setCommitteeName(committee.getCommitteeName());
         return dto;
     }
@@ -22,12 +28,13 @@ public class CommitteeMapper {
             return null;
         }
         Committee committee = new Committee();
-        committee.setId(dto.getUserDto().getId());  // ID from UserDto
-        committee.setUsername(dto.getUserDto().getUsername());
-        committee.setRole(dto.getUserDto().getRole());
-        committee.setEnabled(dto.getUserDto().isEnabled());
-        committee.setCreatedAt(dto.getUserDto().getCreatedAt());
-        committee.setUpdatedAt(dto.getUserDto().getUpdatedAt());
+        committee.setId(dto.getId());
+        committee.setUsername(dto.getUsername());
+        committee.setPassword(dto.getPassword());
+        committee.setRole(dto.getRole());
+        committee.setEnabled(dto.isEnabled());
+        committee.setCreatedAt(dto.getCreatedAt());
+        committee.setUpdatedAt(dto.getUpdatedAt());
         committee.setCommitteeName(dto.getCommitteeName());
         return committee;
     }

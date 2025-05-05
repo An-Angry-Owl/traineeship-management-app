@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `myy803_traineshipApp`;
-USE `myy803_traineshipApp`;
+CREATE DATABASE IF NOT EXISTS `myy803_traineeship_app`;
+USE `myy803_traineeship_app`;
 
 -- Create the USERS table
 CREATE TABLE users (
@@ -41,9 +41,8 @@ CREATE TABLE professors (
 
 CREATE TABLE committee (
                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                           user_id BIGINT UNIQUE NOT NULL,
                            committee_name VARCHAR(100) NOT NULL,
-                           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                           CONSTRAINT fk_committee_users FOREIGN KEY (id) REFERENCES users(id)
 );
 
 -- Create the TRAINEESHIP_POSITIONS table

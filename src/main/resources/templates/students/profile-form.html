@@ -6,95 +6,38 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
+            padding: 2rem;
             font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        .sidebar {
-            width: 33.33%;
-            height: 100vh;
-            background-color: white;
-            padding: 2rem;
-            box-sizing: border-box;
-            border-right: 1px solid #e0e0e0;
-        }
-
-        .main-content {
-            width: 66.67%;
-            height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
-            overflow-y: auto;
+            background-color: #f8f9fa;
         }
 
         .profile-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .return-button {
-            padding: 0.5rem 1rem;
-            background-color: black;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .avatar {
-            width: 100px;
-            height: 100px;
+        .profile-icon {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: #2575fc;
+            background-color: #20c997;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            font-size: 32px;
             color: white;
-            margin: 2rem auto;
-        }
-
-        .nav-box {
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .nav-button {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            background: none;
-            border: none;
-            text-align: left;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-
-        .nav-button.active {
-            background-color: #f0f0f0;
             font-weight: bold;
-            color: #2575fc;
-            border-left: 4px solid #2575fc;
         }
 
-        .form-section {
-            display: none;
-            max-width: 600px;
+        .profile-container {
+            max-width: 800px;
             margin: 0 auto;
-        }
-
-        .account-section {
-            display: block;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .form-group {
@@ -104,208 +47,183 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: bold;
+            font-weight: 600;
+            color: #555;
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 1rem;
         }
 
-        .form-actions {
+        .form-group textarea {
+            min-height: 100px;
+        }
+
+        .skills-tags, .interests-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            background-color: #e9ecef;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
             display: flex;
             gap: 1rem;
             margin-top: 2rem;
         }
 
-        .form-actions button {
+        .save-button {
             padding: 0.8rem 1.5rem;
+            background-color: #20c997;
+            color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
         }
 
-        .save-button {
-            background-color: black;
+        .save-button:hover {
+            background-color: #17a2b8;
+        }
+
+        .cancel-button {
+            padding: 0.8rem 1.5rem;
+            background-color: #6c757d;
             color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.2s;
         }
 
-        .discard-button {
-            background-color: #e0e0e0;
-            color: black;
+        .cancel-button:hover {
+            background-color: #5a6268;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
         }
 
         .password-form {
-            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
         }
 
-        .password-form.active {
-            display: block;
+        .flash-message {
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <div class="profile-header">
-        <a th:href="@{/students/{username}/dashboard(username=${student.userDto.username})}"
-           class="return-button">
-            Return to Dashboard
-        </a>
+<div class="profile-header">
+    <div class="profile-icon"
+         th:text="${#strings.substring(student.username, 0, 1).toUpperCase()}">
     </div>
-
-    <div class="avatar" th:text="${#strings.substring(student.userDto.username, 0, 1).toUpperCase()}">
-        <!-- Initial will be inserted here -->
-    </div>
-
-    <div class="nav-box">
-        <button class="nav-button active" onclick="showSection('account')">Account Details</button>
-        <button class="nav-button" onclick="showSection('password')">Change Password</button>
-        <form th:action="@{/logout}" method="post">
-            <button class="nav-button" type="submit">Log Out</button>
-        </form>
-    </div>
+    <h1>Student Profile</h1>
 </div>
 
-<div class="main-content">
-    <!-- Account Details Section -->
-    <div class="form-section account-section">
-        <form th:action="@{/students/{username}/profile(username=${student.userDto.username})}"
-              th:object="${student}"
-              method="post">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" th:field="*{fullName}">
-            </div>
+<div class="profile-container">
+    <div th:if="${success}" class="flash-message flash-success" th:text="${success}"></div>
+    <div th:if="${error}" class="flash-message flash-error" th:text="${error}"></div>
 
-            <div class="form-group">
-                <label>University ID</label>
-                <input type="text" th:field="*{universityId}">
-            </div>
+    <form th:action="@{/students/{username}/profile(username=${student.username})}"
+          th:object="${student}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <div class="form-group">
-                <label>Interests</label>
-                <textarea th:field="*{interests}" rows="3"></textarea>
-            </div>
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" th:field="*{fullName}" required>
+            <div th:if="${#fields.hasErrors('fullName')}" class="error-message" th:errors="*{fullName}"></div>
+        </div>
 
-            <div class="form-group">
-                <label>Skills</label>
-                <textarea th:field="*{skills}" rows="3"></textarea>
-            </div>
+        <div class="form-group">
+            <label for="universityId">University ID</label>
+            <input type="text" id="universityId" th:field="*{universityId}" required>
+            <div th:if="${#fields.hasErrors('universityId')}" class="error-message" th:errors="*{universityId}"></div>
+        </div>
 
-            <div class="form-group">
-                <label>Preferred Location</label>
-                <input type="text" th:field="*{preferredLocation}">
+        <div class="form-group">
+            <label for="skills">Skills (comma separated)</label>
+            <textarea id="skills" th:field="*{skills}" placeholder="e.g., Java, Python, SQL"></textarea>
+            <div class="skills-tags" th:if="${student.skills != null and !student.skills.isEmpty()}">
+                <span th:each="skill : ${#strings.arraySplit(student.skills, ',')}" class="tag" th:text="${skill.trim()}"></span>
             </div>
+        </div>
 
-            <div class="form-actions">
-                <button type="submit" class="save-button">Save Changes</button>
-                <button type="reset" class="discard-button">Discard</button>
+        <div class="form-group">
+            <label for="interests">Interests (comma separated)</label>
+            <textarea id="interests" th:field="*{interests}" placeholder="e.g., AI, Web Development, Data Analysis"></textarea>
+            <div class="interests-tags" th:if="${student.interests != null and !student.interests.isEmpty()}">
+                <span th:each="interest : ${#strings.arraySplit(student.interests, ',')}" class="tag" th:text="${interest.trim()}"></span>
             </div>
-        </form>
-    </div>
+        </div>
 
-    <!-- Change Password Section -->
-    <div class="form-section password-section">
+        <div class="form-group">
+            <label for="preferredLocation">Preferred Location</label>
+            <input type="text" id="preferredLocation" th:field="*{preferredLocation}">
+            <div th:if="${#fields.hasErrors('preferredLocation')}" class="error-message" th:errors="*{preferredLocation}"></div>
+        </div>
+
+        <div class="action-buttons">
+            <button type="submit" class="save-button">Save Profile</button>
+            <a th:href="@{/students/{username}/dashboard(username=${student.username})}" class="cancel-button">Back to Dashboard</a>
+        </div>
+    </form>
+
+    <div class="password-form">
+        <h3>Change Password</h3>
         <form th:action="@{/students/{username}/change-password(username=${student.username})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
             <div class="form-group">
-                <label>Current Password</label>
-                <input type="password" name="currentPassword" required>
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
             </div>
 
             <div class="form-group">
-                <label>New Password</label>
-                <input type="password" name="newPassword" required>
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" name="newPassword" required>
             </div>
 
             <div class="form-group">
-                <label>Confirm New Password</label>
-                <input type="password" name="confirmPassword" required>
+                <label for="confirmPassword">Confirm New Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="save-button">Change Password</button>
-            </div>
+            <button type="submit" class="save-button" style="margin-top: 1rem;">Change Password</button>
         </form>
     </div>
 </div>
-
-<script>
-    // Initialize the default section
-    document.addEventListener('DOMContentLoaded', function() {
-        // Remove active class from all buttons first
-        document.querySelectorAll('.nav-button').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // Activate account button and show section
-        document.querySelector('.nav-button:first-child').classList.add('active');
-        document.querySelector('.account-section').style.display = 'block';
-    });
-
-    function showSection(section) {
-        // Remove active class from all buttons
-        document.querySelectorAll('.nav-button').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // Hide all sections
-        document.querySelectorAll('.form-section').forEach(div => {
-            div.style.display = 'none';
-        });
-
-        // Show selected section and activate button
-        const sectionElement = document.querySelector(`.${section}-section`);
-        if (sectionElement) {
-            sectionElement.style.display = 'block';
-            event.target.classList.add('active');
-        }
-    }
-
-    // Password validation
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const currentPass = this.elements[0].value;
-        const newPass = this.elements[1].value;
-        const confirmPass = this.elements[2].value;
-
-        if (newPass !== confirmPass) {
-            alert('New passwords do not match!');
-            return;
-        }
-
-        if (newPass === currentPass) {
-            alert('New password must be different from current password!');
-            return;
-        }
-
-        // Here you would typically make an AJAX call to update password
-        alert('Password changed successfully!');
-        this.reset();
-    });
-</script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    const successMessage = /*[[${success}]]*/ null;
-    const errorMessage = /*[[${error}]]*/ null;
-
-    if (successMessage) {
-        alert(successMessage);
-        // Switch back to account section after success
-        showSection('account');
-    }
-    if (errorMessage) {
-        alert(errorMessage);
-        // Stay on password section to fix errors
-        document.querySelector('.password-section').style.display = 'block';
-        document.querySelectorAll('.nav-button').forEach(btn => {
-            if (btn.textContent.includes('Password')) btn.classList.add('active');
-        });
-    }
-    /*]]>*/
-</script>
 </body>
 </html>
