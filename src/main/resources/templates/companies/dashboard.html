@@ -211,7 +211,7 @@
 <!-- Add Position Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-content">
-        <form th:action="@{/companies/{username}/traineeships/new(id=${company.get().userDto.username})}" method="post">
+        <form th:action="@{/companies/{username}/traineeships/new(username=${company.get().userDto.username})}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="form-group">
                 <label>Position Name</label>
