@@ -34,4 +34,10 @@ public interface CompanyService {
     Evaluation evaluateTrainee(Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency);
 
     Optional<CompanyDto> findCompanyById(Long id);
+
+    TraineeshipPositionDto getTraineeshipPositionByIdAndCompany(Long positionId, String companyUsername);
+
+    TraineeshipPositionDto updateTraineeshipPosition(TraineeshipPositionDto positionDto, String companyUsername);
+
+    void deleteTraineeshipPosition(Long positionId, String companyUsername);
 }

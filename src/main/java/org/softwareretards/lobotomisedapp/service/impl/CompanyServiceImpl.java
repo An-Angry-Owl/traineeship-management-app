@@ -170,4 +170,40 @@ public class CompanyServiceImpl implements CompanyService {
 
         return evaluationRepository.save(evaluation);
     }
+
+    @Override
+    public TraineeshipPositionDto getTraineeshipPositionByIdAndCompany(Long positionId, String companyUsername) {
+        TraineeshipPosition position = traineeshipPositionRepository
+                .findByIdAndCompanyUsername(positionId, companyUsername)
+                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
+        return TraineeshipPositionMapper.toDto(position);
+    }
+
+    @Override
+    @Transactional
+    public TraineeshipPositionDto updateTraineeshipPosition(TraineeshipPositionDto positionDto, String companyUsername) {
+        // Verify ownership
+        TraineeshipPosition existingPosition = traineeshipPositionRepository
+                .findByIdAndCompanyUsername(positionDto.getId(), companyUsername)
+                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
+
+        // Update editable fields (preserve student/professor)
+        existingPosition.setDescription(positionDto.getDescription());
+        existingPosition.setRequiredSkills(positionDto.getRequiredSkills());
+        existingPosition.setTopics(positionDto.getTopics());
+        existingPosition.setStartDate(positionDto.getStartDate());
+        existingPosition.setEndDate(positionDto.getEndDate());
+
+        TraineeshipPosition updatedPosition = traineeshipPositionRepository.save(existingPosition);
+        return TraineeshipPositionMapper.toDto(updatedPosition);
+    }
+
+    @Override
+    @Transactional
+    public void deleteTraineeshipPosition(Long positionId, String companyUsername) {
+        TraineeshipPosition position = traineeshipPositionRepository
+                .findByIdAndCompanyUsername(positionId, companyUsername)
+                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
+        traineeshipPositionRepository.delete(position);
+    }
 }

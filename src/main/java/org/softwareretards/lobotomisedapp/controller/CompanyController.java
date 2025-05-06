@@ -14,6 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -212,5 +214,84 @@ public class CompanyController {
                                 @ModelAttribute CompanyDto companyDto) {
         companyService.updateCompany(username, companyDto);
         return "redirect:/companies/" + username + "/profile";
+    }
+
+    @GetMapping("/{username}/traineeships/{positionId}/settings")
+    public String showTraineeshipSettings(
+            @PathVariable String username,
+            @PathVariable Long positionId,
+            @AuthenticationPrincipal User user,
+            Model model) {
+
+        // Verify ownership
+        if (!user.getUsername().equals(username)) {
+            return "redirect:/access-denied";
+        }
+
+        TraineeshipPositionDto position = companyService.getTraineeshipPositionByIdAndCompany(positionId, username);
+        model.addAttribute("position", position);
+        model.addAttribute("companyUsername", username);
+        return "companies/traineeship-settings-form";
+    }
+
+    @PostMapping("/{username}/traineeships/{positionId}/update")
+    public String updateTraineeshipPosition(
+            @PathVariable String username,
+            @PathVariable Long positionId,
+            @ModelAttribute TraineeshipPositionDto positionDto,
+            RedirectAttributes redirectAttributes) {
+
+        TraineeshipPositionDto updatedPosition = companyService.updateTraineeshipPosition(positionDto, username);
+        redirectAttributes.addFlashAttribute("success", "Position updated successfully!");
+        return "redirect:/companies/" + username + "/traineeships/" + positionId + "/settings";
+    }
+
+    @PostMapping("/{username}/traineeships/{positionId}/delete")
+    public String deleteTraineeshipPosition(
+            @PathVariable String username,
+            @PathVariable Long positionId) {
+
+        companyService.deleteTraineeshipPosition(positionId, username);
+        return "redirect:/companies/" + username + "/dashboard";
+    }
+
+
+    @GetMapping("/{username}/traineeships/edit/{positionId}")
+    public String showTraineeshipSettingsForm(
+            @PathVariable String username,
+            @PathVariable Long positionId,
+            @AuthenticationPrincipal User user,
+            Model model
+    ) {
+        // Authorization check
+        if (!user.getUsername().equals(username)) {
+            return "redirect:/access-denied";
+        }
+
+        TraineeshipPositionDto position = companyService.getTraineeshipPositionByIdAndCompany(positionId, username);
+
+        // Explicitly add fields to the model
+        model.addAttribute("description", position.getDescription());
+        model.addAttribute("startDate", position.getStartDate());
+        model.addAttribute("endDate", position.getEndDate());
+        model.addAttribute("requiredSkills", position.getRequiredSkills());
+        model.addAttribute("topics", position.getTopics());
+
+        model.addAttribute("position", position);
+        model.addAttribute("companyUsername", username);
+        return "companies/traineeship-settings-form";
+    }
+
+    @PostMapping("/{username}/traineeships/delete/{positionId}")
+    public String deleteTraineeshipPosition(@PathVariable String username,
+                                            @PathVariable Long positionId,
+                                            RedirectAttributes redirectAttributes) {
+        try {
+            companyService.deleteTraineeshipPosition(positionId, username);
+            redirectAttributes.addFlashAttribute("success", "Position deleted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/companies/" + username + "/dashboard";
     }
 }
