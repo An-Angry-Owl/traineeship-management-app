@@ -40,6 +40,38 @@ public class CompanyServiceImpl implements CompanyService {
         return CompanyMapper.toDto(savedCompany);
     }
 
+    @Override
+    public CompanyDto updateCompany(String username, CompanyDto company) {
+        Optional<Company> existingCompanyOpt = companyRepository.findByUsername(username);
+        if (existingCompanyOpt.isEmpty()) {
+            throw new RuntimeException("Company not found with username: " + username);
+        }
+
+        Company existingCompany = existingCompanyOpt.get();
+        existingCompany.setCompanyName(company.getCompanyName());
+        existingCompany.setLocation(company.getLocation());
+
+        Company updatedCompany = companyRepository.save(existingCompany);
+        return CompanyMapper.toDto(updatedCompany);
+    }
+
+    @Override
+    public void deleteCompany(String username) {
+        Optional<Company> existingCompanyOpt = companyRepository.findByUsername(username);
+        if (existingCompanyOpt.isEmpty()) {
+            throw new RuntimeException("Company not found with username: " + username);
+        }
+
+        Company existingCompany = existingCompanyOpt.get();
+        companyRepository.delete(existingCompany);
+    }
+
+    @Override
+    public Optional<CompanyDto> findCompanyByUsername(String username) {
+        return companyRepository.findByUsername(username)
+                .map(CompanyMapper::toDto);
+    }
+
     public CompanyDto updateCompany(Long companyId, CompanyDto companyDto) {
         Optional<Company> existingCompanyOpt = companyRepository.findById(companyId);
         if (existingCompanyOpt.isEmpty()) {
@@ -58,18 +90,14 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.deleteById(companyId);
     }
 
-    // TODO: Possibly will be used in strategies thus determine and delete unnecessary
-    public CompanyDto findCompanyById(Long companyId) {
+    public Optional<CompanyDto> findCompanyById(Long companyId) {
         return companyRepository.findById(companyId)
-                .map(CompanyMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Company not found with ID: " + companyId));
+                .map(CompanyMapper::toDto);
     }
 
-    public List<CompanyDto> findCompanyByName(String companyName) {
+    public Optional<CompanyDto> findCompanyByName(String companyName) {
         return companyRepository.findByCompanyName(companyName)
-                .stream()
-                .map(CompanyMapper::toDto)
-                .collect(Collectors.toList());
+                .map(CompanyMapper::toDto);
     }
 
     public List<CompanyDto> findCompanyByLocation(String location) {
@@ -89,8 +117,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     // US8: Get list of advertised traineeships by a company
     @Override
-    public List<TraineeshipPositionDto> getTraineeshipPositions(Long companyId) {
-        return traineeshipPositionRepository.findByCompanyId(companyId)
+    public List<TraineeshipPositionDto> getTraineeshipPositions(String username) {
+        return traineeshipPositionRepository.findByCompanyUsername(username)
                 .stream()
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());
@@ -99,8 +127,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     // US9: Get list of assigned traineeships
     @Override
-    public List<TraineeshipPositionDto> getAssignedTraineeships(Long companyId, boolean assigned) {
-        return traineeshipPositionRepository.findAvailableByCompany(companyId)
+    public List<TraineeshipPositionDto> getAssignedTraineeships(String username) {
+        return traineeshipPositionRepository.findByCompanyUsername(username)
                 .stream()
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());

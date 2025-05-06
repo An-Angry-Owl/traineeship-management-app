@@ -5,31 +5,33 @@ import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
 
 import java.util.List;
-
+import java.util.Optional;
 
 public interface CompanyService {
 
     CompanyDto createCompany(CompanyDto company);
 
-    CompanyDto updateCompany(Long companyId, CompanyDto companyDto);
+    CompanyDto updateCompany(String username, CompanyDto company);
 
-    void deleteCompany(Long companyId);
+    void deleteCompany(String username);
 
-    CompanyDto findCompanyById(Long companyId);
+    Optional<CompanyDto> findCompanyByUsername(String username);
 
-    List<CompanyDto> findCompanyByName(String name);
+    Optional<CompanyDto> findCompanyByName(String name);
 
     List<CompanyDto> findCompanyByLocation(String location);
 
     List<CompanyDto> getAllCompanies();
 
-    List<TraineeshipPositionDto> getTraineeshipPositions(Long companyId);
+    List<TraineeshipPositionDto> getTraineeshipPositions(String username);
 
-    List<TraineeshipPositionDto> getAssignedTraineeships(Long companyId, boolean assigned);
+    List<TraineeshipPositionDto> getAssignedTraineeships(String username);
 
     TraineeshipPositionDto announceTraineeship(TraineeshipPositionDto traineeshipPositionDto);
 
     void deleteTraineeship(Long traineeshipId);
 
     Evaluation evaluateTrainee(Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency);
+
+    Optional<CompanyDto> findCompanyById(Long id);
 }

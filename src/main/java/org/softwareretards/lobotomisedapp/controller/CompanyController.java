@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/companies")
@@ -28,131 +29,132 @@ public class CompanyController {
         this.companyRepository = companyRepository;
     }
 
-    //Display all companies
+    // Display all companies
     @GetMapping
     public String listCompanies(Model model) {
         List<CompanyDto> companies = companyService.getAllCompanies();
-        model.addAttribute("companies", companies);
+        model.addAttribute("company", companies);
         return "companies/list";
     }
 
-    //Find company by ID
-    @GetMapping("/{id}")
-    public String getCompanyById(@PathVariable Long id, Model model) {
-        CompanyDto company = companyService.findCompanyById(id);
+    // Find company by username
+    @GetMapping("/{username}")
+    public String getCompanyByUsername(@PathVariable String username, Model model) {
+        Optional<CompanyDto> company = companyService.findCompanyByUsername(username);
         model.addAttribute("company", company);
         return "companies/details";
     }
 
-    //Find company by name
+    // Find company by name
     @GetMapping("/searchByName")
     public String findCompanyByName(@RequestParam String name, Model model) {
-        List<CompanyDto> companies = companyService.findCompanyByName(name);
-        model.addAttribute("companies", companies);
+        Optional<CompanyDto> companies = companyService.findCompanyByName(name);
+        model.addAttribute("company", companies);
         return "companies/list";
     }
 
-    //Find company by location
+    // Find company by location
     @GetMapping("/searchByLocation")
     public String findCompanyByLocation(@RequestParam String location, Model model) {
         List<CompanyDto> companies = companyService.findCompanyByLocation(location);
-        model.addAttribute("companies", companies);
+        model.addAttribute("company", companies);
         return "companies/list";
     }
 
-    //Show form to create a new company
+    // Show form to create a new company
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("company", new CompanyDto());
-        return "companies/form"; // Returns company/form.html
+        return "companies/form";
     }
 
-    //Process new company submission
+    // Process new company submission
     @PostMapping
     public String createCompany(@Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult result) {
         if (result.hasErrors()) {
             return "companies/form";
         }
-        CompanyDto savedCompany = companyService.createCompany(companyDto); // Use returned value
-        return "redirect:/companies/" + savedCompany.getUserDto().getId();
+        CompanyDto savedCompany = companyService.createCompany(companyDto);
+        return "redirect:/companies/" + savedCompany.getUserDto().getUsername();
     }
 
-    //Show form to edit an existing company
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        CompanyDto company = companyService.findCompanyById(id);
+    // Show form to edit an existing company
+    @GetMapping("/edit/{username}")
+    public String showEditForm(@PathVariable String username, Model model) {
+        Optional<CompanyDto> company = companyService.findCompanyByUsername(username);
         model.addAttribute("company", company);
         return "companies/form";
     }
 
-    //Process company update
-    @PostMapping("/update/{id}")
-    public String updateCompany(@PathVariable Long id, @Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult result) {
+    // Process company update
+    @PostMapping("/update/{username}")
+    public String updateCompany(@PathVariable String username, @Valid @ModelAttribute("company") CompanyDto companyDto, BindingResult result) {
         if (result.hasErrors()) {
             return "companies/form";
         }
-        CompanyDto savedCompany = companyService.updateCompany(id, companyDto);
-        return "redirect:/companies" + savedCompany.getUserDto().getId();
+        CompanyDto savedCompany = companyService.updateCompany(username, companyDto);
+        return "redirect:/companies/" + savedCompany.getUserDto().getUsername();
     }
 
-    //Delete a company
-    @GetMapping("/delete/{id}")
-    public String deleteCompany(@PathVariable Long id) {
-        companyService.deleteCompany(id);
+    // Delete a company
+    @GetMapping("/delete/{username}")
+    public String deleteCompany(@PathVariable String username) {
+        companyService.deleteCompany(username);
         return "redirect:/companies";
     }
 
-    //Get traineeship positions announced by a company
-    @GetMapping("/{id}/traineeships")
-    public String getTraineeshipPositions(@PathVariable Long id, Model model) {
-        List<TraineeshipPositionDto> traineeships = companyService.getTraineeshipPositions(id);
-        model.addAttribute("traineeships", traineeships);
-        return "traineeship/list"; // Returns traineeship/list.html
-    }
-
-    //Get assigned traineeships
-    @GetMapping("/{id}/traineeships/assigned")
-    public String getAssignedTraineeships(@PathVariable Long id, Model model) {
-        List<TraineeshipPositionDto> traineeships = companyService.getAssignedTraineeships(id, true);
+    // Get traineeship positions announced by a company
+    @GetMapping("/{username}/traineeships")
+    public String getTraineeshipPositions(@PathVariable String username, Model model) {
+        List<TraineeshipPositionDto> traineeships = companyService.getTraineeshipPositions(username);
         model.addAttribute("traineeships", traineeships);
         return "traineeship/list";
     }
 
-    //Show form to announce a new traineeship
-    @GetMapping("/{id}/traineeships/new")
-    public String showTraineeshipForm(@PathVariable Long id, Model model) {
-        TraineeshipPositionDto traineeshipDto = new TraineeshipPositionDto();
-        traineeshipDto.setId(id); // Pre-set company ID
-        model.addAttribute("traineeship", traineeshipDto);
-        return "traineeship/form"; // Returns traineeship/form.html
+    // Get assigned traineeships
+    @GetMapping("/{username}/traineeships/assigned")
+    public String getAssignedTraineeships(@PathVariable String username, Model model) {
+        List<TraineeshipPositionDto> traineeships = companyService.getAssignedTraineeships(username);
+        model.addAttribute("traineeships", traineeships);
+        return "traineeship/list";
     }
 
-    //Announce a new traineeship
-    @PostMapping("/{id}/traineeships")
-    public String announceTraineeship(@PathVariable Long id, @Valid @ModelAttribute("traineeship") TraineeshipPositionDto traineeshipDto, BindingResult result) {
+    // Show form to announce a new traineeship
+    @GetMapping("/{username}/traineeships/new")
+    public String showTraineeshipForm(@PathVariable String username, Model model) {
+        TraineeshipPositionDto traineeshipDto = new TraineeshipPositionDto();
+        model.addAttribute("traineeship", traineeshipDto);
+        model.addAttribute("companyUsername", username);
+        return "traineeship/form";
+    }
+
+    // Announce a new traineeship
+    @PostMapping("/{username}/traineeships")
+    public String announceTraineeship(@PathVariable String username,
+                                      @Valid @ModelAttribute("traineeship") TraineeshipPositionDto traineeshipDto,
+                                      BindingResult result) {
         if (result.hasErrors()) {
             return "traineeship/form";
         }
-        traineeshipDto.setId(id);
         companyService.announceTraineeship(traineeshipDto);
-        return "redirect:/companies/" + id + "/traineeships";
+        return "redirect:/companies/" + username + "/traineeships";
     }
 
-    //Delete a traineeship
+    // Delete a traineeship
     @GetMapping("/traineeships/delete/{traineeshipId}")
     public String deleteTraineeship(@PathVariable Long traineeshipId) {
         companyService.deleteTraineeship(traineeshipId);
-        return "redirect:/companies";
+        return "redirect:/companies/" + traineeshipId + "/traineeships";
     }
 
-    //Show evaluation form for a traineeship
+    // Show evaluation form for a traineeship
     @GetMapping("/traineeships/{traineeshipId}/evaluate")
     public String showEvaluationForm(@PathVariable Long traineeshipId, Model model) {
         model.addAttribute("traineeshipId", traineeshipId);
-        return "evaluation/form"; // Returns evaluation/form.html
+        return "evaluation/form";
     }
 
-    //Submit traineeship evaluation
+    // Submit traineeship evaluation
     @PostMapping("/traineeships/{traineeshipId}/evaluate")
     public String evaluateTrainee(
             @PathVariable Long traineeshipId,
@@ -160,8 +162,8 @@ public class CompanyController {
             @RequestParam Integer effectiveness,
             @RequestParam Integer efficiency) {
 
-        companyService.evaluateTrainee(traineeshipId, motivation, effectiveness, efficiency);
-        return "redirect:/companies/traineeships/" + traineeshipId;
+        String username = String.valueOf(companyService.evaluateTrainee(traineeshipId, motivation, effectiveness, efficiency));
+        return "redirect:/companies/" + username + "/traineeships/" + traineeshipId;
     }
 
     @GetMapping("/{username}/dashboard")
@@ -175,27 +177,24 @@ public class CompanyController {
             return "redirect:/access-denied";
         }
 
-        CompanyDto company = companyService.findCompanyById(user.getId());
-        List<TraineeshipPositionDto> positions = companyService.getTraineeshipPositions(user.getId());
+        Optional<CompanyDto> company = companyService.findCompanyById(user.getId());
+        List<TraineeshipPositionDto> positions = companyService.getTraineeshipPositions(user.getUsername());
 
         model.addAttribute("company", company);
         model.addAttribute("traineeships", positions);
         return "companies/dashboard";
     }
 
-    @PostMapping("/{companyId}/traineeships/new")
+    @PostMapping("/{username}/traineeships/new")
     public String handleNewPosition(
-            @PathVariable Long companyId,
+            @PathVariable String username,
             @ModelAttribute TraineeshipPositionDto positionDto
     ) {
-        // Get the company entity from the ID
-        Company company = companyRepository.findById(companyId)
+        Company company = companyRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
 
-        // Set the company in the DTO
         positionDto.setCompany(CompanyMapper.toDto(company));
-
         companyService.announceTraineeship(positionDto);
-        return "redirect:/companies/" + companyId + "/dashboard";
+        return "redirect:/companies/" + username + "/dashboard";
     }
 }
