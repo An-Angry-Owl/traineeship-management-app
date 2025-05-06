@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.CompanyMapper;
@@ -139,6 +140,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public TraineeshipPositionDto announceTraineeship(TraineeshipPositionDto traineeshipPositionDto) {
         TraineeshipPosition traineeship = TraineeshipPositionMapper.toEntity(traineeshipPositionDto);
+        traineeship.setStatus(TraineeshipStatus.CLOSED);
         TraineeshipPosition savedTraineeship = traineeshipPositionRepository.save(traineeship);
         return TraineeshipPositionMapper.toDto(savedTraineeship);
     }

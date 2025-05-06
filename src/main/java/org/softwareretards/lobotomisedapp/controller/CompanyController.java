@@ -197,4 +197,20 @@ public class CompanyController {
         companyService.announceTraineeship(positionDto);
         return "redirect:/companies/" + username + "/dashboard";
     }
+
+    // Show profile form
+    @GetMapping("/{username}/profile")
+    public String showProfileForm(@PathVariable String username, Model model) {
+        Optional<CompanyDto> company = companyService.findCompanyByUsername(username);
+        model.addAttribute("company", company.orElseThrow());
+        return "companies/profile-form";
+    }
+
+    // Handle profile update
+    @PostMapping("/{username}/profile")
+    public String updateProfile(@PathVariable String username,
+                                @ModelAttribute CompanyDto companyDto) {
+        companyService.updateCompany(username, companyDto);
+        return "redirect:/companies/" + username + "/profile";
+    }
 }

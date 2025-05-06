@@ -57,7 +57,7 @@ CREATE TABLE traineeship_positions (
                                        description TEXT,
                                        required_skills TEXT,
                                        topics TEXT,
-                                       status ENUM('OPEN', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED') DEFAULT 'OPEN',
+                                       status ENUM('CLOSED', 'OPEN', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED'),
                                        CONSTRAINT fk_positions_company FOREIGN KEY (company_id) REFERENCES companies(id),
                                        CONSTRAINT fk_positions_student FOREIGN KEY (student_id) REFERENCES students(id),
                                        CONSTRAINT fk_positions_professor FOREIGN KEY (professor_id) REFERENCES professors(id)
