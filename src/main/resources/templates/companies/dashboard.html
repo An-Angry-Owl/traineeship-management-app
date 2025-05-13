@@ -283,10 +283,10 @@
 <!-- Header Section -->
 <div class="dashboard-header">
     <div class="profile-icon"
-         th:text="${#strings.substring(company.get().userDto.username, 0, 1).toUpperCase()}">
+         th:text="${#strings.substring(company.userDto.username, 0, 1).toUpperCase()}">
     </div>
     <a class="profile-settings-btn"
-       th:href="@{/companies/{username}/profile(username=${company.get().userDto.username})}">
+       th:href="@{/companies/{username}/profile(username=${company.userDto.username})}">
         Profile Settings
     </a>
 </div>
@@ -303,7 +303,7 @@
 <div class="position-list">
     <h3>Your Traineeship Positions</h3>
     <div th:each="position : ${traineeships}">
-        <div class="position-name" th:text="${company.get().companyName}"></div>
+        <div class="position-name" th:text="${company.companyName}"></div>
 
         <div class="status-container">
             <!-- Assigned Status -->
@@ -328,7 +328,7 @@
 <!-- Add Position Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-content">
-        <form th:action="@{/companies/{username}/traineeships/new(username=${company.get().userDto.username})}" method="post">
+        <form th:action="@{/companies/{username}/traineeships/new(username=${company.userDto.username})}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="form-group">
                 <label>Position Name</label>
