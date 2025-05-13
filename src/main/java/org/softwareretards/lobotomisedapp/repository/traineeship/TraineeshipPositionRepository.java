@@ -1,5 +1,6 @@
 package org.softwareretards.lobotomisedapp.repository.traineeship;
 
+import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,9 +27,23 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.username = :username")
     List<TraineeshipPosition> findByCompanyUsername(@Param("username") String username); // Keep this
 
-    @Query("SELECT t FROM TraineeshipPosition t WHERE t.id = :positionId AND t.company.username = :username")
     Optional<TraineeshipPosition> findByIdAndCompanyUsername(
             @Param("positionId") Long positionId,
             @Param("username") String username
     );
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.professor.username = :professorUsername")
+    List<TraineeshipPosition> findByProfessorUsername(String professorUsername);
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.student.preferredLocation = :studentPreferredLocation")
+    List<TraineeshipPosition> findByStudentPreferredLocation(String studentPreferredLocation);
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.username = :companyUsername" +
+            " AND t.status = :traineeshipStatus")
+    List<TraineeshipPosition> findByCompanyUsernameAndStatus(String companyUsername, TraineeshipStatus traineeshipStatus);
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = :traineeshipStatus")
+    List<TraineeshipPosition> findAllByStatus(TraineeshipStatus traineeshipStatus);
+
+    List<TraineeshipPosition> findAllByStudentIsNull();
 }

@@ -87,4 +87,13 @@ public class TraineeshipPositionMapper {
 
         return entity;
     }
+
+    public static List<TraineeshipPositionDto> toDtoList(List<TraineeshipPosition> positions) {
+        if (positions == null) {
+            return null;
+        }
+        return positions.stream()
+                .map(TraineeshipPositionMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

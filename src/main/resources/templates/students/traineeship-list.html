@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Traineeships</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .traineeship-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .position-card {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        .position-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .position-skills {
+            margin: 1rem 0;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background-color: #e9ecef;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .position-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .apply-button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .match-score {
+            display: inline-block;
+            background-color: #2575fc;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-header">
+    <div class="profile-icon" th:text="${#strings.substring(student.username, 0, 1).toUpperCase()}"></div>
+
+    <div class="nav-buttons">
+        <a class="nav-button"
+           th:href="@{/students/{username}/dashboard(username=${student.username})}">
+            Dashboard
+        </a>
+        <a class="nav-button"
+           th:href="@{/students/{username}/profile(username=${student.username})}">
+            Profile
+        </a>
+    </div>
+</div>
+
+<div class="traineeship-section">
+    <h2 class="section-title">Available Traineeship Positions</h2>
+
+    <div th:if="${positions != null and !positions.isEmpty()}">
+        <div th:each="position : ${positions}" class="position-card">
+            <h3 class="position-title" th:text="${position.description}">
+                <span th:if="${position.matchScore != null}" class="match-score"
+                      th:text="${position.matchScore} + '%'">85%</span>
+            </h3>
+
+            <div class="position-meta">
+                <span>Company:
+                    <strong th:text="${position.company?.userDto.username ?: 'Not specified'}"></strong>
+                </span>
+                            <span>Location:
+                    <strong th:text="${position.company?.location ?: 'Not specified'}"></strong>
+                </span>
+                            <span>
+                    Duration:
+                    <strong th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></strong>
+                    to
+                    <strong th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></strong>
+                </span>
+            </div>
+
+            <div class="position-skills">
+                <span>Required Skills: </span>
+                <span th:each="skill : ${#strings.arraySplit(position.requiredSkills, ',')}">
+                    <span class="skill-tag" th:text="${skill.trim()}">Skill</span>
+                </span>
+            </div>
+
+            <div class="position-skills">
+                <span>Topics: </span>
+                <span th:each="topic : ${#strings.arraySplit(position.topics, ',')}">
+                    <span class="skill-tag" th:text="${topic.trim()}">Topic</span>
+                </span>
+            </div>
+
+            <div class="position-actions">
+                <a th:href="@{/students/{username}/apply/{positionId}(username=${student.username}, positionId=${position.id})}"
+                   class="apply-button">
+                    Apply for Position
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${positions == null or positions.isEmpty()}" class="empty-state">
+        <p>No available traineeship positions at this time.</p>
+        <p>Please check back later or contact the traineeship committee.</p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        const applyButtons = document.querySelectorAll('.apply-button');
+        applyButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const confirmation = confirm('Are you sure you want to apply for this position?');
+                if (confirmation) {
+                    window.location.href = this.href;
+                }
+            });
+        });
+        const matchScores = document.querySelectorAll('.match-score');
+        matchScores.forEach(score => {
+            const scoreValue = parseInt(score.textContent);
+            if (scoreValue < 50) {
+                score.style.backgroundColor = '#dc3545'; // Red
+            } else if (scoreValue < 75) {
+                score.style.backgroundColor = '#ffc107'; // Yellow
+            } else {
+                score.style.backgroundColor = '#28a745'; // Green
+            }
+        });
+        const profileIcon = document.querySelector('.profile-icon');
+        const username = /*[[${student.username}]]*/ 'User';
+        profileIcon.textContent = username.charAt(0).toUpperCase();
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

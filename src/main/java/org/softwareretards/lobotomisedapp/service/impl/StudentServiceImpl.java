@@ -2,6 +2,7 @@ package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipApplicationDto;
+import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipApplication;
@@ -11,6 +12,7 @@ import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.mapper.LogbookEntryMapper;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipApplicationMapper;
+import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
 import org.softwareretards.lobotomisedapp.repository.LogbookEntryRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
@@ -21,6 +23,8 @@ import org.softwareretards.lobotomisedapp.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -124,5 +128,11 @@ public class StudentServiceImpl implements StudentService {
         LogbookEntry savedEntry = logbookEntryRepository.save(logbookEntry);
 
         return LogbookEntryMapper.toDto(savedEntry);
+    }
+
+    @Override
+    public List<TraineeshipPositionDto> getOpenTraineeshipPositions() {
+        List<TraineeshipPosition> positions = traineeshipPositionRepository.findAllByStudentIsNull();
+        return TraineeshipPositionMapper.toDtoList(positions);
     }
 }

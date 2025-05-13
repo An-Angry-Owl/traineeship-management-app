@@ -235,32 +235,40 @@ public class CompanyController {
         }
 
         TraineeshipPositionDto position = companyService.getTraineeshipPositionByIdAndCompany(positionId, username);
-        model.addAttribute("position", position);
+        if (position == null) {
+            return "redirect:/error";
+        }
+
+        model.addAttribute("position", position); // Make sure this matches the th:object in the template
         model.addAttribute("companyUsername", username);
         return "companies/position-settings";
     }
 
     @PostMapping("/{username}/traineeships/update/{positionId}")
-    public String updateTraineeshipPosition(@PathVariable String username,
-                                            @PathVariable Long positionId,
-                                            @ModelAttribute TraineeshipPositionDto positionDto,
-                                            RedirectAttributes redirectAttributes) {
+    public String updateTraineeshipPosition(
+            @PathVariable String username,
+            @PathVariable Long positionId,
+            @Valid @ModelAttribute("position") TraineeshipPositionDto positionDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        // Ensure the path variable ID is set in the DTO
+        positionDto.setId(positionId);
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("position", bindingResult);
+            redirectAttributes.addFlashAttribute("position", positionDto);
+            return "redirect:/companies/" + username + "/traineeships/" + positionId + "/settings";
+        }
+
         try {
-            companyService.updateTraineeshipPosition(positionDto, username);
+            TraineeshipPositionDto updatedPosition = companyService.updateTraineeshipPosition(positionDto, username);
             redirectAttributes.addFlashAttribute("success", "Position updated successfully!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "companies/position-settings";
-    }
 
-    @PostMapping("/{username}/traineeships/{positionId}/delete")
-    public String deleteTraineeshipPosition(
-            @PathVariable String username,
-            @PathVariable Long positionId) {
-
-        companyService.deleteTraineeshipPosition(positionId, username);
-        return "redirect:/companies/" + username + "/dashboard";
+        return "redirect:/companies/" + username + "/traineeships/" + positionId + "/settings";
     }
 
 

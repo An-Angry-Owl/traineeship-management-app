@@ -1,5 +1,6 @@
 package org.softwareretards.lobotomisedapp.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
@@ -173,21 +174,25 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public TraineeshipPositionDto getTraineeshipPositionByIdAndCompany(Long positionId, String companyUsername) {
-        TraineeshipPosition position = traineeshipPositionRepository
+        return traineeshipPositionRepository
                 .findByIdAndCompanyUsername(positionId, companyUsername)
-                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
-        return TraineeshipPositionMapper.toDto(position);
+                .map(TraineeshipPositionMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Position with ID %d not found for company %s", positionId, companyUsername)
+                ));
     }
 
     @Override
     @Transactional
     public TraineeshipPositionDto updateTraineeshipPosition(TraineeshipPositionDto positionDto, String companyUsername) {
-        // Verify ownership
+        // First verify position exists and belongs to company
         TraineeshipPosition existingPosition = traineeshipPositionRepository
                 .findByIdAndCompanyUsername(positionDto.getId(), companyUsername)
-                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Position with ID %d not found for company %s", positionDto.getId(), companyUsername)
+                ));
 
-        // Update editable fields (preserve student/professor)
+        // Update only allowed fields
         existingPosition.setDescription(positionDto.getDescription());
         existingPosition.setRequiredSkills(positionDto.getRequiredSkills());
         existingPosition.setTopics(positionDto.getTopics());
@@ -201,9 +206,14 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public void deleteTraineeshipPosition(Long positionId, String companyUsername) {
+        // Verify position exists and belongs to company before deletion
         TraineeshipPosition position = traineeshipPositionRepository
                 .findByIdAndCompanyUsername(positionId, companyUsername)
-                .orElseThrow(() -> new RuntimeException("Position not found or unauthorized"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Position with ID %d not found for company %s", positionId, companyUsername)
+                ));
+
         traineeshipPositionRepository.delete(position);
     }
+
 }

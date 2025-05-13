@@ -2,6 +2,7 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipApplicationDto;
+import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.service.StudentService;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 public class StudentController {
@@ -114,5 +117,25 @@ public class StudentController {
         model.addAttribute("currentTraineeship", currentTraineeship);
 
         return "students/dashboard";
+    }
+
+    @GetMapping("/students/{username}/traineeships")
+    public String showAvailableTraineeships(
+            @PathVariable String username,
+            @AuthenticationPrincipal User user,
+            Model model) {
+
+        // Authorization check
+        if (!user.getUsername().equals(username)) {
+            return "redirect:/access-denied";
+        }
+
+        List<TraineeshipPositionDto> openPositions = studentService.getOpenTraineeshipPositions();
+
+        // Add to model
+        model.addAttribute("positions", openPositions);
+        model.addAttribute("student", studentService.retrieveProfile(username));
+
+        return "students/traineeship-list";
     }
 }

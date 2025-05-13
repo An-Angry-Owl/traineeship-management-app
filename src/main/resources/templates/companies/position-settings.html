@@ -181,7 +181,7 @@
         </a>
     </div>
 
-    <div class="avatar" th:text="${#strings.substring(companyUsername, 0, 1).toUpperCase()}">
+    <div class="avatar" th:text="${companyUsername != null ? companyUsername.substring(0, 1).toUpperCase() : 'N'}">
         <!-- Initial will be inserted here -->
     </div>
 
@@ -205,19 +205,26 @@
                 <input type="text" th:field="*{description}" required>
             </div>
 
+
             <div class="form-group">
                 <label>Start Date</label>
-                <input type="date" th:field="*{startDate}" required>
+                <input type="date"
+                       th:field="*{startDate}"
+                       required>
             </div>
 
             <div class="form-group">
                 <label>End Date</label>
-                <input type="date" th:field="*{endDate}" required>
+                <input type="date"
+                       th:field="*{endDate}"
+                       required>
             </div>
 
             <div class="form-group">
                 <label>Required Skills</label>
-                <textarea th:field="*{requiredSkills}" rows="3"></textarea>
+                <label>
+                    <textarea th:field="*{requiredSkills}" rows="3"></textarea>
+                </label>
             </div>
 
             <div class="form-group">

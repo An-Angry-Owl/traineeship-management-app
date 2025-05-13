@@ -9,22 +9,25 @@ import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class TraineeshipPositionDto {
-    @Getter @Setter private Long id;
-    @Getter @Setter private CompanyDto company;
-    @Getter @Setter private StudentDto student;
-    @Getter @Setter private ProfessorDto professor;
-    @Getter @Setter private LocalDate startDate;
-    @Getter @Setter private LocalDate endDate;
-    @Getter @Setter private String description;
-    @Getter @Setter private String requiredSkills;
-    @Getter @Setter private String topics;
-    @Getter @Setter private TraineeshipStatus status;
-    @Getter @Setter private List<LogbookEntryDto> logbookEntries;
-    @Getter @Setter private EvaluationDto evaluation;
+    private Long id;
+    private CompanyDto company;
+    private StudentDto student;
+    private ProfessorDto professor;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
+    private String description;
+    private String requiredSkills;
+    private String topics;
+    private TraineeshipStatus status;
+    private List<LogbookEntryDto> logbookEntries;
+    private EvaluationDto evaluation;
 }
