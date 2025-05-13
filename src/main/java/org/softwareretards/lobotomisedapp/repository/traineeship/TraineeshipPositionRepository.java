@@ -23,7 +23,8 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.id = :companyId AND t.student IS NULL")
     List<TraineeshipPosition> findAvailableByCompany(@Param("companyId") Long companyId);
 
-    Optional<TraineeshipPosition> findByCompanyUsername(String username);
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.username = :username")
+    List<TraineeshipPosition> findByCompanyUsername(@Param("username") String username); // Keep this
 
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.id = :positionId AND t.company.username = :username")
     Optional<TraineeshipPosition> findByIdAndCompanyUsername(

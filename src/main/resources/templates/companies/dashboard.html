@@ -302,7 +302,7 @@
 <!-- Positions List -->
 <div class="position-list">
     <h3>Your Traineeship Positions</h3>
-    <div class="position-item" th:each="position : ${traineeships}">
+    <div th:each="position : ${traineeships}">
         <div class="position-name" th:text="${company.get().companyName}"></div>
 
         <div class="status-container">
@@ -319,7 +319,9 @@
             </div>
         </div>
 
-        <div class="settings-gear" onclick="location.href='/positions/${position.id}/settings'">⚙️</div>
+        <a th:href="@{/companies/{username}/traineeships/{positionId}/settings(username=${company.userDto.username}, positionId=${position.id})}">
+            ⚙️ Edit
+        </a>
     </div>
 </div>
 

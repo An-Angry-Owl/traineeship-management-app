@@ -13,7 +13,7 @@ public class ProfessorMapper {
         }
         ProfessorDto dto = new ProfessorDto();
         dto.setUserDto(UserMapper.toDto(professor)); // Convert User part
-        dto.setProfessorName(professor.getProfessorName());
+        dto.setFullName(professor.getProfessorName());
         dto.setInterests(professor.getInterests());
         return dto;
     }
@@ -29,7 +29,7 @@ public class ProfessorMapper {
         professor.setEnabled(dto.getUserDto().isEnabled());
         professor.setCreatedAt(dto.getUserDto().getCreatedAt());
         professor.setUpdatedAt(dto.getUserDto().getUpdatedAt());
-        professor.setProfessorName(dto.getProfessorName());
+        professor.setProfessorName(dto.getFullName());
         professor.setInterests(dto.getInterests());
         return professor;
     }

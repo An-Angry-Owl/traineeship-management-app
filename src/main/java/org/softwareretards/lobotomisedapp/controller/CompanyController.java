@@ -174,16 +174,22 @@ public class CompanyController {
             @AuthenticationPrincipal User user,
             Model model
     ) {
-        // Verify username matches logged-in user
+        // Authorization check
         if (!user.getUsername().equals(username)) {
             return "redirect:/access-denied";
         }
 
-        Optional<CompanyDto> company = companyService.findCompanyById(user.getId());
-        List<TraineeshipPositionDto> positions = companyService.getTraineeshipPositions(user.getUsername());
+        // Get company data (unwrap Optional)
+        CompanyDto company = companyService.findCompanyById(user.getId())
+                .orElseThrow(() -> new RuntimeException("Company not found"));
 
-        model.addAttribute("company", company);
+        // Get positions
+        List<TraineeshipPositionDto> positions = companyService.getTraineeshipPositions(username);
+
+        // Add attributes
+        model.addAttribute("company", company); // Actual DTO
         model.addAttribute("traineeships", positions);
+
         return "companies/dashboard";
     }
 
@@ -231,19 +237,21 @@ public class CompanyController {
         TraineeshipPositionDto position = companyService.getTraineeshipPositionByIdAndCompany(positionId, username);
         model.addAttribute("position", position);
         model.addAttribute("companyUsername", username);
-        return "companies/traineeship-settings-form";
+        return "companies/position-settings";
     }
 
-    @PostMapping("/{username}/traineeships/{positionId}/update")
-    public String updateTraineeshipPosition(
-            @PathVariable String username,
-            @PathVariable Long positionId,
-            @ModelAttribute TraineeshipPositionDto positionDto,
-            RedirectAttributes redirectAttributes) {
-
-        TraineeshipPositionDto updatedPosition = companyService.updateTraineeshipPosition(positionDto, username);
-        redirectAttributes.addFlashAttribute("success", "Position updated successfully!");
-        return "redirect:/companies/" + username + "/traineeships/" + positionId + "/settings";
+    @PostMapping("/{username}/traineeships/update/{positionId}")
+    public String updateTraineeshipPosition(@PathVariable String username,
+                                            @PathVariable Long positionId,
+                                            @ModelAttribute TraineeshipPositionDto positionDto,
+                                            RedirectAttributes redirectAttributes) {
+        try {
+            companyService.updateTraineeshipPosition(positionDto, username);
+            redirectAttributes.addFlashAttribute("success", "Position updated successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "companies/position-settings";
     }
 
     @PostMapping("/{username}/traineeships/{positionId}/delete")
@@ -279,7 +287,7 @@ public class CompanyController {
 
         model.addAttribute("position", position);
         model.addAttribute("companyUsername", username);
-        return "companies/traineeship-settings-form";
+        return "companies/position-settings";
     }
 
     @PostMapping("/{username}/traineeships/delete/{positionId}")
@@ -294,4 +302,5 @@ public class CompanyController {
         }
         return "redirect:/companies/" + username + "/dashboard";
     }
+
 }

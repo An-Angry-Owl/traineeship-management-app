@@ -198,8 +198,10 @@
         <form th:action="@{/companies/{username}/traineeships/update/{positionId}(username=${companyUsername}, positionId=${position.id})}"
               th:object="${position}"
               method="post">
+
+            <!-- Editable Fields -->
             <div class="form-group">
-                <label>Position Name</label>
+                <label>Description</label>
                 <input type="text" th:field="*{description}" required>
             </div>
 
@@ -223,11 +225,11 @@
                 <textarea th:field="*{topics}" rows="3"></textarea>
             </div>
 
+            <!-- Read-only Fields -->
             <div class="form-group">
                 <label>Assigned Student</label>
                 <input type="text"
                        th:value="${position.student?.fullName ?: 'Not assigned'}"
-                       class="read-only-field"
                        readonly>
             </div>
 
@@ -235,13 +237,11 @@
                 <label>Supervising Professor</label>
                 <input type="text"
                        th:value="${position.professor?.fullName ?: 'Not assigned'}"
-                       class="read-only-field"
                        readonly>
             </div>
 
             <div class="form-actions">
                 <button type="submit" class="save-button">Save Changes</button>
-                <button type="reset" class="discard-button">Discard</button>
             </div>
         </form>
     </div>
@@ -250,7 +250,7 @@
     <div class="form-section evaluation-section">
         <div class="evaluation-placeholder">
             <h3>Evaluation Section</h3>
-            <p>Evaluation functionality coming soon!</p>
+            <p>Evaluation functionality is coming soon!</p>
         </div>
     </div>
 

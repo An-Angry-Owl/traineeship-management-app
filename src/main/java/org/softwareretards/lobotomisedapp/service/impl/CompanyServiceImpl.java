@@ -122,7 +122,7 @@ public class CompanyServiceImpl implements CompanyService {
         return traineeshipPositionRepository.findByCompanyUsername(username)
                 .stream()
                 .map(TraineeshipPositionMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
