@@ -150,7 +150,7 @@ public class CommitteeController {
     @GetMapping("/student-list")
     public String showStudentList(
             @RequestParam(value = "studentId", required = false) Long studentId,
-            @RequestParam(value = "strategy", defaultValue = "INTEREST_BASED") RecommendationType strategy,
+            @RequestParam(value = "strategy", defaultValue = "NONE") RecommendationType strategy,
             Model model) {
 
         // Get all students with applications
