@@ -7,12 +7,15 @@ import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPosition
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
+import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.CommitteeService;
+import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +28,17 @@ public class CommitteeController {
     private final TraineeshipPositionRepository traineeshipPositionRepository;
     private final ProfessorRepository professorRepository;
     private final StudentRepository studentRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CommitteeController(CommitteeService committeeService, TraineeshipPositionRepository traineeshipPositionRepository, ProfessorRepository professorRepository, StudentRepository studentRepository) {
+    public CommitteeController(CommitteeService committeeService, TraineeshipPositionRepository traineeshipPositionRepository, ProfessorRepository professorRepository, StudentRepository studentRepository, UserService userService, UserRepository userRepository) {
         this.committeeService = committeeService;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.professorRepository = professorRepository;
         this.studentRepository = studentRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/list")
@@ -135,5 +142,56 @@ public class CommitteeController {
     public String showStudentList(Model model) {
         model.addAttribute("students", studentRepository.findAll());
         return "committees/student-list";
+    }
+
+    @GetMapping("/{username}/profile")
+    public String showProfileForm(@PathVariable String username, Model model) {
+        CommitteeDto committeeDto = committeeService.getCommitteeById(
+                userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .getId()
+        );
+        model.addAttribute("committee", committeeDto);
+        return "committees/profile-form";
+    }
+
+    @PostMapping("/{username}/profile")
+    public String saveProfile(
+            @PathVariable String username,
+            @ModelAttribute("committee") CommitteeDto committeeDto,
+            Model model) {
+
+        // Get existing profile to preserve UserDto
+        CommitteeDto existingProfile = committeeService.getCommitteeById(
+                userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .getId()
+        );
+
+        // Merge changes
+        committeeDto.setUserDto(existingProfile.getUserDto());
+
+        CommitteeDto savedProfile = committeeService.updateCommittee(
+                existingProfile.getUserDto().getId(),
+                committeeDto
+        );
+        model.addAttribute("committee", savedProfile);
+        return "redirect:/committees/" + username + "/profile";
+    }
+
+    @PostMapping("/{username}/change-password")
+    public String changePassword(
+            @PathVariable String username,
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+        try {
+            userService.changePassword(username, currentPassword, newPassword, confirmPassword);
+            redirectAttributes.addFlashAttribute("success", "Password changed successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/committees/" + username + "/profile";
     }
 }
