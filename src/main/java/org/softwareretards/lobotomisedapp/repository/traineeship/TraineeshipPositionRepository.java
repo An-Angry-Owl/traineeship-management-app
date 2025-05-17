@@ -18,7 +18,7 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
 
     List<TraineeshipPosition> findByProfessor(Professor professor);
 
-    @Query("SELECT t FROM TraineeshipPosition t WHERE t.student IS NULL")
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN'")
     List<TraineeshipPosition> findAvailablePositions();
 
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.id = :companyId AND t.student IS NULL")
