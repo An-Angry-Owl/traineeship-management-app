@@ -13,6 +13,7 @@ public class DashboardController {
         return switch (user.getRole()) {
             case STUDENT -> "redirect:/students/" + user.getUsername() + "/dashboard";
             case COMPANY -> "redirect:/companies/" + user.getUsername() + "/dashboard";
+            case PROFESSOR -> "redirect:/professors/" + user.getUsername() + "/dashboard";
             default -> "redirect:/";
         };
     }

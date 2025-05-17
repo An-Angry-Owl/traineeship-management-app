@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Professor Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .traineeship-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .position-card {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        .position-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .position-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .apply-button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-header">
+    <div class="profile-icon" th:text="${#strings.substring(professor.userDto.username, 0, 1).toUpperCase()}"></div>
+
+    <div class="nav-buttons">
+        <a class="nav-button"
+           th:href="@{/professors/{username}/profile(username=${professor.userDto.username})}">
+            Profile
+        </a>
+    </div>
+</div>
+
+<div class="traineeship-section">
+    <h2 class="section-title">Supervising Traineeship Positions</h2>
+
+    <div th:if="${positions != null and !positions.isEmpty()}">
+        <div th:each="position : ${positions}" class="position-card">
+            <h3 class="position-title" th:text="${position.description}"></h3>
+
+            <div class="position-meta">
+                <span>Company:
+                    <strong th:text="${position.company?.userDto.username ?: 'Not specified'}"></strong>
+                </span>
+                <span>Location:
+                    <strong th:text="${position.company?.location ?: 'Not specified'}"></strong>
+                </span>
+                <span>
+                    Duration:
+                    <strong th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></strong>
+                    to
+                    <strong th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></strong>
+                </span>
+                <span>Student:
+                    <strong th:text="${position.student?.fullName ?: 'Not assigned'}"></strong>
+                </span>
+            </div>
+
+            <div class="position-actions">
+                <button class="apply-button" onclick="alert('Evaluation feature coming soon!')">
+                    Evaluate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${positions == null or positions.isEmpty()}" class="empty-state">
+        <p>No supervising traineeship positions at this time.</p>
+        <p>Please contact the traineeship committee if this is incorrect.</p>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileIcon = document.querySelector('.profile-icon');
+        const username = /*[[${professor.userDto.username}]]*/ 'Professor';
+        profileIcon.textContent = username.charAt(0).toUpperCase();
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

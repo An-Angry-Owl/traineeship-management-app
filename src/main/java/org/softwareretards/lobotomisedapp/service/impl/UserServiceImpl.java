@@ -3,10 +3,12 @@ package org.softwareretards.lobotomisedapp.service.impl;
 import org.softwareretards.lobotomisedapp.dto.user.UserDto;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
 import org.softwareretards.lobotomisedapp.entity.user.Company;
+import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
 import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
+import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.UserService;
@@ -25,14 +27,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final StudentRepository studentRepository;
+    private final ProfessorRepository professorRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder, CompanyRepository companyRepository) {
+    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder, CompanyRepository companyRepository, ProfessorRepository professorRepository) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
+        this.professorRepository = professorRepository;
     }
 
     @Override
@@ -98,6 +102,19 @@ public class UserServiceImpl implements UserService {
 
             Company savedCompany = companyRepository.save(company);
             return UserMapper.toDto(savedCompany);
+        }
+
+        if (userDto.getRole() == Role.PROFESSOR) {
+            Professor professor = new Professor(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    "", ""  // Initialize empty fields
+            );
+            professor.setRole(Role.PROFESSOR);
+            professor.setEnabled(true);
+
+            Professor savedProfessor = professorRepository.save(professor);
+            return UserMapper.toDto(savedProfessor);
         }
 
         // Handle other roles if needed
