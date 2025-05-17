@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <style>
+        /* Maintain existing profile form styling */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 33.33%;
+            height: 100vh;
+            background-color: white;
+            padding: 2rem;
+            box-sizing: border-box;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            width: 66.67%;
+            height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .student-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .student-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .student-details {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .strategy-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .strategy-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #2575fc;
+            border-radius: 8px;
+            background: none;
+            color: #2575fc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .strategy-btn.active {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        .position-card {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .position-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-btn {
+            background-color: #2575fc;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .assign-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>Students with Applications</h2>
+    <ul class="student-list" th:if="${not #lists.isEmpty(students)}">
+        <li th:each="student : ${students}"
+            class="student-item"
+            th:onclick="|loadStudentDetails(${student.userDto.id})|"
+            th:text="${student.fullName}">
+            Student Name
+        </li>
+    </ul>
+    <div th:if="${#lists.isEmpty(students)}" class="empty-state">
+        <p>No students have made applications yet.</p>
+    </div>
+</div>
+
+<div class="main-content" id="mainContent">
+    <div th:if="${selectedStudent == null}" class="empty-state">
+        <p>Select a student from the list to view details and recommendations</p>
+    </div>
+
+    <div th:if="${selectedStudent != null}">
+        <div class="student-details">
+            <h3 th:text="${selectedStudent.fullName}"></h3>
+            <p><strong>Interests:</strong> <span th:text="${selectedStudent.interests}"></span></p>
+            <p><strong>Skills:</strong> <span th:text="${selectedStudent.skills}"></span></p>
+            <p><strong>Preferred Location:</strong> <span th:text="${selectedStudent.preferredLocation}"></span></p>
+        </div>
+
+        <div class="strategy-buttons">
+            <button class="strategy-btn"
+                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).INTEREST_BASED} ? 'active'"
+                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'INTEREST_BASED')|">
+                By Interests
+            </button>
+            <button class="strategy-btn"
+                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).LOCATION_BASED} ? 'active'"
+                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'LOCATION_BASED')|">
+                By Location
+            </button>
+            <button class="strategy-btn"
+                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).COMBINED} ? 'active'"
+                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'COMBINED')|">
+                Both
+            </button>
+        </div>
+
+        <div th:if="${recommendations != null and !recommendations.isEmpty()}">
+            <div th:each="position : ${recommendations}" class="position-card">
+                <h4 th:text="${position.description}"></h4>
+                <div class="position-meta">
+                    <span>Company: <strong th:text="${position.company?.userDto.username}"></strong></span>
+                    <span>Location: <strong th:text="${position.company?.location}"></strong></span>
+                    <span>Status: <strong th:text="${position.status}"></strong></span>
+                </div>
+                <div class="position-actions">
+                    <button class="info-btn">More Info</button>
+                    <button class="assign-btn">Assign</button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${recommendations == null or recommendations.isEmpty()}" class="empty-state">
+            <p>No positions found matching the selected criteria</p>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function loadStudentDetails(studentId) {
+        window.location.href = `/committees/student-list?studentId=${studentId}`;
+    }
+
+    function updateRecommendations(studentId, strategy) {
+        const currentStrategy = /*[[${selectedStrategy}]]*/ 'NONE';
+        const newStrategy = currentStrategy === strategy ? 'NONE' : strategy;
+        window.location.href = `/committees/student-list?studentId=${studentId}&strategy=${newStrategy}`;
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

@@ -2,14 +2,19 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
+import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
+import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
+import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.CommitteeService;
+import org.softwareretards.lobotomisedapp.service.RecommendationsService;
 import org.softwareretards.lobotomisedapp.service.UserService;
+import org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,15 +35,19 @@ public class CommitteeController {
     private final StudentRepository studentRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final RecommendationsService recommendationsService;
+    private final TraineeshipApplicationRepository traineeshipApplicationRepository;
 
     @Autowired
-    public CommitteeController(CommitteeService committeeService, TraineeshipPositionRepository traineeshipPositionRepository, ProfessorRepository professorRepository, StudentRepository studentRepository, UserService userService, UserRepository userRepository) {
+    public CommitteeController(CommitteeService committeeService, TraineeshipPositionRepository traineeshipPositionRepository, ProfessorRepository professorRepository, StudentRepository studentRepository, UserService userService, UserRepository userRepository, RecommendationsService recommendationsService, TraineeshipApplicationRepository traineeshipApplicationRepository) {
         this.committeeService = committeeService;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.professorRepository = professorRepository;
         this.studentRepository = studentRepository;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.recommendationsService = recommendationsService;
+        this.traineeshipApplicationRepository = traineeshipApplicationRepository;
     }
 
     @GetMapping("/list")
@@ -139,8 +148,32 @@ public class CommitteeController {
     }
 
     @GetMapping("/student-list")
-    public String showStudentList(Model model) {
-        model.addAttribute("students", studentRepository.findAll());
+    public String showStudentList(
+            @RequestParam(value = "studentId", required = false) Long studentId,
+            @RequestParam(value = "strategy", defaultValue = "INTEREST_BASED") RecommendationType strategy,
+            Model model) {
+
+        // Get all students with applications
+        List<Long> studentIds = traineeshipApplicationRepository.findDistinctStudentIds();
+        List<StudentDto> students = studentRepository.findAllById(studentIds).stream()
+                .map(StudentMapper::toDto)
+                .collect(Collectors.toList());
+
+        model.addAttribute("students", students);
+
+        if (studentId != null) {
+            StudentDto selectedStudent = studentRepository.findById(studentId)
+                    .map(StudentMapper::toDto)
+                    .orElse(null);
+
+            List<TraineeshipPositionDto> recommendations =
+                    recommendationsService.recommend(studentId, strategy);
+
+            model.addAttribute("selectedStudent", selectedStudent);
+            model.addAttribute("recommendations", recommendations);
+            model.addAttribute("selectedStrategy", strategy);
+        }
+
         return "committees/student-list";
     }
 
