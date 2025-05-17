@@ -68,20 +68,4 @@ public class CombinedRecommendationStrategy extends AbstractRecommendationsStrat
                 .collect(Collectors.toList());
     }
 
-
-    private String normalize(String location) {
-        return location == null ? "" : location.trim().toLowerCase();
-    }
-
-    private double calculateJaccard(Set<String> a, Set<String> b) {
-        if (a.isEmpty() || b.isEmpty()) return 0.0;
-
-        Set<String> intersection = new HashSet<>(a);
-        intersection.retainAll(b);
-
-        Set<String> union = new HashSet<>(a);
-        union.addAll(b);
-
-        return (double) intersection.size() / union.size();
-    }
 }

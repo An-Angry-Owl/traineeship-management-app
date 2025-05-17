@@ -57,8 +57,4 @@ public class LocationBasedRecommendationStrategy extends AbstractRecommendations
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());
     }
-
-    private String normalize(String location) {
-        return location == null ? "" : location.trim().toLowerCase();
-    }
 }

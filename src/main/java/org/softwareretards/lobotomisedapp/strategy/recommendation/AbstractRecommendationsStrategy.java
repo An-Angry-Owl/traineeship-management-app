@@ -2,10 +2,7 @@ package org.softwareretards.lobotomisedapp.strategy.recommendation;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AbstractRecommendationsStrategy implements TraineeshipRecommendationsStrategy {
@@ -21,5 +18,21 @@ public abstract class AbstractRecommendationsStrategy implements TraineeshipReco
                 .filter(s -> !s.isEmpty())
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
+    }
+
+    protected final double calculateJaccard(Set<String> a, Set<String> b) {
+        if (a.isEmpty() || b.isEmpty()) return 0.0;
+
+        Set<String> intersection = new HashSet<>(a);
+        intersection.retainAll(b);
+
+        Set<String> union = new HashSet<>(a);
+        union.addAll(b);
+
+        return (double) intersection.size() / union.size();
+    }
+
+    protected final String normalize(String location) {
+        return location == null ? "" : location.trim().toLowerCase();
     }
 }
