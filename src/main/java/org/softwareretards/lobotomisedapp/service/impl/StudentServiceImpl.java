@@ -132,7 +132,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<TraineeshipPositionDto> getOpenTraineeshipPositions() {
-        List<TraineeshipPosition> positions = traineeshipPositionRepository.findAllByStudentIsNull();
+        List<TraineeshipPosition> positions = traineeshipPositionRepository.findOpenPositions();
         return TraineeshipPositionMapper.toDtoList(positions);
     }
 }

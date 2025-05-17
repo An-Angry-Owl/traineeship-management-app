@@ -46,4 +46,7 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
     List<TraineeshipPosition> findAllByStatus(TraineeshipStatus traineeshipStatus);
 
     List<TraineeshipPosition> findAllByStudentIsNull();
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN' AND t.student IS NULL")
+    List<TraineeshipPosition> findOpenPositions();
 }

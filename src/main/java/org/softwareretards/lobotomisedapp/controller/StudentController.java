@@ -54,15 +54,14 @@ public class StudentController {
         return "students/application-form"; // thymeleaf template: students/application-form.html
     }
 
-    @PostMapping("/students/{username}/apply")
+    @PostMapping("/students/{username}/apply/{positionId}")
     public String submitApplication(
             @PathVariable String username,
-            @ModelAttribute("application") TraineeshipApplicationDto applicationDto,
+            @PathVariable Long positionId, // Correctly captures the ID
             Model model
     ) {
         TraineeshipApplicationDto createdApplication =
-                studentService.applyForTraineeship(username, applicationDto.getPosition().getId());
-        model.addAttribute("application", createdApplication);
+                studentService.applyForTraineeship(username, positionId);
         return "students/application-confirmation";
     }
 
@@ -135,6 +134,7 @@ public class StudentController {
         // Add to model
         model.addAttribute("positions", openPositions);
         model.addAttribute("student", studentService.retrieveProfile(username));
+        model.addAttribute("application", new TraineeshipApplicationDto());
 
         return "students/traineeship-list";
     }
