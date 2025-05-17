@@ -41,6 +41,7 @@ public class CombinedRecommendationStrategy extends AbstractRecommendationsStrat
         Student student = studentOpt.get();
         String preferredLocation = normalize(student.getPreferredLocation());
         Set<String> interests = parseAndNormalize(student.getInterests());
+        Set<String> studentSkills = parseAndNormalize(student.getSkills());
 
         // Step 1: Get positions that match the preferred location
         List<TraineeshipPosition> locationMatches = positionRepository.findAvailablePositions().stream()
@@ -55,8 +56,10 @@ public class CombinedRecommendationStrategy extends AbstractRecommendationsStrat
         List<TraineeshipPosition> matching = locationMatches.stream()
                 .filter(pos -> {
                     Set<String> topics = parseAndNormalize(pos.getTopics());
+                    Set<String> requiredSkills = parseAndNormalize(pos.getRequiredSkills());
                     double jaccard = calculateJaccard(interests, topics);
-                    return jaccard >= JACCARD_THRESHOLD;
+                    boolean hasAllRequiredSkills = studentSkills.containsAll(requiredSkills);
+                    return jaccard >= JACCARD_THRESHOLD && hasAllRequiredSkills;
                 })
                 .toList();
 
@@ -65,13 +68,6 @@ public class CombinedRecommendationStrategy extends AbstractRecommendationsStrat
                 .collect(Collectors.toList());
     }
 
-    private Set<String> parseAndNormalize(String input) {
-        if (input == null || input.isBlank()) return Collections.emptySet();
-        return Arrays.stream(input.split(","))
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .collect(Collectors.toSet());
-    }
 
     private String normalize(String location) {
         return location == null ? "" : location.trim().toLowerCase();

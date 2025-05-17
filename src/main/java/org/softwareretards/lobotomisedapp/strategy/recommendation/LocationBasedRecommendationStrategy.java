@@ -38,6 +38,7 @@ public class LocationBasedRecommendationStrategy extends AbstractRecommendations
 
         Student student = studentOpt.get();
         String preferredLocation = normalize(student.getPreferredLocation());
+        Set<String> studentSkills = parseAndNormalize(student.getSkills());
 
         List<TraineeshipPosition> availablePositions = positionRepository.findAvailablePositions();
 
@@ -46,7 +47,9 @@ public class LocationBasedRecommendationStrategy extends AbstractRecommendations
                     Company company = pos.getCompany();
                     if (company == null || company.getLocation() == null) return false;
                     String companyLocation = normalize(company.getLocation());
-                    return preferredLocation.equals(companyLocation);
+                    Set<String> requiredSkills = parseAndNormalize(pos.getRequiredSkills());
+                    boolean hasAllRequiredSkills = studentSkills.containsAll(requiredSkills);
+                    return preferredLocation.equals(companyLocation) && hasAllRequiredSkills;
                 })
                 .toList();
 

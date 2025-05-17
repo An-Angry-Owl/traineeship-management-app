@@ -30,4 +30,5 @@ public class RecommendationsStrategyFactory {
         }
         return strategy;
     }
+
 }
