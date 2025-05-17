@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Professor Profile</title>
+  <style>
+    /* Keep all the same CSS styles from the student template */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .sidebar {
+      width: 33.33%;
+      height: 100vh;
+      background-color: white;
+      padding: 2rem;
+      box-sizing: border-box;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .main-content {
+      width: 66.67%;
+      height: 100vh;
+      padding: 2rem;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .return-button {
+      padding: 0.5rem 1rem;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #2575fc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: white;
+      margin: 2rem auto;
+    }
+
+    .nav-box {
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .nav-button.active {
+      background-color: #f0f0f0;
+      font-weight: bold;
+      color: #2575fc;
+      border-left: 4px solid #2575fc;
+    }
+
+    .form-section {
+      display: none;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .account-section {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .form-actions button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .save-button {
+      background-color: black;
+      color: white;
+    }
+
+    .discard-button {
+      background-color: #e0e0e0;
+      color: black;
+    }
+
+    .password-form {
+      display: none;
+    }
+
+    .password-form.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="profile-header">
+    <a th:href="@{/professors/{username}/dashboard(username=${professor.userDto.username})}"
+       class="return-button">
+      Return to Dashboard
+    </a>
+  </div>
+
+  <div class="avatar" th:text="${#strings.substring(professor.userDto.username, 0, 1).toUpperCase()}">
+    <!-- Initial will be inserted here -->
+  </div>
+
+  <div class="nav-box">
+    <button class="nav-button active" onclick="showSection('account')">Account Details</button>
+    <button class="nav-button" onclick="showSection('password')">Change Password</button>
+    <form th:action="@{/logout}" method="post">
+      <button class="nav-button" type="submit">Log Out</button>
+    </form>
+  </div>
+</div>
+
+<div class="main-content">
+  <!-- Account Details Section -->
+  <div class="form-section account-section">
+    <form th:action="@{/professors/{username}/profile(username=${professor.userDto.username})}"
+          th:object="${professor}"
+          method="post">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" th:field="*{fullName}">
+      </div>
+
+      <div class="form-group">
+        <label>Interests</label>
+        <textarea th:field="*{interests}" rows="3"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-button">Save Changes</button>
+        <button type="reset" class="discard-button">Discard</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Change Password Section -->
+  <div class="form-section password-section">
+    <form th:action="@{/professors/{username}/change-password(username=${professor.userDto.username})}" method="post">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" name="currentPassword" required>
+      </div>
+
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" name="newPassword" required>
+      </div>
+
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" name="confirmPassword" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-button">Change Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Initialize the default section
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.nav-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelector('.nav-button:first-child').classList.add('active');
+    document.querySelector('.account-section').style.display = 'block';
+  });
+
+  function showSection(section) {
+    document.querySelectorAll('.nav-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelectorAll('.form-section').forEach(div => {
+      div.style.display = 'none';
+    });
+    const sectionElement = document.querySelector(`.${section}-section`);
+    if (sectionElement) {
+      sectionElement.style.display = 'block';
+      event.target.classList.add('active');
+    }
+  }
+</script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const successMessage = /*[[${success}]]*/ null;
+  const errorMessage = /*[[${error}]]*/ null;
+
+  if (successMessage) {
+    alert(successMessage);
+    showSection('account');
+  }
+  if (errorMessage) {
+    alert(errorMessage);
+    document.querySelector('.password-section').style.display = 'block';
+    document.querySelectorAll('.nav-button').forEach(btn => {
+      if (btn.textContent.includes('Password')) btn.classList.add('active');
+    });
+  }
+  /*]]>*/
+</script>
+</body>
+</html>

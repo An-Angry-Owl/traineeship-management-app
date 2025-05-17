@@ -45,8 +45,16 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     @Transactional
     public ProfessorDto saveProfile(ProfessorDto professorDto) {
-        Professor professor = ProfessorMapper.toEntity(professorDto);
-        Professor savedProfessor = professorRepository.save(professor);
+        // Get existing professor data
+        Professor existingProfessor = professorRepository.findById(professorDto.getUserDto().getId())
+                .orElseThrow(() -> new RuntimeException("Professor not found"));
+
+        // Update only allowed fields
+        existingProfessor.setProfessorName(professorDto.getFullName());
+        existingProfessor.setInterests(professorDto.getInterests());
+
+        // Save updated entity
+        Professor savedProfessor = professorRepository.save(existingProfessor);
         return ProfessorMapper.toDto(savedProfessor);
     }
 

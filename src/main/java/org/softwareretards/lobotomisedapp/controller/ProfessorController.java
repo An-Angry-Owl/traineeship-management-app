@@ -5,14 +5,13 @@ import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.service.ProfessorService;
+import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -20,10 +19,12 @@ import java.util.List;
 public class ProfessorController {
 
     private final ProfessorService professorService;
+    private final UserService userService;
 
     @Autowired
-    public ProfessorController(ProfessorService professorService) {
+    public ProfessorController(ProfessorService professorService, UserService userService) {
         this.professorService = professorService;
+        this.userService = userService;
     }
 
     // US13: Profile Management
@@ -40,6 +41,12 @@ public class ProfessorController {
             @ModelAttribute("professor") ProfessorDto professorDto,
             Model model
     ) {
+        // Get existing profile to preserve UserDto
+        ProfessorDto existingProfile = professorService.getProfile(username);
+
+        // Merge changes
+        professorDto.setUserDto(existingProfile.getUserDto());
+
         ProfessorDto savedProfile = professorService.saveProfile(professorDto);
         model.addAttribute("professor", savedProfile);
         return "redirect:/professors/" + username + "/profile";
@@ -95,5 +102,21 @@ public class ProfessorController {
         model.addAttribute("positions", positions);
 
         return "professors/dashboard";
+    }
+
+    @PostMapping("/professors/{username}/change-password")
+    public String changePassword(
+            @PathVariable String username,
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+        try {
+            userService.changePassword(username, currentPassword, newPassword, confirmPassword);
+            redirectAttributes.addFlashAttribute("success", "Password changed successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/professors/" + username + "/profile";
     }
 }
