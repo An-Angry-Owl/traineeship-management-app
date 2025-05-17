@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/committee")
+@RequestMapping("/committees")
 public class CommitteeController {
 
     private final CommitteeService committeeService;

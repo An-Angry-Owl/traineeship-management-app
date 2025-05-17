@@ -39,6 +39,7 @@ public class Committee extends User {
                 ", enabled=" + isEnabled() +
                 ", createdAt=" + getCreatedAt() +
                 ", updatedAt=" + getUpdatedAt() +
+                ", committeeName='" + committeeName + '\'' +
                 '}';
     }
 
