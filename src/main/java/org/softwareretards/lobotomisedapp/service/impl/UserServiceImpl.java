@@ -2,15 +2,9 @@ package org.softwareretards.lobotomisedapp.service.impl;
 
 import org.softwareretards.lobotomisedapp.dto.user.UserDto;
 import org.softwareretards.lobotomisedapp.entity.enums.Role;
-import org.softwareretards.lobotomisedapp.entity.user.Company;
-import org.softwareretards.lobotomisedapp.entity.user.Professor;
-import org.softwareretards.lobotomisedapp.entity.user.Student;
-import org.softwareretards.lobotomisedapp.entity.user.User;
+import org.softwareretards.lobotomisedapp.entity.user.*;
 import org.softwareretards.lobotomisedapp.mapper.user.UserMapper;
-import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
-import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
-import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
-import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
+import org.softwareretards.lobotomisedapp.repository.user.*;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,15 +22,17 @@ public class UserServiceImpl implements UserService {
     private final CompanyRepository companyRepository;
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
+    private final CommitteeRepository committeeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder, CompanyRepository companyRepository, ProfessorRepository professorRepository) {
+    public UserServiceImpl(UserRepository userRepository, StudentRepository studentRepository, BCryptPasswordEncoder passwordEncoder, CompanyRepository companyRepository, ProfessorRepository professorRepository, CommitteeRepository committeeRepository) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
         this.professorRepository = professorRepository;
+        this.committeeRepository = committeeRepository;
     }
 
     @Override
@@ -117,8 +113,21 @@ public class UserServiceImpl implements UserService {
             return UserMapper.toDto(savedProfessor);
         }
 
+        if (userDto.getRole() == Role.COMMITTEE) {
+            Committee committee = new Committee(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    ""  // Initialize empty fields
+            );
+            committee.setRole(Role.COMMITTEE);
+            committee.setEnabled(true);
+
+            Committee savedCommittee = committeeRepository.save(committee);
+            return UserMapper.toDto(savedCommittee);
+        }
+
         // Handle other roles if needed
-        throw new UnsupportedOperationException("Role not yet supported");
+        throw new UnsupportedOperationException("Ask Zhu Yuan about this role, she know more!");
     }
 
     @Override

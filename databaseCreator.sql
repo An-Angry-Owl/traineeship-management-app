@@ -40,10 +40,9 @@ CREATE TABLE professors (
 );
 
 CREATE TABLE committee (
-                           id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                           user_id BIGINT UNIQUE NOT NULL,
+                           id BIGINT PRIMARY KEY,
                            committee_name VARCHAR(100) NOT NULL,
-                           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                           CONSTRAINT fk_committees_users FOREIGN KEY (id) REFERENCES users(id)
 );
 
 -- Create the TRAINEESHIP_POSITIONS table
