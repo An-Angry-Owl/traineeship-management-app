@@ -91,6 +91,15 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
+        // Check for existing application
+        boolean alreadyApplied = traineeshipApplicationRepository.existsByStudentIdAndPositionId(
+                student.getId(),
+                positionId
+        );
+        if (alreadyApplied) {
+            throw new RuntimeException("Student has already applied to this position");
+        }
+
         // Retrieve position
         TraineeshipPosition position = traineeshipPositionRepository.findById(positionId)
                 .orElseThrow(() -> new RuntimeException("Traineeship position not found"));
