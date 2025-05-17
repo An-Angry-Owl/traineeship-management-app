@@ -127,6 +127,7 @@ public class CommitteeServiceImpl implements CommitteeService {
 
             if (evaluation != null) {
                 //FIXME: This is a security issue, we should not print the final mark
+                // I am not going to fix you.
                 System.out.println("Traineeship evaluation: " + evaluation.getFinalMark());
             } else {
                 System.out.println("No evaluation found for traineeship");

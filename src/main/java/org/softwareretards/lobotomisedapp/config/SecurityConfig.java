@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .requestMatchers("/students/**").hasAuthority("STUDENT")
                         .requestMatchers("/companies/**").hasAuthority("COMPANY")
                         .requestMatchers("/professors/**").hasAuthority("PROFESSOR")
-                        .requestMatchers("/committee/**").hasAuthority("COMMITTEE")
+                        .requestMatchers("/committees/**").hasAuthority("COMMITTEE")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
