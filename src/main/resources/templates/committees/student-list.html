@@ -4,32 +4,76 @@
     <meta charset="UTF-8">
     <title>Student Management</title>
     <style>
-        /* Maintain existing profile form styling */
         body {
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
+            padding: 2rem;
             font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .content-container {
+            display: flex;
+            gap: 2rem;
         }
 
         .sidebar {
             width: 33.33%;
-            height: 100vh;
             background-color: white;
             padding: 2rem;
-            box-sizing: border-box;
-            border-right: 1px solid #e0e0e0;
-            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .main-content {
             width: 66.67%;
-            height: 100vh;
-            padding: 2rem;
-            box-sizing: border-box;
-            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .student-list {
@@ -49,12 +93,24 @@
             background-color: #f8f9fa;
         }
 
-        .student-details {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
+        .student-details-section {
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .student-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 1rem;
+        }
+
+        .student-info {
+            margin-bottom: 0.5rem;
+            color: #666;
         }
 
         .strategy-buttons {
@@ -65,10 +121,10 @@
 
         .strategy-btn {
             padding: 0.8rem 1.5rem;
-            border: 2px solid #2575fc;
+            border: none;
             border-radius: 8px;
-            background: none;
-            color: #2575fc;
+            background-color: #e9ecef;
+            color: #212529;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -80,16 +136,37 @@
 
         .position-card {
             padding: 1.5rem;
-            margin-bottom: 1rem;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .position-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
         }
 
         .position-actions {
             display: flex;
-            gap: 1rem;
+            align-items: center;
             margin-top: 1rem;
+        }
+
+        .position-actions form {
+            display: inline;
+            margin: 0;
+            padding: 0;
         }
 
         .info-btn {
@@ -99,6 +176,7 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            margin-right: 1rem;
         }
 
         .assign-btn {
@@ -108,6 +186,24 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            margin-left: auto;
+        }
+
+        .pill-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .pill {
+            background-color: #1f1f1f;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            display: inline-block;
         }
 
         .empty-state {
@@ -119,69 +215,124 @@
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <h2>Students with Applications</h2>
-    <ul class="student-list" th:if="${not #lists.isEmpty(students)}">
-        <li th:each="student : ${students}"
-            class="student-item"
-            th:onclick="|loadStudentDetails(${student.userDto.id})|"
-            th:text="${student.fullName}">
-            Student Name
-        </li>
-    </ul>
-    <div th:if="${#lists.isEmpty(students)}" class="empty-state">
-        <p>No students have made applications yet.</p>
+<div class="dashboard-header">
+    <div class="profile-icon">C</div>
+    <h1>Student Management</h1>
+    <div class="nav-buttons">
+        <a class="nav-button" href="#">Dashboard</a>
+        <a class="nav-button" href="#">Profile</a>
     </div>
 </div>
 
-<div class="main-content" id="mainContent">
-    <div th:if="${selectedStudent == null}" class="empty-state">
-        <p>Select a student from the list to view details and recommendations</p>
+<div class="content-container">
+    <div class="sidebar">
+        <h2 class="section-title">Students with Applications</h2>
+        <ul class="student-list" th:if="${not #lists.isEmpty(students)}">
+            <li th:each="student : ${students}"
+                class="student-item"
+                th:onclick="|loadStudentDetails(${student.userDto.id})|"
+                th:text="${student.fullName}">
+                Student Name
+            </li>
+        </ul>
+        <div th:if="${#lists.isEmpty(students)}" class="empty-state">
+            <p>No students have made applications yet.</p>
+        </div>
     </div>
 
-    <div th:if="${selectedStudent != null}">
-        <div class="student-details">
-            <h3 th:text="${selectedStudent.fullName}"></h3>
-            <p><strong>Interests:</strong> <span th:text="${selectedStudent.interests}"></span></p>
-            <p><strong>Skills:</strong> <span th:text="${selectedStudent.skills}"></span></p>
-            <p><strong>Preferred Location:</strong> <span th:text="${selectedStudent.preferredLocation}"></span></p>
+    <div class="main-content" id="mainContent">
+        <div th:if="${selectedStudent == null}" class="empty-state">
+            <p>Select a student from the list to view details and recommendations</p>
         </div>
 
-        <div class="strategy-buttons">
-            <button class="strategy-btn"
-                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).INTEREST_BASED} ? 'active'"
-                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'INTEREST_BASED')|">
-                By Interests
-            </button>
-            <button class="strategy-btn"
-                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).LOCATION_BASED} ? 'active'"
-                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'LOCATION_BASED')|">
-                By Location
-            </button>
-            <button class="strategy-btn"
-                    th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).COMBINED} ? 'active'"
-                    th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'COMBINED')|">
-                Both
-            </button>
-        </div>
+        <div th:if="${selectedStudent != null}">
+            <div class="student-details-section">
+                <h3 class="student-name" th:text="${selectedStudent.fullName}"></h3>
+                <p class="student-info"><strong>Interests:</strong> <span th:text="${selectedStudent.interests}"></span></p>
+                <p class="student-info"><strong>Skills:</strong> <span th:text="${selectedStudent.skills}"></span></p>
+                <p class="student-info"><strong>Preferred Location:</strong> <span th:text="${selectedStudent.preferredLocation}"></span></p>
+            </div>
 
-        <div th:if="${recommendations != null and !recommendations.isEmpty()}">
-            <div th:each="position : ${recommendations}" class="position-card">
-                <h4 th:text="${position.description}"></h4>
-                <div class="position-meta">
-                    <span>Company: <strong th:text="${position.company?.userDto.username}"></strong></span>
-                    <span>Location: <strong th:text="${position.company?.location}"></strong></span>
-                    <span>Status: <strong th:text="${position.status}"></strong></span>
-                </div>
-                <div class="position-actions">
-                    <button class="info-btn">More Info</button>
-                    <button class="assign-btn">Assign</button>
+            <div class="strategy-buttons">
+                <button class="strategy-btn"
+                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).INTEREST_BASED} ? 'active'"
+                        th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'INTEREST_BASED')|">
+                    By Interests
+                </button>
+                <button class="strategy-btn"
+                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).LOCATION_BASED} ? 'active'"
+                        th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'LOCATION_BASED')|">
+                    By Location
+                </button>
+                <button class="strategy-btn"
+                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).COMBINED} ? 'active'"
+                        th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'COMBINED')|">
+                    Both
+                </button>
+            </div>
+
+            <div th:if="${recommendations != null and !recommendations.isEmpty()}">
+                <h2 class="section-title">Recommended Positions</h2>
+                <div th:each="position : ${recommendations}" class="position-card">
+                    <h4 class="position-title" th:text="${position.description}">
+                <span th:if="${position.matchScore != null}" class="match-score"
+                      th:text="${position.matchScore} + '%'">85%</span>
+                            </h4>
+
+                    <div class="position-meta">
+                        <span>Company: <strong th:text="${position.company?.userDto.username ?: 'Not specified'}"></strong></span>
+                        <span>Location: <strong th:text="${position.company?.location ?: 'Not specified'}"></strong></span>
+                        <span>Status: <strong th:text="${position.status}"></strong></span>
+                    </div>
+
+                    <div class="position-meta">
+                    <span>
+                        Duration:
+                        <strong th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></strong>
+                        to
+                        <strong th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></strong>
+                    </span>
+                    </div>
+                    <div class="position-skills">
+                        <span>Required Skills: </span>
+                        <div class="pill-container">
+                        <span th:each="skill : ${#strings.arraySplit(position.requiredSkills, ',')}"
+                              class="pill"
+                              th:text="${skill.trim()}">
+                            Skill
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="position-skills">
+                        <span>Topics: </span>
+                        <div class="pill-container">
+                        <span th:each="topic : ${#strings.arraySplit(position.topics, ',')}"
+                              class="pill"
+                              th:text="${topic.trim()}">
+                            Topic
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="position-actions">
+                        <div style="flex-grow: 1;"></div>
+                        <form th:action="@{/committees/assign-traineeship}" method="post" style="display: inline;">
+                            <input type="hidden" name="committeeId" th:value="${committee?.userDto.id}">
+                            <input type="hidden" name="studentId" th:value="${selectedStudent.userDto.id}">
+                            <input type="hidden" name="traineeshipId" th:value="${position.id}">
+                            <button type="submit" class="assign-btn"
+                                    th:attr="onclick='return confirm(\'Assign this traineeship to ' + ${selectedStudent.fullName} + '?\');'">
+                                Assign
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div th:if="${recommendations == null or recommendations.isEmpty()}" class="empty-state">
-            <p>No positions found matching the selected criteria</p>
+            <div th:if="${recommendations == null or recommendations.isEmpty()}" class="empty-state">
+                <p>No positions found matching the selected criteria</p>
+            </div>
         </div>
     </div>
 </div>
@@ -196,6 +347,9 @@
         const currentStrategy = /*[[${selectedStrategy}]]*/ 'NONE';
         const newStrategy = currentStrategy === strategy ? 'NONE' : strategy;
         window.location.href = `/committees/student-list?studentId=${studentId}&strategy=${newStrategy}`;
+    }
+    function confirmAssignment(studentName) {
+        return confirm('Are you sure you want to assign this position to ' + studentName + '?');
     }
     /*]]>*/
 </script>

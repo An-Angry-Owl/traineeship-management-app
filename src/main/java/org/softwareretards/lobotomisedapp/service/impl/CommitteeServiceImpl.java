@@ -3,6 +3,7 @@ package org.softwareretards.lobotomisedapp.service.impl;
 import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
@@ -89,6 +90,7 @@ public class CommitteeServiceImpl implements CommitteeService {
 
             // Assign the student to the traineeship
             traineeship.setStudent(student);
+            traineeship.setStatus(TraineeshipStatus.ASSIGNED);
             traineeshipPositionRepository.save(traineeship);
         } else {
             throw new RuntimeException("Student or Traineeship not found");

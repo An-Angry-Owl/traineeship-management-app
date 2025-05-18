@@ -3,6 +3,7 @@ package org.softwareretards.lobotomisedapp.controller;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
+import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
@@ -16,6 +17,7 @@ import org.softwareretards.lobotomisedapp.service.RecommendationsService;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -151,7 +153,19 @@ public class CommitteeController {
     public String showStudentList(
             @RequestParam(value = "studentId", required = false) Long studentId,
             @RequestParam(value = "strategy", defaultValue = "NONE") RecommendationType strategy,
-            Model model) {
+            Model model,
+            Authentication authentication) {
+
+        // Get the currently logged-in committee
+        String username = authentication.getName();
+        CommitteeDto committeeDto = committeeService.getCommitteeById(
+                userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .getId()
+        );
+
+        // Add committee to model
+        model.addAttribute("committee", committeeDto);
 
         // Get all students with applications
         List<Long> studentIds = traineeshipApplicationRepository.findDistinctStudentIds();
@@ -226,5 +240,20 @@ public class CommitteeController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/committees/" + username + "/profile";
+    }
+
+    @PostMapping("/assign-traineeship")
+    public String assignTraineeship(@RequestParam Long committeeId,
+                                    @RequestParam Long studentId,
+                                    @RequestParam Long traineeshipId,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            // Call your existing service method
+            committeeService.assignTraineeshipToStudent(committeeId, studentId, traineeshipId);
+            redirectAttributes.addFlashAttribute("success", "Traineeship assigned successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to assign traineeship: " + e.getMessage());
+        }
+        return "redirect:/committees/student-list?studentId=" + studentId;
     }
 }

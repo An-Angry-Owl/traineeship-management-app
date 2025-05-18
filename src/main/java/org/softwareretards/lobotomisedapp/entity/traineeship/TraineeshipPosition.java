@@ -65,7 +65,7 @@ public class TraineeshipPosition {
     @Column(name = "status")
     private TraineeshipStatus status = TraineeshipStatus.OPEN;
 
-    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<LogbookEntry> logbookEntries = new ArrayList<>();
 
     @OneToOne(mappedBy = "traineeshipPosition", cascade = CascadeType.ALL, orphanRemoval = true)
