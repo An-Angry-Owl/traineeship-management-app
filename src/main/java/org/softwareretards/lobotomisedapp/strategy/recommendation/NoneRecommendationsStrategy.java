@@ -38,7 +38,7 @@ public class NoneRecommendationsStrategy extends AbstractRecommendationsStrategy
         Student student = studentOpt.get();
         Set<String> studentSkills = parseAndNormalize(student.getSkills());
 
-        List<TraineeshipPosition> availablePositions = positionRepository.findAvailablePositions();
+        List<TraineeshipPosition> availablePositions = positionRepository.findAvailableStudentPositions();
 
         List<TraineeshipPosition> matching = availablePositions.stream()
                 .filter(pos -> {

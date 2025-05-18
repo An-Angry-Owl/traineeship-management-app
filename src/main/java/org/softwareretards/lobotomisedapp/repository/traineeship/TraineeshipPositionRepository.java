@@ -18,8 +18,11 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
 
     List<TraineeshipPosition> findByProfessor(Professor professor);
 
-    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN'")
-    List<TraineeshipPosition> findAvailablePositions();
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN' AND t.student IS NULL")
+    List<TraineeshipPosition> findAvailableStudentPositions();
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN' AND t.professor IS NULL")
+    List<TraineeshipPosition> findAvailableProfessorPositions();
 
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.company.id = :companyId AND t.student IS NULL")
     List<TraineeshipPosition> findAvailableByCompany(@Param("companyId") Long companyId);
@@ -49,4 +52,7 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
 
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.status = 'OPEN' AND t.student IS NULL")
     List<TraineeshipPosition> findOpenPositions();
+
+    @Query("SELECT p FROM TraineeshipPosition p WHERE p.status = 'OPEN' ORDER BY (SELECT COUNT(tp) FROM TraineeshipPosition tp WHERE tp.professor.id = p.professor.id) ASC")
+    List<TraineeshipPosition> findAvailablePositionsOrderByProfessorWorkload();
 }

@@ -44,7 +44,7 @@ public class CombinedRecommendationStrategy extends AbstractRecommendationsStrat
         Set<String> studentSkills = parseAndNormalize(student.getSkills());
 
         // Step 1: Get positions that match the preferred location
-        List<TraineeshipPosition> locationMatches = positionRepository.findAvailablePositions().stream()
+        List<TraineeshipPosition> locationMatches = positionRepository.findAvailableStudentPositions().stream()
                 .filter(pos -> {
                     Company company = pos.getCompany();
                     if (company == null || company.getLocation() == null) return false;
