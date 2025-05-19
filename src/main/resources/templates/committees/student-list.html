@@ -219,8 +219,14 @@
     <div class="profile-icon">C</div>
     <h1>Student Management</h1>
     <div class="nav-buttons">
-        <a class="nav-button" href="#">Dashboard</a>
-        <a class="nav-button" href="#">Profile</a>
+        <a class="nav-button"
+           th:href="@{/committees/{username}/dashboard(username=${committee.userDto.username})}">
+            Dashboard
+        </a>
+        <a class="nav-button"
+           th:href="@{/committees/{username}/profile(username=${committee.userDto.username})}">
+            Profile
+        </a>
     </div>
 </div>
 
