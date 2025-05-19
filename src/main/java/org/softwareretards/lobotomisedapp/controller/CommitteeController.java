@@ -332,10 +332,6 @@ public class CommitteeController {
             @AuthenticationPrincipal User user,
             Model model) {
 
-        System.out.println("=== CONTROLLER METHOD TRIGGERED ===");
-        System.out.println("Username: " + username);
-        System.out.println("Position ID: " + positionId);
-
         // Authorization check
         if (!user.getUsername().equals(username)) {
             return "redirect:/access-denied";
@@ -358,10 +354,6 @@ public class CommitteeController {
                 .collect(Collectors.toList()));
         model.addAttribute("evaluation", evaluation);
         model.addAttribute("position", traineeshipPositionRepository.findById(positionId).orElseThrow());
-
-        System.out.println("Fetching evaluation for position ID: " + positionId);
-        System.out.println("Found evaluation: " + (evaluation != null ? evaluation.toString() : "null"));
-        System.out.println("sex");
 
         return "committees/dashboard";
     }
