@@ -4,6 +4,7 @@ import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.User;
@@ -108,26 +109,50 @@ public class ProfessorServiceImpl implements ProfessorService {
             throw new RuntimeException("Professor does not supervise this position");
         }
 
-        // Validate rating ranges (1-5)
-        validateRatings(evaluationDto);
+        Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
+                .orElseGet(() -> {
+                    Evaluation newEvaluation = new Evaluation();
+                    newEvaluation.setTraineeshipPosition(position);
+                    return newEvaluation;
+                });
 
-        // Create/update evaluation
-        Evaluation evaluation = EvaluationMapper.toEntity(evaluationDto);
-        evaluation.setTraineeshipPosition(position);
+        // Update only professor-specific fields
+        if (evaluationDto.getProfStdMotivationRating() != null)
+            evaluation.setProfStdMotivationRating(evaluationDto.getProfStdMotivationRating());
+        if (evaluationDto.getProfStdEffectivenessRating() != null)
+            evaluation.setProfStdEffectivenessRating(evaluationDto.getProfStdEffectivenessRating());
+        if (evaluationDto.getProfStdEfficiencyRating() != null)
+            evaluation.setProfStdEfficiencyRating(evaluationDto.getProfStdEfficiencyRating());
+        if (evaluationDto.getProfCompFacilitiesRating() != null)
+            evaluation.setProfCompFacilitiesRating(evaluationDto.getProfCompFacilitiesRating());
+        if (evaluationDto.getProfCompGuidanceRating() != null)
+            evaluation.setProfCompGuidanceRating(evaluationDto.getProfCompGuidanceRating());
+
+        if (evaluationDto.getFinalMark() != null) {
+            evaluation.setFinalMark(evaluationDto.getFinalMark());
+        } else {
+            evaluation.setFinalMark(FinalMark.PENDING);
+        }
+
+        // Validate rating ranges (1-5)
+        validateProfessorRatings(evaluationDto);
 
         Evaluation savedEvaluation = evaluationRepository.save(evaluation);
-
-        // Link evaluation to position
         position.setEvaluation(savedEvaluation);
         traineeshipPositionRepository.save(position);
 
         return EvaluationMapper.toDto(savedEvaluation);
     }
 
-    private void validateRatings(EvaluationDto dto) {
-        validateRating(dto.getProfessorMotivationRating());
-        validateRating(dto.getProfessorEffectivenessRating());
-        validateRating(dto.getProfessorEfficiencyRating());
+    private void validateProfessorRatings(EvaluationDto dto) {
+        validateRating(dto.getProfStdMotivationRating());
+        validateRating(dto.getProfStdEffectivenessRating());
+        validateRating(dto.getProfStdEfficiencyRating());
+        validateRating(dto.getProfCompFacilitiesRating());
+        validateRating(dto.getProfCompGuidanceRating());
+        if (dto.getFinalMark() == null) {
+            throw new RuntimeException("Final recommendation is required");
+        }
     }
 
     private void validateRating(Integer rating) {

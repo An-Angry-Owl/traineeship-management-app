@@ -4,6 +4,8 @@ import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
+import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
+import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
 import org.softwareretards.lobotomisedapp.service.ProfessorService;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,15 @@ public class ProfessorController {
 
     private final ProfessorService professorService;
     private final UserService userService;
+    private final EvaluationRepository evaluationRepository;
 
     @Autowired
-    public ProfessorController(ProfessorService professorService, UserService userService) {
+    public ProfessorController(ProfessorService professorService,
+                               UserService userService,
+                               EvaluationRepository evaluationRepository) {
         this.professorService = professorService;
         this.userService = userService;
+        this.evaluationRepository = evaluationRepository;
     }
 
     // US13: Profile Management
@@ -67,9 +73,14 @@ public class ProfessorController {
             @PathVariable Long positionId,
             Model model
     ) {
-        model.addAttribute("evaluation", new EvaluationDto());
+        // Get existing evaluation if exists
+        EvaluationDto evaluationDto = evaluationRepository.findByTraineeshipPositionId(positionId)
+                .map(EvaluationMapper::toDto)
+                .orElse(new EvaluationDto());
+
+        model.addAttribute("evaluation", evaluationDto);
         model.addAttribute("positionId", positionId);
-        return "professors/evaluation-form"; // src/main/resources/templates/professors/evaluation-form.html
+        return "professors/dashboard";
     }
 
     @PostMapping("/professors/{username}/positions/{positionId}/evaluate")

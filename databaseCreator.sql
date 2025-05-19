@@ -66,9 +66,12 @@ CREATE TABLE traineeship_positions (
 CREATE TABLE evaluations (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
                              traineeship_position_id BIGINT NOT NULL UNIQUE,
-                             prof_motivation_rating TINYINT,
-                             prof_effectiveness_rating TINYINT,
-                             prof_efficiency_rating TINYINT,
+                             prof_std_motivation_rating TINYINT,
+                             prof_std_effectiveness_rating TINYINT,
+                             prof_std_efficiency_rating TINYINT,
+                             prof_comp_facilities_rating TINYINT,
+                             prof_comp_guidance_rating TINYINT,
+
                              comp_motivation_rating TINYINT,
                              comp_effectiveness_rating TINYINT,
                              comp_efficiency_rating TINYINT,

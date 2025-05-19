@@ -124,12 +124,64 @@
         }
 
         .modal-content {
-            background-color: white;
-            margin: 5% auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
             padding: 2rem;
-            width: 60%;
+            border-radius: 16px;
+            width: 50%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .evaluation-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-item {
+            background: white;
+            padding: 1rem;
             border-radius: 8px;
-            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .rating-item select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .final-mark-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .final-mark-section select {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: 2px solid #2575fc;
+            background: white;
+            font-weight: 500;
+        }
+
+        .rating-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+            font-weight: 500;
         }
 
         .close {
@@ -225,50 +277,93 @@
 
         <form id="evaluationForm" method="post" th:object="${evaluation}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <!-- Professor Ratings -->
-            <div class="form-section">
+            <div class="evaluation-section">
                 <h3>Student Evaluation</h3>
-                <div class="rating-group">
-                    <label>Motivation:
-                        <input type="number" th:field="*{professorMotivationRating}" min="1" max="5" required>
-                    </label>
-                    <label>Effectiveness:
-                        <input type="number" th:field="*{professorEffectivenessRating}" min="1" max="5" required>
-                    </label>
-                    <label>Efficiency:
-                        <input type="number" th:field="*{professorEfficiencyRating}" min="1" max="5" required>
-                    </label>
+                <div class="rating-grid">
+                    <div class="rating-item">
+                        <label>Motivation</label>
+                        <select th:field="*{profStdMotivationRating}" required>
+                            <option value="">Select (1-5)</option>
+                            <option value="1">1 - Needs Improvement</option>
+                            <option value="2">2 - Developing</option>
+                            <option value="3">3 - Competent</option>
+                            <option value="4">4 - Proficient</option>
+                            <option value="5">5 - Exemplary</option>
+                        </select>
+                    </div>
+                    <div class="rating-item">
+                        <label>Effectiveness</label>
+                        <select th:field="*{profStdEffectivenessRating}" required>
+                            <option value="">Select (1-5)</option>
+                            <option value="1">1 - Needs Improvement</option>
+                            <option value="2">2 - Developing</option>
+                            <option value="3">3 - Competent</option>
+                            <option value="4">4 - Proficient</option>
+                            <option value="5">5 - Exemplary</option>
+                        </select>
+                    </div>
+                    <div class="rating-item">
+                        <label>Efficiency</label>
+                        <select th:field="*{profStdEfficiencyRating}" required>
+                            <option value="">Select (1-5)</option>
+                            <option value="1">1 - Needs Improvement</option>
+                            <option value="2">2 - Developing</option>
+                            <option value="3">3 - Competent</option>
+                            <option value="4">4 - Proficient</option>
+                            <option value="5">5 - Exemplary</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Company Ratings -->
-            <div class="form-section">
+            <div class="evaluation-section">
                 <h3>Company Evaluation</h3>
-                <div class="rating-group">
-                    <label>Motivation:
-                        <input type="number" th:field="*{companyMotivationRating}" min="1" max="5" required>
-                    </label>
-                    <label>Effectiveness:
-                        <input type="number" th:field="*{companyEffectivenessRating}" min="1" max="5" required>
-                    </label>
-                    <label>Efficiency:
-                        <input type="number" th:field="*{companyEfficiencyRating}" min="1" max="5" required>
-                    </label>
+                <div class="rating-grid">
+                    <div class="rating-item">
+                        <label>Facilities</label>
+                        <select th:field="*{profCompFacilitiesRating}" required>
+                            <option value="">Select (1-5)</option>
+                            <option value="1">1 - Needs Improvement</option>
+                            <option value="2">2 - Developing</option>
+                            <option value="3">3 - Competent</option>
+                            <option value="4">4 - Proficient</option>
+                            <option value="5">5 - Exemplary</option>
+                        </select>
+                    </div>
+                    <div class="rating-item">
+                        <label>Guidance</label>
+                        <select th:field="*{profCompGuidanceRating}" required>
+                            <option value="">Select (1-5)</option>
+                            <option value="1">1 - Needs Improvement</option>
+                            <option value="2">2 - Developing</option>
+                            <option value="3">3 - Competent</option>
+                            <option value="4">4 - Proficient</option>
+                            <option value="5">5 - Exemplary</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- Final Mark -->
-            <div class="form-section">
-                <label>Final Mark:
-                    <select th:field="*{finalMark}" required>
-                        <option value="PASS">Pass</option>
-                        <option value="FAIL">Fail</option>
-                        <option value="PENDING">Pending</option>
-                    </select>
-                </label>
+            <div class="final-mark-section">
+                <label>Final Recommendation:</label>
+                <select th:field="*{finalMark}" required>
+                    <option value="PASS"
+                            th:selected="${evaluation.finalMark?.name() == 'PASS'}"
+                            style="color: #28a745;">Pass</option>
+                    <option value="FAIL"
+                            th:selected="${evaluation.finalMark?.name() == 'FAIL'}"
+                            style="color: #dc3545;">Fail</option>
+                    <option value="PENDING"
+                            th:selected="${evaluation.finalMark == null || evaluation.finalMark?.name() == 'PENDING'}"
+                    >Pending</option>
+                </select>
             </div>
 
-            <button type="submit" class="apply-button">Submit Evaluation</button>
+            <div class="form-actions" style="margin-top: 2rem; justify-content: center;">
+                <button type="submit" class="save-button" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                    Submit Evaluation
+                </button>
+            </div>
         </form>
     </div>
 </div>

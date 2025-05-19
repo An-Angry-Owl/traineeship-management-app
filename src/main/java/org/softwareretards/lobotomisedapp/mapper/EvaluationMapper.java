@@ -16,12 +16,11 @@ public class EvaluationMapper {
         if (entity.getTraineeshipPosition() != null) {
             dto.setTraineeshipPositionId(entity.getTraineeshipPosition().getId());
         }
-        dto.setProfessorMotivationRating(entity.getProfessorMotivationRating());
-        dto.setProfessorEffectivenessRating(entity.getProfessorEffectivenessRating());
-        dto.setProfessorEfficiencyRating(entity.getProfessorEfficiencyRating());
-        dto.setCompanyMotivationRating(entity.getCompanyMotivationRating());
-        dto.setCompanyEffectivenessRating(entity.getCompanyEffectivenessRating());
-        dto.setCompanyEfficiencyRating(entity.getCompanyEfficiencyRating());
+        dto.setProfStdMotivationRating(entity.getProfStdMotivationRating());
+        dto.setProfStdEffectivenessRating(entity.getProfStdEffectivenessRating());
+        dto.setProfStdEfficiencyRating(entity.getProfStdEfficiencyRating());
+        dto.setProfCompFacilitiesRating(entity.getProfCompFacilitiesRating());
+        dto.setProfCompGuidanceRating(entity.getProfCompGuidanceRating());
 
         dto.setCompStdMotivationRating(entity.getCompStdMotivationRating());
         dto.setCompStdEffectivenessRating(entity.getCompStdEffectivenessRating());
@@ -37,12 +36,11 @@ public class EvaluationMapper {
 
         Evaluation entity = new Evaluation();
         entity.setId(dto.getId());
-        entity.setProfessorMotivationRating(dto.getProfessorMotivationRating());
-        entity.setProfessorEffectivenessRating(dto.getProfessorEffectivenessRating());
-        entity.setProfessorEfficiencyRating(dto.getProfessorEfficiencyRating());
-        entity.setCompanyMotivationRating(dto.getCompanyMotivationRating());
-        entity.setCompanyEffectivenessRating(dto.getCompanyEffectivenessRating());
-        entity.setCompanyEfficiencyRating(dto.getCompanyEfficiencyRating());
+        entity.setProfStdMotivationRating(dto.getProfStdMotivationRating());
+        entity.setProfStdEffectivenessRating(dto.getProfStdEffectivenessRating());
+        entity.setProfStdEfficiencyRating(dto.getProfStdEfficiencyRating());
+        entity.setProfCompFacilitiesRating(dto.getProfCompFacilitiesRating());
+        entity.setProfCompGuidanceRating(dto.getProfCompGuidanceRating());
 
         entity.setCompStdMotivationRating(dto.getCompStdMotivationRating());
         entity.setCompStdEffectivenessRating(dto.getCompStdEffectivenessRating());

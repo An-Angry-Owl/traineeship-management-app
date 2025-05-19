@@ -9,13 +9,20 @@ import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 public class EvaluationDto {
     private Long id;
     private Long traineeshipPositionId;
+    // Professor-specific ratings
+    private Integer profStdMotivationRating;
+    private Integer profStdEffectivenessRating;
+    private Integer profStdEfficiencyRating;
+    private Integer profCompFacilitiesRating;
+    private Integer profCompGuidanceRating;
+
     private Integer professorMotivationRating;
     private Integer professorEffectivenessRating;
     private Integer professorEfficiencyRating;
     private Integer companyMotivationRating;
     private Integer companyEffectivenessRating;
     private Integer companyEfficiencyRating;
-
+    // Company-specific ratings
     private Integer compStdMotivationRating;
     private Integer compStdEffectivenessRating;
     private Integer compStdEfficiencyRating;
