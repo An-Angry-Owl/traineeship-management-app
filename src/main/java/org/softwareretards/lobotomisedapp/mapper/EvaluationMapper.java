@@ -22,6 +22,11 @@ public class EvaluationMapper {
         dto.setCompanyMotivationRating(entity.getCompanyMotivationRating());
         dto.setCompanyEffectivenessRating(entity.getCompanyEffectivenessRating());
         dto.setCompanyEfficiencyRating(entity.getCompanyEfficiencyRating());
+
+        dto.setCompStdMotivationRating(entity.getCompStdMotivationRating());
+        dto.setCompStdEffectivenessRating(entity.getCompStdEffectivenessRating());
+        dto.setCompStdEfficiencyRating(entity.getCompStdEfficiencyRating());
+
         dto.setFinalMark(entity.getFinalMark());
 
         return dto;
@@ -38,6 +43,11 @@ public class EvaluationMapper {
         entity.setCompanyMotivationRating(dto.getCompanyMotivationRating());
         entity.setCompanyEffectivenessRating(dto.getCompanyEffectivenessRating());
         entity.setCompanyEfficiencyRating(dto.getCompanyEfficiencyRating());
+
+        entity.setCompStdMotivationRating(dto.getCompStdMotivationRating());
+        entity.setCompStdEffectivenessRating(dto.getCompStdEffectivenessRating());
+        entity.setCompStdEfficiencyRating(dto.getCompStdEfficiencyRating());
+
         entity.setFinalMark(dto.getFinalMark());
 
         return entity;

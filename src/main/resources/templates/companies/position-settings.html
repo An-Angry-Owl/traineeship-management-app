@@ -255,10 +255,46 @@
 
     <!-- Evaluation Section -->
     <div class="form-section evaluation-section">
-        <div class="evaluation-placeholder">
-            <h3>Evaluation Section</h3>
-            <p>Evaluation functionality is coming soon!</p>
-        </div>
+        <h3>Evaluate Trainee</h3>
+        <form th:action="@{/companies/{username}/traineeships/{positionId}/evaluate(username=${companyUsername}, positionId=${position.id})}"
+              method="post">
+            <div class="form-group">
+                <label>Motivation Rating</label>
+                <select name="motivation" class="form-control" required>
+                    <option value="">Select rating (1-5)</option>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="3">3 - Good</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Effectiveness Rating</label>
+                <select name="effectiveness" class="form-control" required>
+                    <option value="">Select rating (1-5)</option>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="3">3 - Good</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Efficiency Rating</label>
+                <select name="efficiency" class="form-control" required>
+                    <option value="">Select rating (1-5)</option>
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="3">3 - Good</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="save-button">Submit Evaluation</button>
+            </div>
+        </form>
     </div>
 
     <!-- Delete Section -->

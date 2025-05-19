@@ -157,15 +157,22 @@ public class CompanyController {
     }
 
     // Submit traineeship evaluation
-    @PostMapping("/traineeships/{traineeshipId}/evaluate")
+    @PostMapping("/{username}/traineeships/{traineeshipId}/evaluate")
     public String evaluateTrainee(
+            @PathVariable String username,
             @PathVariable Long traineeshipId,
             @RequestParam Integer motivation,
             @RequestParam Integer effectiveness,
-            @RequestParam Integer efficiency) {
+            @RequestParam Integer efficiency,
+            RedirectAttributes redirectAttributes) {
 
-        String username = String.valueOf(companyService.evaluateTrainee(traineeshipId, motivation, effectiveness, efficiency));
-        return "redirect:/companies/" + username + "/traineeships/" + traineeshipId;
+        try {
+            companyService.evaluateTrainee(username, traineeshipId, motivation, effectiveness, efficiency);
+            redirectAttributes.addFlashAttribute("success", "Evaluation submitted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/companies/" + username + "/traineeships/" + traineeshipId + "/settings";
     }
 
     @GetMapping("/{username}/dashboard")

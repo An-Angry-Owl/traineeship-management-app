@@ -157,19 +157,30 @@ public class CompanyServiceImpl implements CompanyService {
     // US12: Fill in an evaluation for a traineeship (Company Side)
     @Override
     @Transactional
-    public Evaluation evaluateTrainee(Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency) {
-        Optional<Evaluation> evaluationOpt = evaluationRepository.findByTraineeshipPositionId(traineeshipPositionId);
+    public String evaluateTrainee(String username, Long traineeshipPositionId,
+                                  Integer motivation, Integer effectiveness, Integer efficiency) {
+        // Verify traineeship belongs to the company
+        TraineeshipPosition position = traineeshipPositionRepository
+                .findByIdAndCompanyUsername(traineeshipPositionId, username)
+                .orElseThrow(() -> new RuntimeException("Position not found"));
 
-        if (evaluationOpt.isEmpty()) {
-            throw new RuntimeException("No evaluation found for this traineeship position.");
-        }
+        // Get or create evaluation
+        Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(traineeshipPositionId)
+                .orElseGet(() -> {
+                    Evaluation newEvaluation = new Evaluation();
+                    newEvaluation.setTraineeshipPosition(position); // Set required relationship
+                    return newEvaluation;
+                });
 
-        Evaluation evaluation = evaluationOpt.get();
-        evaluation.setCompanyMotivationRating(motivation);
-        evaluation.setCompanyEffectivenessRating(effectiveness);
-        evaluation.setCompanyEfficiencyRating(efficiency);
+        // Set the student evaluation fields (company's perspective)
+        evaluation.setCompStdMotivationRating(motivation);
+        evaluation.setCompStdEffectivenessRating(effectiveness);
+        evaluation.setCompStdEfficiencyRating(efficiency);
 
-        return evaluationRepository.save(evaluation);
+        // Save or update the evaluation
+        evaluationRepository.save(evaluation);
+
+        return username;
     }
 
     @Override

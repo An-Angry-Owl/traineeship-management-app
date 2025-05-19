@@ -15,5 +15,10 @@ public class EvaluationDto {
     private Integer companyMotivationRating;
     private Integer companyEffectivenessRating;
     private Integer companyEfficiencyRating;
+
+    private Integer compStdMotivationRating;
+    private Integer compStdEffectivenessRating;
+    private Integer compStdEfficiencyRating;
+
     private FinalMark finalMark;
 }

@@ -31,7 +31,7 @@ public interface CompanyService {
 
     void deleteTraineeship(Long traineeshipId);
 
-    Evaluation evaluateTrainee(Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency);
+    String evaluateTrainee(String username, Long traineeshipPositionId, Integer motivation, Integer effectiveness, Integer efficiency);
 
     Optional<CompanyDto> findCompanyById(Long id);
 

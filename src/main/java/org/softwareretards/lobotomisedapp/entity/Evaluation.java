@@ -52,6 +52,18 @@ public class Evaluation {
     @Column(name = "comp_efficiency_rating")
     private Integer companyEfficiencyRating;
 
+    @Min(1) @Max(5)
+    @Column(name = "comp_std_motivation_rating")
+    private Integer compStdMotivationRating;
+
+    @Min(1) @Max(5)
+    @Column(name = "comp_std_effectiveness_rating")
+    private Integer compStdEffectivenessRating;
+
+    @Min(1) @Max(5)
+    @Column(name = "comp_std_efficiency_rating")
+    private Integer compStdEfficiencyRating;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "final_mark")
     private FinalMark finalMark = FinalMark.PENDING;
