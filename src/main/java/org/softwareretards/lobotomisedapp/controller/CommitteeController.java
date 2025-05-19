@@ -4,11 +4,14 @@ import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
+import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
+import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
@@ -44,6 +47,7 @@ public class CommitteeController {
     private final RecommendationsService recommendationsService;
     private final TraineeshipApplicationRepository traineeshipApplicationRepository;
     private final SearchService searchService;
+    private final EvaluationRepository evaluationRepository;
 
     @Autowired
     public CommitteeController(CommitteeService committeeService,
@@ -54,7 +58,8 @@ public class CommitteeController {
                                UserRepository userRepository,
                                RecommendationsService recommendationsService,
                                TraineeshipApplicationRepository traineeshipApplicationRepository,
-                               SearchService searchService) {
+                               SearchService searchService,
+                               EvaluationRepository evaluationRepository) {
         this.committeeService = committeeService;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.professorRepository = professorRepository;
@@ -64,6 +69,7 @@ public class CommitteeController {
         this.recommendationsService = recommendationsService;
         this.traineeshipApplicationRepository = traineeshipApplicationRepository;
         this.searchService = searchService;
+        this.evaluationRepository = evaluationRepository;
     }
 
     @GetMapping("/list")
@@ -315,5 +321,36 @@ public class CommitteeController {
 
 
         return "redirect:/committees/student-list?studentId=" + studentId;
+    }
+
+    @GetMapping("/committees/{username}/traineeships/{positionId}/info")
+    public String showEvaluationInfo(@PathVariable String username,
+                                     @PathVariable Long positionId,
+                                     Model model) {
+        Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
+                .orElse(null);
+
+        model.addAttribute("evaluation", evaluation);
+        model.addAttribute("position", traineeshipPositionRepository.findById(positionId).orElseThrow());
+        return "committees/dashboard"; // Return to dashboard with modal data
+    }
+
+    @PostMapping("/committees/{username}/update-final-mark")
+    public String updateFinalMark(@PathVariable String username,
+                                  @RequestParam Long positionId,
+                                  @RequestParam FinalMark finalMark,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
+                    .orElseThrow(() -> new RuntimeException("Evaluation not found"));
+
+            evaluation.setFinalMark(finalMark);
+            evaluationRepository.save(evaluation);
+
+            redirectAttributes.addFlashAttribute("success", "Final mark updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error updating final mark: " + e.getMessage());
+        }
+        return "redirect:/committees/" + username + "/dashboard";
     }
 }

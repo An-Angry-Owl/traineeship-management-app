@@ -111,6 +111,65 @@
             color: #666;
             font-style: italic;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 60%;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .rating-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .rating-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .rating-item input {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+        }
+
+        .final-mark-section {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .final-mark-section select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -167,6 +226,92 @@
     </div>
 </div>
 
+<div id="evaluationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="section-title">Traineeship Evaluation Details</h2>
+
+        <div th:if="${evaluation}">
+            <!-- Student Evaluation -->
+            <div class="evaluation-section">
+                <h3>Student Evaluation by Professor</h3>
+                <div class="rating-grid">
+                    <div class="rating-item">
+                        <label>Motivation</label>
+                        <input type="text" th:value="${evaluation.profStdMotivationRating}" readonly>
+                    </div>
+                    <div class="rating-item">
+                        <label>Effectiveness</label>
+                        <input type="text" th:value="${evaluation.profStdEffectivenessRating}" readonly>
+                    </div>
+                    <div class="rating-item">
+                        <label>Efficiency</label>
+                        <input type="text" th:value="${evaluation.profStdEfficiencyRating}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Evaluation -->
+            <div class="evaluation-section">
+                <h3>Company Evaluation by Professor</h3>
+                <div class="rating-grid">
+                    <div class="rating-item">
+                        <label>Facilities</label>
+                        <input type="text" th:value="${evaluation.profCompFacilitiesRating}" readonly>
+                    </div>
+                    <div class="rating-item">
+                        <label>Guidance</label>
+                        <input type="text" th:value="${evaluation.profCompGuidanceRating}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company's Student Evaluation -->
+            <div class="evaluation-section">
+                <h3>Student Evaluation by Company</h3>
+                <div class="rating-grid">
+                    <div class="rating-item">
+                        <label>Motivation</label>
+                        <input type="text" th:value="${evaluation.compStdMotivationRating}" readonly>
+                    </div>
+                    <div class="rating-item">
+                        <label>Effectiveness</label>
+                        <input type="text" th:value="${evaluation.compStdEffectivenessRating}" readonly>
+                    </div>
+                    <div class="rating-item">
+                        <label>Efficiency</label>
+                        <input type="text" th:value="${evaluation.compStdEfficiencyRating}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Mark Update Form -->
+            <form th:action="@{/committees/{username}/update-final-mark(username=${committee.userDto.username})}"
+                  method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="positionId" th:value="${position.id}">
+
+                <div class="final-mark-section">
+                    <label>Final Decision:</label>
+                    <select name="finalMark" required>
+                        <option value="PASS" th:selected="${evaluation.finalMark.name() == 'PASS'}">Pass</option>
+                        <option value="FAIL" th:selected="${evaluation.finalMark.name() == 'FAIL'}">Fail</option>
+                        <option value="PENDING" th:selected="${evaluation.finalMark.name() == 'PENDING'}">Pending</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="save-button">Update Final Mark</button>
+                </div>
+            </form>
+        </div>
+
+        <div th:unless="${evaluation}" class="empty-state">
+            <p>No evaluation data available yet</p>
+        </div>
+    </div>
+</div>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function() {
@@ -174,6 +319,23 @@
         const username = /*[[${committee.userDto.username}]]*/ 'Committee';
         profileIcon.textContent = username.charAt(0).toUpperCase();
     });
+
+    document.querySelectorAll('.info-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('evaluationModal').style.display = 'block';
+        });
+    });
+
+    document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('evaluationModal').style.display = 'none';
+    });
+
+    window.onclick = (event) => {
+        if (event.target === document.getElementById('evaluationModal')) {
+            document.getElementById('evaluationModal').style.display = 'none';
+        }
+    }
     /*]]>*/
 </script>
 </body>

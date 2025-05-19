@@ -71,11 +71,6 @@ CREATE TABLE evaluations (
                              prof_std_efficiency_rating TINYINT,
                              prof_comp_facilities_rating TINYINT,
                              prof_comp_guidance_rating TINYINT,
-
-                             comp_motivation_rating TINYINT,
-                             comp_effectiveness_rating TINYINT,
-                             comp_efficiency_rating TINYINT,
-
                              comp_std_motivation_rating TINYINT,
                              comp_std_effectiveness_rating TINYINT,
                              comp_std_efficiency_rating TINYINT,
