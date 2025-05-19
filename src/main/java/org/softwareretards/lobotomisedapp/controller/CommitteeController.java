@@ -358,7 +358,7 @@ public class CommitteeController {
         return "committees/dashboard";
     }
 
-    @PostMapping("/committees/{username}/update-final-mark")
+    @PostMapping("/{username}/update-final-mark")
     public String updateFinalMark(@PathVariable String username,
                                   @RequestParam Long positionId,
                                   @RequestParam FinalMark finalMark,

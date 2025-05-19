@@ -285,8 +285,7 @@
             </div>
 
             <!-- Final Mark Update Form -->
-            <form th:action="@{/committees/{username}/update-final-mark(username=${committee.userDto.username})}"
-                  method="post">
+            <form th:action="@{/committees/{username}/update-final-mark(username=${committee.userDto.username})}" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="positionId" th:value="${position.id}">
 
