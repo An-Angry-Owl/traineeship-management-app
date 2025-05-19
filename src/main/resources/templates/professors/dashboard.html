@@ -224,7 +224,7 @@
         <h2 class="section-title">Traineeship Evaluation</h2>
 
         <form id="evaluationForm" method="post" th:object="${evaluation}">
-
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <!-- Professor Ratings -->
             <div class="form-section">
                 <h3>Student Evaluation</h3>
