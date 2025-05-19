@@ -20,12 +20,10 @@ import java.util.stream.Collectors;
 public class TraineeshipPositionMapper {
 
     public static TraineeshipPositionDto toDto(TraineeshipPosition entity) {
-        if (entity == null) {
-            return null;
-        }
+        if (entity == null) return null;
+
         TraineeshipPositionDto dto = new TraineeshipPositionDto();
         dto.setId(entity.getId());
-        // TODO: add a name in the proper way
         dto.setPositionName(entity.getDescription());
         dto.setStartDate(entity.getStartDate());
         dto.setEndDate(entity.getEndDate());
