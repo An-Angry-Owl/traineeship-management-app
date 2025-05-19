@@ -144,4 +144,14 @@ public class StudentServiceImpl implements StudentService {
         List<TraineeshipPosition> positions = traineeshipPositionRepository.findOpenPositions();
         return TraineeshipPositionMapper.toDtoList(positions);
     }
+
+    @Override
+    public TraineeshipPositionDto getCurrentTraineeship(String username) {
+        List<TraineeshipPosition> positions = traineeshipPositionRepository.findByStudentUsername(username);
+        if (positions.isEmpty()) {
+            return null;
+        }
+
+        return TraineeshipPositionMapper.toDto(positions.get(0));
+    }
 }

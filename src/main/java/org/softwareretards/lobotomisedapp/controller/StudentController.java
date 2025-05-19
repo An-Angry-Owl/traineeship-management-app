@@ -112,7 +112,7 @@ public class StudentController {
         model.addAttribute("student", studentDto);
 
         // Add this mock data - you'll need to implement proper service later
-        TraineeshipApplicationDto currentTraineeship = null; // Replace with actual service call
+        TraineeshipPositionDto currentTraineeship = studentService.getCurrentTraineeship(username);
         model.addAttribute("currentTraineeship", currentTraineeship);
 
         return "students/dashboard";

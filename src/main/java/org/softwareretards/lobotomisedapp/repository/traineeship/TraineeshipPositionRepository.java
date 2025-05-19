@@ -55,4 +55,7 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
 
     @Query("SELECT p FROM TraineeshipPosition p WHERE p.status = 'OPEN' ORDER BY (SELECT COUNT(tp) FROM TraineeshipPosition tp WHERE tp.professor.id = p.professor.id) ASC")
     List<TraineeshipPosition> findAvailablePositionsOrderByProfessorWorkload();
+
+    @Query("SELECT t FROM TraineeshipPosition t WHERE t.student.username = :username")
+    List<TraineeshipPosition> findByStudentUsername(@Param("username") String username);
 }

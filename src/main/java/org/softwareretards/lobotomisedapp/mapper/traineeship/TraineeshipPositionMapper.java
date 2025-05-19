@@ -24,6 +24,8 @@ public class TraineeshipPositionMapper {
         }
         TraineeshipPositionDto dto = new TraineeshipPositionDto();
         dto.setId(entity.getId());
+        // TODO: add a name in the proper way
+        dto.setPositionName(entity.getDescription());
         dto.setStartDate(entity.getStartDate());
         dto.setEndDate(entity.getEndDate());
         dto.setDescription(entity.getDescription());

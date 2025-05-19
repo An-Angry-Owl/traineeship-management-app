@@ -17,6 +17,8 @@ import java.util.List;
 @Data
 public class TraineeshipPositionDto {
     private Long id;
+    // TODO: Add a name the proper way
+    private String positionName;
     private CompanyDto company;
     private StudentDto student;
     private ProfessorDto professor;
