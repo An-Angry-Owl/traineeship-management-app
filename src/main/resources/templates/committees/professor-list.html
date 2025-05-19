@@ -258,7 +258,15 @@
                     </div>
 
                     <div class="position-meta">
-                        <button class="assign-btn">Assign Professor</button>
+                        <form th:action="@{/committees/assignProfessor}" method="post">
+                            <input type="hidden" name="committeeId" th:value="${committee.userDto.id}">
+                            <input type="hidden" name="professorId" th:value="${selectedProfessor.userDto.id}">
+                            <input type="hidden" name="traineeshipId" th:value="${position.id}">
+                            <button type="submit" class="assign-btn"
+                                    th:onclick="|return confirm('Assign professor to this position?')|">
+                                Assign Professor
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

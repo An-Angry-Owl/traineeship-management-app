@@ -120,11 +120,18 @@ public class CommitteeController {
     }
 
     @PostMapping("/assignProfessor")
-    public String assignSupervisingProfessor(@RequestParam Long committeeId,
-                                             @RequestParam Long traineeshipId,
-                                             @RequestParam Long professorId) {
-        committeeService.assignSupervisingProfessor(committeeId, traineeshipId, professorId);
-        return "redirect:/committee/list";
+    public String assignSupervisingProfessor(
+            @RequestParam Long committeeId,
+            @RequestParam Long traineeshipId,
+            @RequestParam Long professorId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            committeeService.assignSupervisingProfessor(committeeId, traineeshipId, professorId);
+            redirectAttributes.addFlashAttribute("success", "Professor assigned successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/committees/professor-list?professorId=" + professorId;
     }
 
     @GetMapping("/monitorEvaluations/{traineeshipId}")
