@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 public class EvaluationMapper {
 
     public static EvaluationDto toDto(Evaluation entity) {
-        if (entity == null) {
-            return null;
-        }
+        if (entity == null) return null;
+
         EvaluationDto dto = new EvaluationDto();
         dto.setId(entity.getId());
-        dto.setTraineeshipPosition(TraineeshipPositionMapper.toDto(entity.getTraineeshipPosition()));
+        if (entity.getTraineeshipPosition() != null) {
+            dto.setTraineeshipPositionId(entity.getTraineeshipPosition().getId());
+        }
         dto.setProfessorMotivationRating(entity.getProfessorMotivationRating());
         dto.setProfessorEffectivenessRating(entity.getProfessorEffectivenessRating());
         dto.setProfessorEfficiencyRating(entity.getProfessorEfficiencyRating());
@@ -22,16 +23,15 @@ public class EvaluationMapper {
         dto.setCompanyEffectivenessRating(entity.getCompanyEffectivenessRating());
         dto.setCompanyEfficiencyRating(entity.getCompanyEfficiencyRating());
         dto.setFinalMark(entity.getFinalMark());
+
         return dto;
     }
 
     public static Evaluation toEntity(EvaluationDto dto) {
-        if (dto == null) {
-            return null;
-        }
+        if (dto == null) return null;
+
         Evaluation entity = new Evaluation();
         entity.setId(dto.getId());
-        entity.setTraineeshipPosition(TraineeshipPositionMapper.toEntity(dto.getTraineeshipPosition()));
         entity.setProfessorMotivationRating(dto.getProfessorMotivationRating());
         entity.setProfessorEffectivenessRating(dto.getProfessorEffectivenessRating());
         entity.setProfessorEfficiencyRating(dto.getProfessorEfficiencyRating());
@@ -39,6 +39,7 @@ public class EvaluationMapper {
         entity.setCompanyEffectivenessRating(dto.getCompanyEffectivenessRating());
         entity.setCompanyEfficiencyRating(dto.getCompanyEfficiencyRating());
         entity.setFinalMark(dto.getFinalMark());
+
         return entity;
     }
 }

@@ -1,5 +1,6 @@
 package org.softwareretards.lobotomisedapp.mapper.traineeship;
 
+import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.LogbookEntryDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.LogbookEntry;
@@ -48,6 +49,13 @@ public class TraineeshipPositionMapper {
 
         // Map one-to-one Evaluation if present
         dto.setEvaluation(EvaluationMapper.toDto(entity.getEvaluation()));
+
+        if (entity.getEvaluation() != null) {
+            EvaluationDto evaluationDto = new EvaluationDto();
+            evaluationDto.setId(entity.getEvaluation().getId());
+            evaluationDto.setFinalMark(entity.getEvaluation().getFinalMark());
+            dto.setEvaluation(evaluationDto);
+        }
 
         return dto;
     }

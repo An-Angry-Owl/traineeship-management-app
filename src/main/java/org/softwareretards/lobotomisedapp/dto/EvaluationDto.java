@@ -8,7 +8,7 @@ import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 @Data
 public class EvaluationDto {
     private Long id;
-    private TraineeshipPositionDto traineeshipPosition;
+    private Long traineeshipPositionId;
     private Integer professorMotivationRating;
     private Integer professorEffectivenessRating;
     private Integer professorEfficiencyRating;
