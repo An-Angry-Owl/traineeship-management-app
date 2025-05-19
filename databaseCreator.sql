@@ -72,6 +72,10 @@ CREATE TABLE evaluations (
                              comp_motivation_rating TINYINT,
                              comp_effectiveness_rating TINYINT,
                              comp_efficiency_rating TINYINT,
+
+                             comp_std_motivation_rating TINYINT,
+                             comp_std_effectiveness_rating TINYINT,
+                             comp_std_efficiency_rating TINYINT,
                              final_mark ENUM('PASS','FAIL','PENDING') DEFAULT 'PENDING',
                              CONSTRAINT fk_evaluations_position FOREIGN KEY (traineeship_position_id) REFERENCES traineeship_positions(id)
 );
