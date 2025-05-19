@@ -14,4 +14,6 @@ public interface StudentService {
     LogbookEntryDto saveLogbookEntry(String studentUsername, Long positionId, String content);
     List<TraineeshipPositionDto> getOpenTraineeshipPositions();
     TraineeshipPositionDto getCurrentTraineeship(String username);
+
+    List<LogbookEntryDto> getLogbookEntries(String username, Long id);
 }

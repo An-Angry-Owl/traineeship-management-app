@@ -227,12 +227,12 @@
 
             <div class="strategy-buttons">
                 <button class="strategy-btn"
-                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.search.SearchType).INTEREST_BASED} ? 'active'"
+                        th:classappend="${selectedStrategy?.name() == 'INTEREST_BASED'} ? 'active'"
                         th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'INTEREST_BASED')|">
                     By Interests
                 </button>
                 <button class="strategy-btn"
-                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.search.SearchType).WORKLOAD} ? 'active'"
+                        th:classappend="${selectedStrategy?.name() == 'WORKLOAD'} ? 'active'"
                         th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'WORKLOAD')|">
                     By Workload
                 </button>

@@ -261,17 +261,17 @@
 
             <div class="strategy-buttons">
                 <button class="strategy-btn"
-                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).INTEREST_BASED} ? 'active'"
+                        th:classappend="${selectedStrategy?.name() == 'INTEREST_BASED'} ? 'active'"
                         th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'INTEREST_BASED')|">
                     By Interests
                 </button>
                 <button class="strategy-btn"
-                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).LOCATION_BASED} ? 'active'"
+                        th:classappend="${selectedStrategy?.name() == 'LOCATION_BASED'} ? 'active'"
                         th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'LOCATION_BASED')|">
                     By Location
                 </button>
                 <button class="strategy-btn"
-                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType).COMBINED} ? 'active'"
+                        th:classappend="${selectedStrategy?.name() == 'COMBINED'} ? 'active'"
                         th:onclick="|updateRecommendations(${selectedStudent.userDto.id}, 'COMBINED')|">
                     Both
                 </button>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard</title>
+    <title>Logbook Entries</title>
     <style>
         body {
             margin: 0;
@@ -50,12 +50,15 @@
             text-align: center;
         }
 
-        .traineeship-section {
+        .entries-section {
             background-color: white;
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .section-title {
@@ -68,30 +71,56 @@
             text-align: center;
         }
 
-        .program-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
+        .entry-card {
             background-color: #f8f9fa;
+            padding: 1.5rem;
             border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .logbook-button {
-            background-color: #dc3545;
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .entry-date {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .entry-content {
+            color: #212529;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .no-entries {
+            text-align: center;
+            color: #6c757d;
+            padding: 2rem;
+        }
+
+        .new-entry-button {
+            background-color: #2575fc;
             color: white;
             padding: 0.8rem 1.5rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: block;
+            margin: 2rem auto 0;
             text-decoration: none;
-            display: inline-block;
+            text-align: center;
+            width: fit-content;
         }
 
-        .logbook-button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
+        .new-entry-button:hover {
+            background-color: #1a5dc8;
         }
     </style>
 </head>
@@ -101,8 +130,8 @@
 
     <div class="nav-buttons">
         <a class="nav-button"
-           th:href="@{/students/{username}/traineeships(username=${student.userDto.username})}">
-            Traineeship Positions
+           th:href="@{/students/{username}/dashboard(username=${student.userDto.username})}">
+            Dashboard
         </a>
         <a class="nav-button"
            th:href="@{/students/{username}/profile(username=${student.userDto.username})}">
@@ -111,29 +140,28 @@
     </div>
 </div>
 
-<div class="traineeship-section">
-    <h2 class="section-title">Current Traineeship Program</h2>
-    <div class="program-box">
-        <div class="program-info" th:text="${currentTraineeship?.positionName ?: 'None selected'}"></div>
-        <div class="action-buttons" style="display: flex; gap: 1rem;">
-            <a class="logbook-button"
-               th:unless="${currentTraineeship == null}"
-               th:href="@{/students/{username}/logbook(username=${student.userDto.username})}">
-                New Entry
-            </a>
-            <a class="logbook-button"
-               th:unless="${currentTraineeship == null}"
-               th:href="@{/students/{username}/logbook/entries(username=${student.userDto.username})}"
-               style="background-color: #28a745;">
-                View Entries
-            </a>
-            <button class="logbook-button"
-                    th:if="${currentTraineeship == null}"
-                    disabled>
-                Logbook
-            </button>
-        </div>
+<div class="entries-section">
+    <h2 class="section-title">Logbook Entries</h2>
+
+    <div class="program-info" style="margin-bottom: 1.5rem; font-weight: 600;">
+        Traineeship: <span th:text="${currentTraineeship.positionName}"></span>
     </div>
+
+    <div th:if="${entries.size() == 0}" class="no-entries">
+        No logbook entries yet. Start by creating your first entry!
+    </div>
+
+    <div th:each="entry : ${entries}" class="entry-card">
+        <div class="entry-header">
+            <span class="entry-date" th:text="${#dates.format(entry.entryDate, 'dd/MM/yyyy')}"></span>
+        </div>
+        <div class="entry-content" th:text="${entry.content}"></div>
+    </div>
+
+    <a class="new-entry-button"
+       th:href="@{/students/{username}/logbook(username=${student.userDto.username})}">
+        Create New Entry
+    </a>
 </div>
 </body>
 </html>

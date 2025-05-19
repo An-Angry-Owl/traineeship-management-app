@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -116,6 +117,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public LogbookEntryDto saveLogbookEntry(String studentUsername, Long positionId, String content) {
+        // Validate content
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("Logbook entry content cannot be empty");
+        }
+        // Validate position ID
+        if (positionId == null) {
+            throw new RuntimeException("Traineeship position ID cannot be null");
+        }
+        // Validate student username
+        if (studentUsername == null || studentUsername.isEmpty()) {
+            throw new RuntimeException("Student username cannot be empty");
+        }
+
         // Retrieve student
         User user = userRepository.findByUsername(studentUsername)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -133,10 +147,23 @@ public class StudentServiceImpl implements StudentService {
         }
 
         // Create and save logbook entry
-        LogbookEntry logbookEntry = new LogbookEntry(student, position, content);
-        LogbookEntry savedEntry = logbookEntryRepository.save(logbookEntry);
+        // Instead of using the mapper to create the entity:
+        LogbookEntry entry = new LogbookEntry();
+        entry.setStudent(student); // student entity fetched from repository
+        entry.setPosition(position); // position entity fetched from repository
+        entry.setContent(content);
+        entry.setEntryDate(new Timestamp(System.currentTimeMillis()));
 
-        return LogbookEntryMapper.toDto(savedEntry);
+        LogbookEntry saved = logbookEntryRepository.save(entry);
+
+        // For the return DTO, use minimal mapping
+        LogbookEntryDto dto = new LogbookEntryDto();
+        dto.setId(saved.getId());
+        dto.setContent(saved.getContent());
+        dto.setEntryDate(saved.getEntryDate());
+        // Optionally set minimal student/position info if needed
+        return dto;
+
     }
 
     @Override
@@ -154,4 +181,30 @@ public class StudentServiceImpl implements StudentService {
 
         return TraineeshipPositionMapper.toDto(positions.get(0));
     }
+
+    @Override
+    public List<LogbookEntryDto> getLogbookEntries(String studentUsername, Long positionId) {
+        // Retrieve student
+        User user = userRepository.findByUsername(studentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRole() != Role.STUDENT) {
+            throw new RuntimeException("User is not a student");
+        }
+        Student student = studentRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        // Retrieve position
+        TraineeshipPosition position = traineeshipPositionRepository.findById(positionId)
+                .orElseThrow(() -> new RuntimeException("Traineeship position not found"));
+
+        // Check if the student is assigned to this position
+        if (!position.getStudent().getId().equals(student.getId())) {
+            throw new RuntimeException("Student is not assigned to this position");
+        }
+
+        // Retrieve logbook entries
+        List<LogbookEntry> entries = logbookEntryRepository.findByStudentAndPosition(student, position);
+        return LogbookEntryMapper.toDtoList(entries);
+    }
+
 }
