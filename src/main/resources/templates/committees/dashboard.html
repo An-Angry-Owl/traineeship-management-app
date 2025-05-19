@@ -212,8 +212,7 @@
             </div>
 
             <div class="position-actions">
-                <a th:href="@{/committees/{username}/traineeships/{positionId}/info(username=${committee.userDto.username}, positionId=${position.id})}"
-                   class="info-button">
+                <a th:href="@{/committees/{username}/traineeships/{positionId}/info(username=${committee.userDto.username},positionId=${position.id})}" class="info-button">
                     More Info
                 </a>
             </div>
@@ -315,27 +314,28 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function() {
+        // Profile icon initialization
         const profileIcon = document.querySelector('.profile-icon');
         const username = /*[[${committee.userDto.username}]]*/ 'Committee';
         profileIcon.textContent = username.charAt(0).toUpperCase();
-    });
 
-    document.querySelectorAll('.info-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
+        // Auto-show modal if evaluation exists
+        const evaluationExists = /*[[${evaluation != null}]]*/ false;
+        if (evaluationExists) {
             document.getElementById('evaluationModal').style.display = 'block';
-        });
-    });
-
-    document.querySelector('.close').addEventListener('click', () => {
-        document.getElementById('evaluationModal').style.display = 'none';
-    });
-
-    window.onclick = (event) => {
-        if (event.target === document.getElementById('evaluationModal')) {
-            document.getElementById('evaluationModal').style.display = 'none';
         }
-    }
+
+        // Modal close handlers
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('evaluationModal').style.display = 'none';
+        });
+
+        window.onclick = (event) => {
+            if (event.target === document.getElementById('evaluationModal')) {
+                document.getElementById('evaluationModal').style.display = 'none';
+            }
+        }
+    });
     /*]]>*/
 </script>
 </body>

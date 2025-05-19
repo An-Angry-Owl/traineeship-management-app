@@ -1,5 +1,6 @@
 package org.softwareretards.lobotomisedapp.controller;
 
+import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
@@ -8,6 +9,7 @@ import org.softwareretards.lobotomisedapp.entity.Evaluation;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
+import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
@@ -323,16 +325,45 @@ public class CommitteeController {
         return "redirect:/committees/student-list?studentId=" + studentId;
     }
 
-    @GetMapping("/committees/{username}/traineeships/{positionId}/info")
-    public String showEvaluationInfo(@PathVariable String username,
-                                     @PathVariable Long positionId,
-                                     Model model) {
+    @GetMapping("/{username}/traineeships/{positionId}/info")
+    public String showEvaluationInfo(
+            @PathVariable String username,
+            @PathVariable Long positionId,
+            @AuthenticationPrincipal User user,
+            Model model) {
+
+        System.out.println("=== CONTROLLER METHOD TRIGGERED ===");
+        System.out.println("Username: " + username);
+        System.out.println("Position ID: " + positionId);
+
+        // Authorization check
+        if (!user.getUsername().equals(username)) {
+            return "redirect:/access-denied";
+        }
+
+        // Get required data
+        CommitteeDto committeeDto = committeeService.getCommitteeById(user.getId());
+        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findAll().stream()
+                .map(TraineeshipPositionMapper::toDto)
+                .collect(Collectors.toList());
+
+        // Get evaluation data
         Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
                 .orElse(null);
 
+        // Add all required attributes
+        model.addAttribute("committee", committeeDto);
+        model.addAttribute("positions", traineeshipPositionRepository.findAll().stream()
+                .map(TraineeshipPositionMapper::toDto)
+                .collect(Collectors.toList()));
         model.addAttribute("evaluation", evaluation);
         model.addAttribute("position", traineeshipPositionRepository.findById(positionId).orElseThrow());
-        return "committees/dashboard"; // Return to dashboard with modal data
+
+        System.out.println("Fetching evaluation for position ID: " + positionId);
+        System.out.println("Found evaluation: " + (evaluation != null ? evaluation.toString() : "null"));
+        System.out.println("sex");
+
+        return "committees/dashboard";
     }
 
     @PostMapping("/committees/{username}/update-final-mark")
@@ -352,5 +383,13 @@ public class CommitteeController {
             redirectAttributes.addFlashAttribute("error", "Error updating final mark: " + e.getMessage());
         }
         return "redirect:/committees/" + username + "/dashboard";
+    }
+
+    @GetMapping("/committees/evaluations/{positionId}")
+    @ResponseBody
+    public EvaluationDto getEvaluationData(@PathVariable Long positionId) {
+        return evaluationRepository.findByTraineeshipPositionId(positionId)
+                .map(EvaluationMapper::toDto)
+                .orElse(null);
     }
 }
