@@ -3,12 +3,15 @@ package org.softwareretards.lobotomisedapp.service.impl;
 import jakarta.transaction.Transactional;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
+import org.softwareretards.lobotomisedapp.entity.enums.ApplicationStatus;
 import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
+import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipApplication;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.entity.user.Student;
 import org.softwareretards.lobotomisedapp.mapper.user.CommitteeMapper;
+import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.CommitteeRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
@@ -25,6 +28,7 @@ public class CommitteeServiceImpl implements CommitteeService {
 
     private final CommitteeRepository committeeRepository;
     private final TraineeshipPositionRepository traineeshipPositionRepository;
+    private final TraineeshipApplicationRepository traineeshipApplicationRepository;
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
 
@@ -32,11 +36,13 @@ public class CommitteeServiceImpl implements CommitteeService {
     public CommitteeServiceImpl(CommitteeRepository committeeRepository,
                                 TraineeshipPositionRepository traineeshipPositionRepository,
                                 StudentRepository studentRepository,
-                                ProfessorRepository professorRepository) {
+                                ProfessorRepository professorRepository,
+                                TraineeshipApplicationRepository traineeshipApplicationRepository) {
         this.committeeRepository = committeeRepository;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.studentRepository = studentRepository;
         this.professorRepository = professorRepository;
+        this.traineeshipApplicationRepository = traineeshipApplicationRepository;
     }
 
     public List<CommitteeDto> getAllCommittees() {
@@ -138,5 +144,19 @@ public class CommitteeServiceImpl implements CommitteeService {
         } else {
             throw new RuntimeException("Traineeship not found");
         }
+    }
+
+    @Override
+    public void acceptApplication(Long studentId){
+        List<TraineeshipApplication> applications = traineeshipApplicationRepository.findByStudentId(studentId);
+
+        TraineeshipApplication application = applications.get(0);
+
+        if (application.getStatus() == ApplicationStatus.ACCEPTED) {
+            throw new RuntimeException("Application is already accepted but shouldn't be!");
+        }
+
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        traineeshipApplicationRepository.save(application);
     }
 }

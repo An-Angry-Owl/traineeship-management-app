@@ -250,10 +250,13 @@ public class CommitteeController {
         try {
             // Call your existing service method
             committeeService.assignTraineeshipToStudent(committeeId, studentId, traineeshipId);
+            committeeService.acceptApplication(studentId);
             redirectAttributes.addFlashAttribute("success", "Traineeship assigned successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to assign traineeship: " + e.getMessage());
         }
+
+
         return "redirect:/committees/student-list?studentId=" + studentId;
     }
 }

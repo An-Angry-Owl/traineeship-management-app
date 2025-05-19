@@ -23,4 +23,6 @@ public interface CommitteeService {
     void assignSupervisingProfessor(Long committeeId, Long traineeshipId, Long professorId);
 
     void monitorTraineeshipEvaluations(Long committeeId, Long traineeshipId);
+
+    void acceptApplication(Long studentId);
 }
