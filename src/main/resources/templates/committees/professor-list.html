@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Professor Management</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #2575fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .content-container {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            width: 33.33%;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            width: 66.67%;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .professor-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .professor-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .professor-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .professor-details-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .professor-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 1rem;
+        }
+
+        .professor-info {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .strategy-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .strategy-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            color: #212529;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .strategy-btn.active {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        .position-card {
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .position-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin-bottom: 0.5rem;
+        }
+
+        .position-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .assign-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-header">
+    <div class="profile-icon" th:text="${#strings.substring(committee.userDto.username, 0, 1).toUpperCase()}"></div>
+    <h1>Professor Management</h1>
+    <div class="nav-buttons">
+        <a class="nav-button"
+           th:href="@{/committees/{username}/dashboard(username=${committee.userDto.username})}">
+            Dashboard
+        </a>
+        <a class="nav-button"
+           th:href="@{/committees/{username}/profile(username=${committee.userDto.username})}">
+            Profile
+        </a>
+    </div>
+</div>
+
+<div class="content-container">
+    <div class="sidebar">
+        <h2 class="section-title">Available Professors</h2>
+        <ul class="professor-list" th:if="${not #lists.isEmpty(professors)}">
+            <li th:each="professor : ${professors}"
+                class="professor-item"
+                th:onclick="|loadProfessorDetails(${professor.userDto.id})|"
+                th:text="${professor.fullName}">
+                Professor Name
+            </li>
+        </ul>
+        <div th:if="${#lists.isEmpty(professors)}" class="empty-state">
+            <p>No professors found</p>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div th:if="${selectedProfessor == null}" class="empty-state">
+            <p>Select a professor from the list to view details</p>
+        </div>
+
+        <div th:if="${selectedProfessor != null}">
+            <div class="professor-details-section">
+                <h3 class="professor-name" th:text="${selectedProfessor.fullName}"></h3>
+                <p class="professor-info">
+                    <strong>Interests:</strong>
+                    <span th:text="${selectedProfessor.interests}"></span>
+                </p>
+                <p class="professor-info">
+                    <strong>Current Workload:</strong>
+                    <span th:text="${workload} + ' positions'"></span>
+                </p>
+            </div>
+
+            <div class="strategy-buttons">
+                <button class="strategy-btn"
+                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.search.SearchType).INTEREST_BASED} ? 'active'"
+                        th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'INTEREST_BASED')|">
+                    By Interests
+                </button>
+                <button class="strategy-btn"
+                        th:classappend="${selectedStrategy == T(org.softwareretards.lobotomisedapp.strategy.search.SearchType).WORKLOAD} ? 'active'"
+                        th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'WORKLOAD')|">
+                    By Workload
+                </button>
+            </div>
+
+            <div th:if="${recommendations != null and !recommendations.isEmpty()}">
+                <h2 class="section-title">Recommended Positions</h2>
+                <div th:each="position : ${recommendations}" class="position-card">
+                    <h4 class="position-title" th:text="${position.description}"></h4>
+
+                    <div class="position-meta">
+                        <span>Company: <strong th:text="${position.company?.userDto.username ?: 'Not specified'}"></strong></span>
+                        <span>Status: <strong th:text="${position.status}"></strong></span>
+                    </div>
+
+                    <div class="position-meta">
+                        <span>
+                            Duration:
+                            <strong th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></strong>
+                            to
+                            <strong th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></strong>
+                        </span>
+                    </div>
+
+                    <div class="position-meta">
+                        <button class="assign-btn">Assign Professor</button>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${recommendations == null or recommendations.isEmpty()}" class="empty-state">
+                <p>No positions found matching the selected criteria</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function loadProfessorDetails(professorId) {
+        window.location.href = `/committees/professor-list?professorId=${professorId}`;
+    }
+
+    function updateRecommendations(professorId, strategy) {
+        const currentStrategy = /*[[${selectedStrategy}]]*/ 'NONE';
+        const newStrategy = currentStrategy === strategy ? 'NONE' : strategy;
+        window.location.href = `/committees/professor-list?professorId=${professorId}&strategy=${newStrategy}`;
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

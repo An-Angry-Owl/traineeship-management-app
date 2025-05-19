@@ -2,10 +2,12 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
+import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
@@ -14,8 +16,10 @@ import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
 import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.CommitteeService;
 import org.softwareretards.lobotomisedapp.service.RecommendationsService;
+import org.softwareretards.lobotomisedapp.service.SearchService;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.softwareretards.lobotomisedapp.strategy.recommendation.RecommendationType;
+import org.softwareretards.lobotomisedapp.strategy.search.SearchType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,9 +43,18 @@ public class CommitteeController {
     private final UserRepository userRepository;
     private final RecommendationsService recommendationsService;
     private final TraineeshipApplicationRepository traineeshipApplicationRepository;
+    private final SearchService searchService;
 
     @Autowired
-    public CommitteeController(CommitteeService committeeService, TraineeshipPositionRepository traineeshipPositionRepository, ProfessorRepository professorRepository, StudentRepository studentRepository, UserService userService, UserRepository userRepository, RecommendationsService recommendationsService, TraineeshipApplicationRepository traineeshipApplicationRepository) {
+    public CommitteeController(CommitteeService committeeService,
+                               TraineeshipPositionRepository traineeshipPositionRepository,
+                               ProfessorRepository professorRepository,
+                               StudentRepository studentRepository,
+                               UserService userService,
+                               UserRepository userRepository,
+                               RecommendationsService recommendationsService,
+                               TraineeshipApplicationRepository traineeshipApplicationRepository,
+                               SearchService searchService) {
         this.committeeService = committeeService;
         this.traineeshipPositionRepository = traineeshipPositionRepository;
         this.professorRepository = professorRepository;
@@ -50,6 +63,7 @@ public class CommitteeController {
         this.userRepository = userRepository;
         this.recommendationsService = recommendationsService;
         this.traineeshipApplicationRepository = traineeshipApplicationRepository;
+        this.searchService = searchService;
     }
 
     @GetMapping("/list")
@@ -144,8 +158,44 @@ public class CommitteeController {
     }
 
     @GetMapping("/professor-list")
-    public String showProfessorList(Model model) {
-        model.addAttribute("professors", professorRepository.findAll());
+    public String showProfessorList(
+            @RequestParam(value = "professorId", required = false) Long professorId,
+            @RequestParam(value = "strategy", defaultValue = "NONE") SearchType strategy,
+            Model model,
+            Authentication authentication) {
+
+        // Get committee
+        String username = authentication.getName();
+        CommitteeDto committeeDto = committeeService.getCommitteeById(
+                userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .getId()
+        );
+        model.addAttribute("committee", committeeDto);
+
+        // Get all professors without workload
+        List<ProfessorDto> professors = professorRepository.findAll().stream()
+                .map(ProfessorMapper::toDto)
+                .collect(Collectors.toList());
+        model.addAttribute("professors", professors);
+
+        if (professorId != null) {
+            ProfessorDto selectedProfessor = professorRepository.findById(professorId)
+                    .map(ProfessorMapper::toDto)
+                    .orElse(null);
+
+            // Calculate workload live using repository query
+            Integer workload = traineeshipPositionRepository.countPositionsByProfessorId(professorId);
+
+            List<TraineeshipPositionDto> recommendations =
+                    searchService.recommend(professorId, strategy);
+
+            model.addAttribute("selectedProfessor", selectedProfessor);
+            model.addAttribute("recommendations", recommendations);
+            model.addAttribute("selectedStrategy", strategy);
+            model.addAttribute("workload", workload);
+        }
+
         return "committees/professor-list";
     }
 

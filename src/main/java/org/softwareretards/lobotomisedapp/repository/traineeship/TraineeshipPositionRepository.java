@@ -58,4 +58,7 @@ public interface TraineeshipPositionRepository extends JpaRepository<Traineeship
 
     @Query("SELECT t FROM TraineeshipPosition t WHERE t.student.username = :username")
     List<TraineeshipPosition> findByStudentUsername(@Param("username") String username);
+
+    @Query("SELECT COUNT(t) FROM TraineeshipPosition t WHERE t.professor.id = :professorId")
+    Integer countPositionsByProfessorId(@Param("professorId") Long professorId);
 }
