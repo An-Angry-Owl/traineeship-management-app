@@ -1,9 +1,8 @@
 package org.softwareretards.lobotomisedapp.strategy.search;
 
-import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
-import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
-import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
+import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +30,18 @@ public class WorkloadBasedSearchStrategy extends AbstractSearchStrategy {
     }
 
     @Override
-    public List<TraineeshipPositionDto> searchTraineeships(Long professorId) {
-        Optional<Professor> professorOpt = professorRepository.findById(professorId);
-        if (professorOpt.isEmpty()) return Collections.emptyList();
+    public List<ProfessorDto> searchProfessors(Long positionId) {
+        // We don't really use positionId for workload-based sorting, but it's part of the signature
 
-        List<TraineeshipPosition> positionsSortedByWorkload = positionRepository.findAvailablePositionsOrderByProfessorWorkload();
+        List<Professor> professors = professorRepository.findAll();
 
-        return positionsSortedByWorkload.stream()
-                .map(TraineeshipPositionMapper::toDto)
+        professors.sort(Comparator.comparingInt(prof -> {
+            Integer count = positionRepository.countPositionsByProfessorId(prof.getId());
+            return count != null ? count : 0;
+        }));
+
+        return professors.stream()
+                .map(ProfessorMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

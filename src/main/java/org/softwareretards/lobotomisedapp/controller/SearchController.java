@@ -1,6 +1,7 @@
 package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.service.SearchService;
 import org.softwareretards.lobotomisedapp.strategy.search.SearchType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,14 @@ public class SearchController {
         this.searchService = searchService;
     }
 
-    @GetMapping("/{professorId}")
-    public String getRecommendations(@PathVariable Long professorId,
-                                     @RequestParam("strategy") SearchType strategy,
-                                     Model model) {
-        List<TraineeshipPositionDto> search = searchService.recommend(professorId, strategy);
+    @GetMapping("/{positionId}")
+    public String getSearch(@PathVariable Long positionId,
+                            @RequestParam("strategy") SearchType strategy,
+                            Model model) {
+        List<ProfessorDto> search = searchService.recommend(positionId, strategy);
         model.addAttribute("recommendations", search);
-        model.addAttribute("professorId", professorId);
+        model.addAttribute("positionId", positionId);
         model.addAttribute("selectedStrategy", strategy);
-        return "search/list"; // Your Thymeleaf or JSP page
+        return "search/list"; // Thymeleaf template here
     }
 }

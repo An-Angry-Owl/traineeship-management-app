@@ -202,11 +202,11 @@ public class CommitteeController {
             // Calculate workload live using repository query
             Integer workload = traineeshipPositionRepository.countPositionsByProfessorId(professorId);
 
-            List<TraineeshipPositionDto> recommendations =
-                    searchService.recommend(professorId, strategy);
+            //List<TraineeshipPositionDto> recommendations =
+            //        searchService.recommend(positionId, strategy);
 
             model.addAttribute("selectedProfessor", selectedProfessor);
-            model.addAttribute("recommendations", recommendations);
+            //model.addAttribute("recommendations", recommendations);
             model.addAttribute("selectedStrategy", strategy);
             model.addAttribute("workload", workload);
         }
@@ -214,6 +214,7 @@ public class CommitteeController {
         return "committees/professor-list";
     }
 
+    //TODO: FIX THE ABOVE CONTROLLER
     @GetMapping("/student-list")
     public String showStudentList(
             @RequestParam(value = "studentId", required = false) Long studentId,

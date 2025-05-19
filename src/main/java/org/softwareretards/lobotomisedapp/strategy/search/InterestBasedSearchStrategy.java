@@ -1,9 +1,11 @@
 package org.softwareretards.lobotomisedapp.strategy.search;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Professor;
 import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
+import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
 import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
 import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +35,25 @@ public class InterestBasedSearchStrategy extends AbstractSearchStrategy {
     }
 
     @Override
-    public List<TraineeshipPositionDto> searchTraineeships(Long professorId) {
-        Optional<Professor> professorOpt = professorRepository.findById(professorId);
-        if (professorOpt.isEmpty()) return Collections.emptyList();
+    public List<ProfessorDto> searchProfessors(Long positionId) {
+        Optional<TraineeshipPosition> positionOpt = positionRepository.findById(positionId);
+        if (positionOpt.isEmpty()) return Collections.emptyList();
 
-        Professor professor = professorOpt.get();
-        Set<String> professorInterests = parseAndNormalize(professor.getInterests());
+        TraineeshipPosition position = positionOpt.get();
+        Set<String> positionTopics = parseAndNormalize(position.getTopics());
 
-        List<TraineeshipPosition> availablePositions = positionRepository.findAvailableProfessorPositions();
+        List<Professor> allProfessors = professorRepository.findAll();
 
-        List<TraineeshipPosition> matching = availablePositions.stream()
-                .filter(pos -> {
-                    Set<String> topics = parseAndNormalize(pos.getTopics());
-                    double jaccard = calculateJaccard(professorInterests, topics);
+        List<Professor> matching = allProfessors.stream()
+                .filter(prof -> {
+                    Set<String> interests = parseAndNormalize(prof.getInterests());
+                    double jaccard = calculateJaccard(positionTopics, interests);
                     return jaccard >= JACCARD_THRESHOLD;
                 })
-                .toList();
+                .collect(Collectors.toList());
+
         return matching.stream()
-                .map(TraineeshipPositionMapper::toDto)
+                .map(ProfessorMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package org.softwareretards.lobotomisedapp.strategy.search;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,7 +10,7 @@ public abstract class AbstractSearchStrategy implements TraineeshipSearchStrateg
     public abstract SearchType getType();
 
     @Override
-    public abstract List<TraineeshipPositionDto> searchTraineeships(Long professorId);
+    public abstract List<ProfessorDto> searchProfessors(Long positionId);
 
     protected final Set<String> parseAndNormalize(String input) {
         if (input == null || input.isBlank()) return Collections.emptySet();

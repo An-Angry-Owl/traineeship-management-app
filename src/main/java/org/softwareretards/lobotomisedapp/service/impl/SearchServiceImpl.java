@@ -1,6 +1,6 @@
 package org.softwareretards.lobotomisedapp.service.impl;
 
-import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.service.SearchService;
 import org.softwareretards.lobotomisedapp.strategy.search.SearchStrategyFactory;
 import org.softwareretards.lobotomisedapp.strategy.search.SearchType;
@@ -19,7 +19,7 @@ public class SearchServiceImpl implements SearchService {
         this.strategyFactory = strategyFactory;
     }
 
-    public List<TraineeshipPositionDto> recommend(Long professorId, SearchType type) {
-        return strategyFactory.getStrategy(type).searchTraineeships(professorId);
+    public List<ProfessorDto> recommend(Long positionId, SearchType type) {
+        return strategyFactory.getStrategy(type).searchProfessors(positionId);
     }
 }

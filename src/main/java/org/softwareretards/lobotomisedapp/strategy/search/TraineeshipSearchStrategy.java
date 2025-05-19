@@ -1,9 +1,9 @@
 package org.softwareretards.lobotomisedapp.strategy.search;
 
-import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
+import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 
 import java.util.List;
 
 public interface TraineeshipSearchStrategy {
-    List<TraineeshipPositionDto> searchTraineeships(Long professorId);
+    List<ProfessorDto> searchProfessors(Long positionId);
 }
