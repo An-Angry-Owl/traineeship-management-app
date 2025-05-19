@@ -111,6 +111,58 @@
             color: #666;
             font-style: italic;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 60%;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .rating-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .rating-group label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rating-group input {
+            width: 60px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -151,7 +203,9 @@
             </div>
 
             <div class="position-actions">
-                <button class="apply-button" onclick="alert('Evaluation feature coming soon!')">
+                <button class="apply-button evaluate-btn"
+                        th:data-position-id="${position.id}"
+                        th:data-username="${professor.userDto.username}">
                     Evaluate
                 </button>
             </div>
@@ -164,6 +218,61 @@
     </div>
 </div>
 
+<div id="evaluationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="section-title">Traineeship Evaluation</h2>
+
+        <form id="evaluationForm" method="post" th:object="${evaluation}">
+
+            <!-- Professor Ratings -->
+            <div class="form-section">
+                <h3>Student Evaluation</h3>
+                <div class="rating-group">
+                    <label>Motivation:
+                        <input type="number" th:field="*{professorMotivationRating}" min="1" max="5" required>
+                    </label>
+                    <label>Effectiveness:
+                        <input type="number" th:field="*{professorEffectivenessRating}" min="1" max="5" required>
+                    </label>
+                    <label>Efficiency:
+                        <input type="number" th:field="*{professorEfficiencyRating}" min="1" max="5" required>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Company Ratings -->
+            <div class="form-section">
+                <h3>Company Evaluation</h3>
+                <div class="rating-group">
+                    <label>Motivation:
+                        <input type="number" th:field="*{companyMotivationRating}" min="1" max="5" required>
+                    </label>
+                    <label>Effectiveness:
+                        <input type="number" th:field="*{companyEffectivenessRating}" min="1" max="5" required>
+                    </label>
+                    <label>Efficiency:
+                        <input type="number" th:field="*{companyEfficiencyRating}" min="1" max="5" required>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Final Mark -->
+            <div class="form-section">
+                <label>Final Mark:
+                    <select th:field="*{finalMark}" required>
+                        <option value="PASS">Pass</option>
+                        <option value="FAIL">Fail</option>
+                        <option value="PENDING">Pending</option>
+                    </select>
+                </label>
+            </div>
+
+            <button type="submit" class="apply-button">Submit Evaluation</button>
+        </form>
+    </div>
+</div>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function() {
@@ -171,6 +280,42 @@
         const username = /*[[${professor.userDto.username}]]*/ 'Professor';
         profileIcon.textContent = username.charAt(0).toUpperCase();
     });
+
+    document.querySelectorAll('.apply-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            if (e.target.textContent === 'Evaluate') {
+                e.preventDefault();
+                const modal = document.getElementById('evaluationModal');
+                modal.style.display = 'block';
+            }
+        });
+    });
+
+    document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('evaluationModal').style.display = 'none';
+    });
+
+    document.querySelectorAll('.evaluate-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const positionId = button.getAttribute('data-position-id');
+            const username = button.getAttribute('data-username');
+            const form = document.getElementById('evaluationForm');
+
+            // Update form action with actual IDs
+            form.action = `/professors/${username}/positions/${positionId}/evaluate`;
+
+            // Show modal
+            document.getElementById('evaluationModal').style.display = 'block';
+        });
+    });
+
+    window.onclick = (event) => {
+        const modal = document.getElementById('evaluationModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
     /*]]>*/
 </script>
 </body>

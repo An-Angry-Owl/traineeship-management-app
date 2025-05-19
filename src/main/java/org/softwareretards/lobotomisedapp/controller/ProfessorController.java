@@ -77,11 +77,16 @@ public class ProfessorController {
             @PathVariable String username,
             @PathVariable Long positionId,
             @ModelAttribute("evaluation") EvaluationDto evaluationDto,
-            Model model
-    ) {
-        EvaluationDto savedEvaluation = professorService.saveEvaluation(username, positionId, evaluationDto);
-        model.addAttribute("evaluation", savedEvaluation);
-        return "professors/evaluation-confirmation";
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            EvaluationDto savedEvaluation = professorService.saveEvaluation(username, positionId, evaluationDto);
+            redirectAttributes.addFlashAttribute("success", "Evaluation submitted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/professors/" + username + "/dashboard";
     }
 
     @GetMapping("/professors/{username}/dashboard")
@@ -100,6 +105,8 @@ public class ProfessorController {
 
         model.addAttribute("professor", professorDto);
         model.addAttribute("positions", positions);
+        model.addAttribute("position", positions);
+        model.addAttribute("evaluation", new EvaluationDto());
 
         return "professors/dashboard";
     }

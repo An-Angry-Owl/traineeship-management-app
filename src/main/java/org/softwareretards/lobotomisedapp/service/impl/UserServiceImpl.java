@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Handle other roles if needed
-        throw new UnsupportedOperationException("Ask Zhu Yuan about this role, she know more!");
+        throw new UnsupportedOperationException("Ask Zhu Yuan about this role, she may know more!");
     }
 
     @Override
