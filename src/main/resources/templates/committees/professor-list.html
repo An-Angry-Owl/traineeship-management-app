@@ -193,75 +193,70 @@
 
 <div class="content-container">
     <div class="sidebar">
-        <h2 class="section-title">Available Professors</h2>
-        <ul class="professor-list" th:if="${not #lists.isEmpty(professors)}">
-            <li th:each="professor : ${professors}"
+        <h2 class="section-title">Available Positions</h2>
+        <ul class="professor-list" th:if="${not #lists.isEmpty(positions)}">
+            <li th:each="position : ${positions}"
                 class="professor-item"
-                th:onclick="|loadProfessorDetails(${professor.userDto.id})|"
-                th:text="${professor.fullName}">
-                Professor Name
+                th:onclick="|loadPositionDetails(${position.id})|"
+                th:text="${position.description}"> <!-- Or use positionName if available -->
+                Position Name
             </li>
         </ul>
-        <div th:if="${#lists.isEmpty(professors)}" class="empty-state">
-            <p>No professors found</p>
+        <div th:if="${#lists.isEmpty(positions)}" class="empty-state">
+            <p>No positions found</p>
         </div>
     </div>
 
+    <!-- Right side - Position details and professors -->
     <div class="main-content" id="mainContent">
-        <div th:if="${selectedProfessor == null}" class="empty-state">
-            <p>Select a professor from the list to view details</p>
+        <div th:if="${selectedPosition == null}" class="empty-state">
+            <p>Select a position from the list to view details</p>
         </div>
 
-        <div th:if="${selectedProfessor != null}">
+        <div th:if="${selectedPosition != null}">
             <div class="professor-details-section">
-                <h3 class="professor-name" th:text="${selectedProfessor.fullName}"></h3>
-                <p class="professor-info">
-                    <strong>Interests:</strong>
-                    <span th:text="${selectedProfessor.interests}"></span>
-                </p>
-                <p class="professor-info">
-                    <strong>Current Workload:</strong>
-                    <span th:text="${workload} + ' positions'"></span>
-                </p>
+                <h3 class="professor-name" th:text="${selectedPosition.description}"></h3>
+                <div class="position-meta">
+                    <span>Company: <strong th:text="${selectedPosition.company?.userDto.username}"></strong></span>
+                    <span>Status: <strong th:text="${selectedPosition.status}"></strong></span>
+                </div>
+                <div class="position-meta">
+                <span>Duration:
+                    <strong th:text="${#temporals.format(selectedPosition.startDate, 'dd MMM yyyy')}"></strong>
+                    to
+                    <strong th:text="${#temporals.format(selectedPosition.endDate, 'dd MMM yyyy')}"></strong>
+                </span>
+                </div>
             </div>
 
+            <!-- Strategy buttons -->
             <div class="strategy-buttons">
                 <button class="strategy-btn"
                         th:classappend="${selectedStrategy?.name() == 'INTEREST_BASED'} ? 'active'"
-                        th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'INTEREST_BASED')|">
+                        th:onclick="|updateRecommendations(${selectedPosition.id}, 'INTEREST_BASED')|">
                     By Interests
                 </button>
                 <button class="strategy-btn"
                         th:classappend="${selectedStrategy?.name() == 'WORKLOAD'} ? 'active'"
-                        th:onclick="|updateRecommendations(${selectedProfessor.userDto.id}, 'WORKLOAD')|">
+                        th:onclick="|updateRecommendations(${selectedPosition.id}, 'WORKLOAD')|">
                     By Workload
                 </button>
             </div>
 
+            <!-- Professors list -->
             <div th:if="${recommendations != null and !recommendations.isEmpty()}">
-                <h2 class="section-title">Recommended Positions</h2>
-                <div th:each="position : ${recommendations}" class="position-card">
-                    <h4 class="position-title" th:text="${position.description}"></h4>
-
+                <h2 class="section-title">Recommended Professors</h2>
+                <div th:each="professor : ${recommendations}" class="position-card">
+                    <h4 class="position-title" th:text="${professor.fullName}"></h4>
                     <div class="position-meta">
-                        <span>Company: <strong th:text="${position.company?.userDto.username ?: 'Not specified'}"></strong></span>
-                        <span>Status: <strong th:text="${position.status}"></strong></span>
+                        <span>Interests: <strong th:text="${professor.interests}"></strong></span>
+                        <span>Workload: <strong th:text="${professorWorkloads.get(professor.userDto.id)} + ' positions'"></strong></span>
                     </div>
-
-                    <div class="position-meta">
-                        <span>
-                            Duration:
-                            <strong th:text="${#temporals.format(position.startDate, 'dd MMM yyyy')}"></strong>
-                            to
-                            <strong th:text="${#temporals.format(position.endDate, 'dd MMM yyyy')}"></strong>
-                        </span>
-                    </div>
-
                     <div class="position-meta">
                         <form th:action="@{/committees/assignProfessor}" method="post">
                             <input type="hidden" name="committeeId" th:value="${committee.userDto.id}">
-                            <input type="hidden" name="professorId" th:value="${selectedProfessor.userDto.id}">
-                            <input type="hidden" name="traineeshipId" th:value="${position.id}">
+                            <input type="hidden" name="traineeshipId" th:value="${selectedPosition.id}">
+                            <input type="hidden" name="professorId" th:value="${professor.userDto.id}">
                             <button type="submit" class="assign-btn"
                                     th:onclick="|return confirm('Assign professor to this position?')|">
                                 Assign Professor
@@ -270,24 +265,20 @@
                     </div>
                 </div>
             </div>
-
-            <div th:if="${recommendations == null or recommendations.isEmpty()}" class="empty-state">
-                <p>No positions found matching the selected criteria</p>
-            </div>
         </div>
     </div>
 </div>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function loadProfessorDetails(professorId) {
-        window.location.href = `/committees/professor-list?professorId=${professorId}`;
+    function loadPositionDetails(positionId) {
+        window.location.href = `/committees/professor-list?positionId=${positionId}`;
     }
 
-    function updateRecommendations(professorId, strategy) {
+    function updateRecommendations(positionId, strategy) {
         const currentStrategy = /*[[${selectedStrategy}]]*/ 'NONE';
         const newStrategy = currentStrategy === strategy ? 'NONE' : strategy;
-        window.location.href = `/committees/professor-list?professorId=${professorId}&strategy=${newStrategy}`;
+        window.location.href = `/committees/professor-list?positionId=${positionId}&strategy=${newStrategy}`;
     }
     /*]]>*/
 </script>

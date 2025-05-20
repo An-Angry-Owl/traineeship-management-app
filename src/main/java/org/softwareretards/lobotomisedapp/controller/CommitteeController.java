@@ -33,7 +33,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -174,7 +176,7 @@ public class CommitteeController {
 
     @GetMapping("/professor-list")
     public String showProfessorList(
-            @RequestParam(value = "professorId", required = false) Long professorId,
+            @RequestParam(value = "positionId", required = false) Long positionId,
             @RequestParam(value = "strategy", defaultValue = "NONE") SearchType strategy,
             Model model,
             Authentication authentication) {
@@ -188,33 +190,37 @@ public class CommitteeController {
         );
         model.addAttribute("committee", committeeDto);
 
-        // Get all professors without workload
-        List<ProfessorDto> professors = professorRepository.findAll().stream()
-                .map(ProfessorMapper::toDto)
+        // Get all OPEN positions
+        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findOpenPositions().stream()
+                .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());
-        model.addAttribute("professors", professors);
+        model.addAttribute("positions", positions);
 
-        if (professorId != null) {
-            ProfessorDto selectedProfessor = professorRepository.findById(professorId)
-                    .map(ProfessorMapper::toDto)
+        if (positionId != null) {
+            TraineeshipPositionDto selectedPosition = traineeshipPositionRepository.findById(positionId)
+                    .map(TraineeshipPositionMapper::toDto)
                     .orElse(null);
 
-            // Calculate workload live using repository query
-            Integer workload = traineeshipPositionRepository.countPositionsByProfessorId(professorId);
+            // Get recommended professors
+            List<ProfessorDto> recommendations =
+                    searchService.recommend(positionId, strategy);
 
-            //List<TraineeshipPositionDto> recommendations =
-            //        searchService.recommend(positionId, strategy);
+            // Calculate workloads for each professor
+            Map<Long, Integer> professorWorkloads = new HashMap<>();
+            recommendations.forEach(prof -> {
+                int workload = traineeshipPositionRepository.countPositionsByProfessorId(prof.getUserDto().getId());
+                professorWorkloads.put(prof.getUserDto().getId(), workload);
+            });
 
-            model.addAttribute("selectedProfessor", selectedProfessor);
-            //model.addAttribute("recommendations", recommendations);
+            model.addAttribute("selectedPosition", selectedPosition);
+            model.addAttribute("recommendations", recommendations);
+            model.addAttribute("professorWorkloads", professorWorkloads);
             model.addAttribute("selectedStrategy", strategy);
-            model.addAttribute("workload", workload);
         }
 
         return "committees/professor-list";
     }
 
-    //TODO: FIX THE ABOVE CONTROLLER
     @GetMapping("/student-list")
     public String showStudentList(
             @RequestParam(value = "studentId", required = false) Long studentId,
