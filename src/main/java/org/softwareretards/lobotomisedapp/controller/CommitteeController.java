@@ -7,6 +7,8 @@ import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
 import org.softwareretards.lobotomisedapp.entity.Evaluation;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
+import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
+import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
 import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
 import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
@@ -375,6 +377,15 @@ public class CommitteeController {
                     .orElseThrow(() -> new RuntimeException("Evaluation not found"));
 
             evaluation.setFinalMark(finalMark);
+
+            TraineeshipPosition position = evaluation.getTraineeshipPosition();
+            if (finalMark.equals(FinalMark.PASS) || finalMark.equals(FinalMark.FAIL)){
+                position.setStatus(TraineeshipStatus.COMPLETED);
+            } else if (finalMark.equals(FinalMark.PENDING)) {
+                position.setStatus(TraineeshipStatus.IN_PROGRESS);
+            } else {
+                throw new RuntimeException("What kind of final mark is this?");
+            }
             evaluationRepository.save(evaluation);
 
             redirectAttributes.addFlashAttribute("success", "Final mark updated successfully!");
