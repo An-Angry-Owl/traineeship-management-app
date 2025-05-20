@@ -46,6 +46,12 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .return-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .avatar {
@@ -59,6 +65,12 @@
             font-size: 48px;
             color: white;
             margin: 2rem auto;
+            transition: all 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
         }
 
         .nav-box {
@@ -66,6 +78,13 @@
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 2rem;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .nav-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .nav-button {
@@ -78,19 +97,32 @@
             text-align: left;
             cursor: pointer;
             border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-button:hover {
+            background-color: rgba(37, 117, 252, 0.1);
+            transform: translateX(5px);
         }
 
         .nav-button.active {
-            background-color: #f0f0f0;
+            background-color: rgba(37, 117, 252, 0.1);
             font-weight: bold;
             color: #2575fc;
             border-left: 4px solid #2575fc;
+            transform: translateX(5px);
         }
 
         .form-section {
             display: none;
             max-width: 600px;
             margin: 0 auto;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .account-section {
@@ -108,12 +140,22 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #2575fc;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+            outline: none;
         }
 
         .form-actions {
@@ -127,6 +169,7 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .save-button {
@@ -134,17 +177,19 @@
             color: white;
         }
 
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
         .discard-button {
             background-color: #e0e0e0;
             color: black;
         }
 
-        .password-form {
-            display: none;
-        }
-
-        .password-form.active {
-            display: block;
+        .discard-button:hover {
+            background-color: #d0d0d0;
+            transform: translateY(-2px);
         }
 
         .read-only-field {
@@ -162,25 +207,152 @@
             color: white;
             padding: 1rem 2rem;
             font-size: 1.1rem;
+            transition: all 0.3s ease;
         }
 
-        .evaluation-placeholder {
+        .delete-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Enhanced Evaluation Section */
+        .evaluation-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .evaluation-section h3 {
             text-align: center;
-            color: #666;
-            padding: 4rem;
-            font-style: italic;
+            margin-bottom: 2rem;
+            color: #2575fc;
+            font-size: 1.8rem;
         }
 
-        .text-danger {
-            color: #dc3545;
-            margin-top: 0.5rem;
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .rating-item {
+            background-color: rgba(233, 236, 239, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #2575fc;
+            transition: all 0.3s ease;
+        }
+
+        .rating-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .rating-item label {
             display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
         }
 
-        select.form-control[disabled] {
-            background-color: #e9ecef;
-            opacity: 1;
+        .rating-item select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
         }
+
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+            transform: scale(1.2);
+        }
+
+        .evaluation-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .submit-evaluation {
+            background-color: #28a745;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-evaluation:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+        .star.active {
+            color: #ffc107;
+            text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Color stars based on rating value */
+        .star[data-value="1"].active {
+            color: #ff3d3d; /* Red for low rating */
+        }
+
+        .star[data-value="2"].active {
+            color: #ff8a3d; /* Orange for fair rating */
+        }
+
+        .star[data-value="3"].active {
+            color: #ffc107; /* Yellow for good rating */
+        }
+
+        .star[data-value="4"].active {
+            color: #8bc34a; /* Light green for very good */
+        }
+
+        .star[data-value="5"].active {
+            color: #4caf50; /* Green for excellent */
+        }
+
     </style>
 </head>
 <body>
@@ -216,7 +388,6 @@
                 <input type="text" th:field="*{description}" required>
             </div>
 
-
             <div class="form-group">
                 <label>Start Date</label>
                 <input type="date"
@@ -241,20 +412,6 @@
             <div class="form-group">
                 <label>Topics</label>
                 <textarea th:field="*{topics}" rows="3"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Position Status</label>
-                <select th:field="*{status}" class="form-control" required>
-                    <option value="CLOSED"
-                            th:selected="${position.status.name() == 'CLOSED'}">
-                        CLOSED
-                    </option>
-                    <option value="OPEN"
-                            th:selected="${position.status.name() == 'OPEN'}">
-                        OPEN
-                    </option>
-                </select>
             </div>
 
             <!-- Read-only Fields -->
@@ -283,41 +440,67 @@
         <h3>Evaluate Trainee</h3>
         <form th:action="@{/companies/{username}/traineeships/{positionId}/evaluate(username=${companyUsername}, positionId=${position.id})}"
               method="post">
-            <div class="form-group">
-                <label>Motivation Rating</label>
-                <select name="motivation" class="form-control" required>
-                    <option value="">Select rating (1-5)</option>
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
-                </select>
+            <div class="rating-container">
+                <div class="rating-item">
+                    <label>Motivation Rating</label>
+                    <select name="motivation" class="form-control rating-select" required>
+                        <option value="">Select rating (1-5)</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+                    <div class="stars-container" data-target="motivation">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <label>Effectiveness Rating</label>
+                    <select name="effectiveness" class="form-control rating-select" required>
+                        <option value="">Select rating (1-5)</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+                    <div class="stars-container" data-target="effectiveness">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                </div>
+
+                <div class="rating-item">
+                    <label>Efficiency Rating</label>
+                    <select name="efficiency" class="form-control rating-select" required>
+                        <option value="">Select rating (1-5)</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+                    <div class="stars-container" data-target="efficiency">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Effectiveness Rating</label>
-                <select name="effectiveness" class="form-control" required>
-                    <option value="">Select rating (1-5)</option>
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Efficiency Rating</label>
-                <select name="efficiency" class="form-control" required>
-                    <option value="">Select rating (1-5)</option>
-                    <option value="1">1 - Poor</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="3">3 - Good</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="5">5 - Excellent</option>
-                </select>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="save-button">Submit Evaluation</button>
+
+            <div class="evaluation-actions">
+                <button type="submit" class="submit-evaluation">Submit Evaluation</button>
             </div>
         </form>
     </div>
@@ -352,6 +535,69 @@
             event.target.classList.add('active');
         }
     }
+</script>
+
+<script>
+    function setupStarRatings() {
+        document.querySelectorAll('.stars-container').forEach(container => {
+            const stars = container.querySelectorAll('.star');
+            const select = document.querySelector(`select[name="${container.dataset.target}"]`);
+
+            // Function to update stars based on selected value
+            const updateStars = (value) => {
+                stars.forEach(star => {
+                    star.classList.remove('active');
+                    if (star.dataset.value <= value) {
+                        star.classList.add('active');
+                    }
+                });
+            };
+
+            // Initialize stars if select has a value
+            if (select.value && parseInt(select.value)) {
+                updateStars(parseInt(select.value));
+            }
+
+            // Star click handler
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.dataset.value;
+                    select.value = value;
+                    updateStars(value);
+                });
+            });
+
+            // Select change handler
+            select.addEventListener('change', () => {
+                if (select.value) {
+                    updateStars(parseInt(select.value));
+                } else {
+                    stars.forEach(star => star.classList.remove('active'));
+                }
+            });
+
+            // Hover effects
+            container.addEventListener('mouseleave', () => {
+                if (select.value) {
+                    updateStars(parseInt(select.value));
+                }
+            });
+
+            stars.forEach(star => {
+                star.addEventListener('mouseenter', () => {
+                    const hoverValue = star.dataset.value;
+                    stars.forEach(s => {
+                        s.classList.toggle('hover', s.dataset.value <= hoverValue);
+                    });
+                });
+            });
+        });
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        setupStarRatings();
+    });
 </script>
 
 <script th:inline="javascript">
