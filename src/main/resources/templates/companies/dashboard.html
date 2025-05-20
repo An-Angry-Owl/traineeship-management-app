@@ -277,6 +277,18 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+
+        .status-bubble.completed {
+            color: #6f42c1;
+            border-color: rgba(111, 66, 193, 0.4);
+            background-color: rgba(111, 66, 193, 0.1);
+        }
+
+        .status-bubble.not-completed {
+            color: #dc3545;
+            border-color: rgba(220, 53, 69, 0.4);
+            background-color: rgba(220, 53, 69, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -306,6 +318,12 @@
         <div class="position-name" th:text="${company.companyName}"></div>
 
         <div class="status-container">
+            <!-- COMPLETED Status -->
+            <div class="status-bubble"
+                 th:classappend="${position.status.name() == 'COMPLETED'} ? 'completed' : 'not-completed'"
+                 th:text="${position.status.name() == 'COMPLETED'} ? 'Completed ✓' : 'Not Completed ✗'">
+            </div>
+
             <!-- Assigned Status -->
             <div class="status-bubble"
                  th:classappend="${position.status.name() == 'ASSIGNED' || position.status.name() == 'IN_PROGRESS' || position.status.name() == 'COMPLETED'} ? 'assigned' : 'not-assigned'"
