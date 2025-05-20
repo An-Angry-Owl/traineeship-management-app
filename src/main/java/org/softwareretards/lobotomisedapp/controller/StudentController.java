@@ -59,7 +59,7 @@ public class StudentController {
     public String submitApplication(
             @PathVariable String username,
             @PathVariable Long positionId,
-            RedirectAttributes redirectAttributes // Add RedirectAttributes
+            RedirectAttributes redirectAttributes
     ) {
         try {
             TraineeshipApplicationDto createdApplication =

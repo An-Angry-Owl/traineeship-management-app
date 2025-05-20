@@ -12,7 +12,7 @@ import java.util.List;
 public interface TraineeshipApplicationRepository extends JpaRepository<TraineeshipApplication, Long> {
     List<TraineeshipApplication> findByStudentId(Long studentId);
     List<TraineeshipApplication> findByStatus(ApplicationStatus status);
-    boolean existsByStudentIdAndPositionId(Long studentId, Long positionId);
+    boolean existsByStudentId(Long studentId);
 
     @Query("SELECT DISTINCT a.student.id FROM TraineeshipApplication a")
     List<Long> findDistinctStudentIds();

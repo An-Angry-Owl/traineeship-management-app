@@ -82,7 +82,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public TraineeshipApplicationDto applyForTraineeship(String studentUsername, Long positionId) {
+    public TraineeshipApplicationDto applyForTraineeship(String studentUsername,
+                                                         Long positionId) {
         // Retrieve student
         User user = userRepository.findByUsername(studentUsername)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -93,12 +94,10 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         // Check for existing application
-        boolean alreadyApplied = traineeshipApplicationRepository.existsByStudentIdAndPositionId(
-                student.getId(),
-                positionId
-        );
+        boolean alreadyApplied = traineeshipApplicationRepository.existsByStudentId(student.getId());
+
         if (alreadyApplied) {
-            throw new RuntimeException("Student has already applied");
+            throw new RuntimeException("You have already applied");
         }
 
         // Retrieve position
@@ -106,7 +105,7 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new RuntimeException("Traineeship position not found"));
 
         // Create and save application
-        TraineeshipApplication application = new TraineeshipApplication(student, position);
+        TraineeshipApplication application = new TraineeshipApplication(student);
         TraineeshipApplication savedApplication = traineeshipApplicationRepository.save(application);
 
         return TraineeshipApplicationMapper.toDto(savedApplication);

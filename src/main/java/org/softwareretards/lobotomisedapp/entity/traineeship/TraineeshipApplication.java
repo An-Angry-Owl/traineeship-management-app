@@ -25,10 +25,6 @@ public class TraineeshipApplication{
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @ManyToOne
-    @JoinColumn(name = "position_id", nullable = false)
-    private TraineeshipPosition position;
-
     @Column(name = "application_date", updatable = false, nullable = false)
     private Timestamp applicationDate; // moved to constructor
 
@@ -36,9 +32,8 @@ public class TraineeshipApplication{
     @Column(name = "status", nullable = false)
     private ApplicationStatus status = ApplicationStatus.PENDING; // Best to set it here because it is static
 
-    public TraineeshipApplication(Student student, TraineeshipPosition position){
+    public TraineeshipApplication(Student student){
         this.student = student;
-        this.position = position;
         this.applicationDate = new Timestamp(System.currentTimeMillis()); // Best to set it here because it is dynamic (aka, every time it is called it is different)
     }
 
@@ -47,7 +42,6 @@ public class TraineeshipApplication{
         return "TraineeshipApplication{" +
                 "id=" + id +
                 ", student=" + student +
-                ", position=" + position +
                 ", applicationDate=" + applicationDate +
                 ", status=" + status +
                 '}';

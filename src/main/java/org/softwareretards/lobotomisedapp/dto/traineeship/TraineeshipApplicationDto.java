@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 public class TraineeshipApplicationDto {
     private Long id;
     private StudentDto student;
-    private TraineeshipPositionDto position;
     private Timestamp applicationDate;
     private ApplicationStatus status;
 }

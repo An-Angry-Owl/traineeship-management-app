@@ -18,7 +18,6 @@ public class TraineeshipApplicationMapper {
         dto.setStatus(entity.getStatus());
         // Map nested objects using static methods
         dto.setStudent(StudentMapper.toDto(entity.getStudent()));
-        dto.setPosition(TraineeshipPositionMapper.toDto(entity.getPosition()));
         return dto;
     }
 
@@ -32,7 +31,6 @@ public class TraineeshipApplicationMapper {
         entity.setStatus(dto.getStatus());
         // Map nested objects using static methods
         entity.setStudent(StudentMapper.toEntity(dto.getStudent()));
-        entity.setPosition(TraineeshipPositionMapper.toEntity(dto.getPosition()));
         return entity;
     }
 }
