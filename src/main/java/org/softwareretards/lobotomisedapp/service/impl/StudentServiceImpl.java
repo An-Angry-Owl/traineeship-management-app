@@ -98,7 +98,7 @@ public class StudentServiceImpl implements StudentService {
                 positionId
         );
         if (alreadyApplied) {
-            throw new RuntimeException("Student has already applied to this position");
+            throw new RuntimeException("Student has already applied");
         }
 
         // Retrieve position

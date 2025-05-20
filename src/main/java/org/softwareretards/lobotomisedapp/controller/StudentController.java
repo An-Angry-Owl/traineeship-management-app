@@ -58,12 +58,17 @@ public class StudentController {
     @PostMapping("/students/{username}/apply/{positionId}")
     public String submitApplication(
             @PathVariable String username,
-            @PathVariable Long positionId, // Correctly captures the ID
-            Model model
+            @PathVariable Long positionId,
+            RedirectAttributes redirectAttributes // Add RedirectAttributes
     ) {
-        TraineeshipApplicationDto createdApplication =
-                studentService.applyForTraineeship(username, positionId);
-        return "students/application-confirmation";
+        try {
+            TraineeshipApplicationDto createdApplication =
+                    studentService.applyForTraineeship(username, positionId);
+            redirectAttributes.addFlashAttribute("success", "Application submitted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/students/" + username + "/traineeships"; // Redirect back to traineeships list
     }
 
     // US6: Logbook Management
