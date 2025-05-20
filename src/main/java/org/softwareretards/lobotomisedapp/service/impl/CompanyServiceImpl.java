@@ -221,7 +221,7 @@ public class CompanyServiceImpl implements CompanyService {
             existingPosition.setStatus(TraineeshipStatus.OPEN);
         } else {
             if (existingPosition.getStudent() != null || existingPosition.getProfessor() != null) {
-                throw new IllegalStateException("Once a student has been assigned, you are not allowed to make any changes. Contact the committee for more information.");
+                throw new IllegalStateException("Once a student has been assigned, you are not allowed to close the position");
             }
             existingPosition.setStatus(TraineeshipStatus.CLOSED);
         }

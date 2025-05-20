@@ -251,8 +251,7 @@
                         CLOSED
                     </option>
                     <option value="OPEN"
-                            th:selected="${position.status.name() == 'OPEN'}"
-                            th:disabled="${position.student != null || position.professor != null}">
+                            th:selected="${position.status.name() == 'OPEN'}">
                         OPEN
                     </option>
                 </select>
