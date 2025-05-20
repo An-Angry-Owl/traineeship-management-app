@@ -117,6 +117,7 @@ public class CommitteeServiceImpl implements CommitteeService {
 
             // Assign the professor to the traineeship
             traineeship.setProfessor(professor);
+            traineeship.setStatus(TraineeshipStatus.IN_PROGRESS);
             traineeshipPositionRepository.save(traineeship);
         } else {
             //TODO: This should be handled better with a custom exception

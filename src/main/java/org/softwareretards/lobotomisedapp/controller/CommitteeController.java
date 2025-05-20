@@ -190,8 +190,8 @@ public class CommitteeController {
         );
         model.addAttribute("committee", committeeDto);
 
-        // Get all OPEN positions
-        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findOpenPositions().stream()
+        // Get all Assigned positions
+        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findAssignedPositions().stream()
                 .map(TraineeshipPositionMapper::toDto)
                 .collect(Collectors.toList());
         model.addAttribute("positions", positions);
