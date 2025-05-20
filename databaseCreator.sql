@@ -82,11 +82,9 @@ CREATE TABLE evaluations (
 CREATE TABLE traineeship_applications (
                                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                           student_id BIGINT NOT NULL,
-                                          position_id BIGINT NOT NULL,
                                           application_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                           status ENUM('PENDING','ACCEPTED','REJECTED') DEFAULT 'PENDING',
-                                          CONSTRAINT fk_applications_student FOREIGN KEY (student_id) REFERENCES students(id),
-                                          CONSTRAINT fk_applications_position FOREIGN KEY (position_id) REFERENCES traineeship_positions(id)
+                                          CONSTRAINT fk_applications_student FOREIGN KEY (student_id) REFERENCES students(id)
 );
 
 -- Create the LOGBOOK_ENTRIES table
