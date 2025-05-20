@@ -194,6 +194,7 @@
             display: flex;
             gap: 1.5rem;
             align-items: center;
+            margin-left: auto;
         }
 
         .status-bubble {
@@ -289,6 +290,32 @@
             border-color: rgba(220, 53, 69, 0.4);
             background-color: rgba(220, 53, 69, 0.1);
         }
+
+        .status-edit-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .edit-button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            margin-left: 2rem;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -314,32 +341,35 @@
 <!-- Positions List -->
 <div class="position-list">
     <h3>Your Traineeship Positions</h3>
-    <div th:each="position : ${traineeships}">
-        <div class="position-name" th:text="${company.companyName}"></div>
+    <div th:each="position : ${traineeships}" class="position-item">
+        <div class="position-name" th:text="${position.positionName}"></div>
 
-        <div class="status-container">
-            <!-- COMPLETED Status -->
-            <div class="status-bubble"
-                 th:classappend="${position.status.name() == 'COMPLETED'} ? 'completed' : 'not-completed'"
-                 th:text="${position.status.name() == 'COMPLETED'} ? 'Completed ✓' : 'Not Completed ✗'">
+        <div class="status-edit-container">
+            <div class="status-container">
+                <!-- COMPLETED Status -->
+                <div class="status-bubble"
+                     th:classappend="${position.status.name() == 'COMPLETED'} ? 'completed' : 'not-completed'"
+                     th:text="${position.status.name() == 'COMPLETED'} ? 'Completed ✓' : 'Not Completed ✗'">
+                </div>
+
+                <!-- Assigned Status -->
+                <div class="status-bubble"
+                     th:classappend="${position.status.name() == 'ASSIGNED' || position.status.name() == 'IN_PROGRESS' || position.status.name() == 'COMPLETED'} ? 'assigned' : 'not-assigned'"
+                     th:text="${position.status.name() == 'ASSIGNED' || position.status.name() == 'IN_PROGRESS' || position.status.name() == 'COMPLETED'} ? 'Assigned ✓' : 'Not Assigned ✗'">
+                </div>
+
+                <!-- Announced Status -->
+                <div class="status-bubble"
+                     th:classappend="${position.status.name() != 'CLOSED'} ? 'announced' : 'not-announced'"
+                     th:text="${position.status.name() != 'CLOSED'} ? 'Announced ✓' : 'Not Announced ✗'">
+                </div>
             </div>
 
-            <!-- Assigned Status -->
-            <div class="status-bubble"
-                 th:classappend="${position.status.name() == 'ASSIGNED' || position.status.name() == 'IN_PROGRESS' || position.status.name() == 'COMPLETED'} ? 'assigned' : 'not-assigned'"
-                 th:text="${position.status.name() == 'ASSIGNED' || position.status.name() == 'IN_PROGRESS' || position.status.name() == 'COMPLETED'} ? 'Assigned ✓' : 'Not Assigned ✗'">
-            </div>
-
-            <!-- Announced Status -->
-            <div class="status-bubble"
-                 th:classappend="${position.status.name() != 'CLOSED'} ? 'announced' : 'not-announced'"
-                 th:text="${position.status.name() != 'CLOSED'} ? 'Announced ✓' : 'Not Announced ✗'">
-            </div>
+            <a class="edit-button"
+               th:href="@{/companies/{username}/traineeships/{positionId}/settings(username=${company.userDto.username}, positionId=${position.id})}">
+                ⚙ Edit
+            </a>
         </div>
-
-        <a th:href="@{/companies/{username}/traineeships/{positionId}/settings(username=${company.userDto.username}, positionId=${position.id})}">
-            ⚙️ Edit
-        </a>
     </div>
 </div>
 
