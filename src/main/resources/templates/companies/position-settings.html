@@ -170,6 +170,17 @@
             padding: 4rem;
             font-style: italic;
         }
+
+        .text-danger {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        select.form-control[disabled] {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -230,6 +241,24 @@
             <div class="form-group">
                 <label>Topics</label>
                 <textarea th:field="*{topics}" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Position Status</label>
+                <select th:field="*{status}" class="form-control" required>
+                    <option value="CLOSED"
+                            th:selected="${position.status.name() == 'CLOSED'}">
+                        CLOSED
+                    </option>
+                    <option value="OPEN"
+                            th:selected="${position.status.name() == 'OPEN'}"
+                            th:disabled="${position.student != null || position.professor != null}">
+                        OPEN
+                    </option>
+                </select>
+                <small class="text-danger" th:if="${position.student != null || position.professor != null}">
+                    To close the position, it must be unassigned. Contact the committee for more information.
+                </small>
             </div>
 
             <!-- Read-only Fields -->

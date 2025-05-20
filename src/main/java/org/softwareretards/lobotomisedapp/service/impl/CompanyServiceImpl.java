@@ -210,6 +210,22 @@ public class CompanyServiceImpl implements CompanyService {
         existingPosition.setStartDate(positionDto.getStartDate());
         existingPosition.setEndDate(positionDto.getEndDate());
 
+        existingPosition.setDescription(positionDto.getDescription());
+        existingPosition.setRequiredSkills(positionDto.getRequiredSkills());
+        existingPosition.setTopics(positionDto.getTopics());
+        existingPosition.setStartDate(positionDto.getStartDate());
+        existingPosition.setEndDate(positionDto.getEndDate());
+
+
+        if (positionDto.getStatus() == TraineeshipStatus.OPEN) {
+            existingPosition.setStatus(TraineeshipStatus.OPEN);
+        } else {
+            if (existingPosition.getStudent() != null || existingPosition.getProfessor() != null) {
+                throw new IllegalStateException("To close the position, it must be unassigned. Contact the committee for more information.");
+            }
+            existingPosition.setStatus(TraineeshipStatus.CLOSED);
+        }
+
         TraineeshipPosition updatedPosition = traineeshipPositionRepository.save(existingPosition);
         return TraineeshipPositionMapper.toDto(updatedPosition);
     }
