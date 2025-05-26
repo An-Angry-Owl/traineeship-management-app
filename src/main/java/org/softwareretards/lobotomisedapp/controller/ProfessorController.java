@@ -4,8 +4,6 @@ import org.softwareretards.lobotomisedapp.dto.EvaluationDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.entity.user.User;
-import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
-import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
 import org.softwareretards.lobotomisedapp.service.ProfessorService;
 import org.softwareretards.lobotomisedapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +20,12 @@ public class ProfessorController {
 
     private final ProfessorService professorService;
     private final UserService userService;
-    private final EvaluationRepository evaluationRepository;
 
     @Autowired
     public ProfessorController(ProfessorService professorService,
-                               UserService userService,
-                               EvaluationRepository evaluationRepository) {
+                               UserService userService) {
         this.professorService = professorService;
         this.userService = userService;
-        this.evaluationRepository = evaluationRepository;
     }
 
     // US13: Profile Management
@@ -66,18 +61,15 @@ public class ProfessorController {
         return "professors/position-list"; // src/main/resources/templates/professors/position-list.html
     }
 
-    // US15: Evaluation Submission
+    // US15: Evaluation Submission Form
     @GetMapping("/professors/{username}/positions/{positionId}/evaluate")
     public String showEvaluationForm(
             @PathVariable String username,
             @PathVariable Long positionId,
             Model model
     ) {
-        // Get existing evaluation if exists
-        EvaluationDto evaluationDto = evaluationRepository.findByTraineeshipPositionId(positionId)
-                .map(EvaluationMapper::toDto)
-                .orElse(new EvaluationDto());
-
+        // Delegate to service layer
+        EvaluationDto evaluationDto = professorService.getOrCreateEvaluation(positionId);
         model.addAttribute("evaluation", evaluationDto);
         model.addAttribute("positionId", positionId);
         return "professors/dashboard";

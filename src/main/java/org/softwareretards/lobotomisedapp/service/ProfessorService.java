@@ -10,4 +10,5 @@ public interface ProfessorService {
     List<TraineeshipPositionDto> getSupervisedPositions(String username);
     EvaluationDto saveEvaluation(String username, Long positionId, EvaluationDto evaluationDto);
     ProfessorDto getProfile(String username);
+    EvaluationDto getOrCreateEvaluation(Long positionId);
 }

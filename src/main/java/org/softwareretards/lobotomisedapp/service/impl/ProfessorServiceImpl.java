@@ -144,6 +144,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         return EvaluationMapper.toDto(savedEvaluation);
     }
 
+    @Override
+    public EvaluationDto getOrCreateEvaluation(Long positionId) {
+        return evaluationRepository.findByTraineeshipPositionId(positionId)
+                .map(EvaluationMapper::toDto)
+                .orElse(new EvaluationDto());
+    }
+
     private void validateProfessorRatings(EvaluationDto dto) {
         validateRating(dto.getProfStdMotivationRating());
         validateRating(dto.getProfStdEffectivenessRating());

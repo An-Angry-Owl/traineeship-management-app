@@ -2,10 +2,7 @@ package org.softwareretards.lobotomisedapp.controller;
 
 import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto;
 import org.softwareretards.lobotomisedapp.dto.user.CompanyDto;
-import org.softwareretards.lobotomisedapp.entity.user.Company;
 import org.softwareretards.lobotomisedapp.entity.user.User;
-import org.softwareretards.lobotomisedapp.mapper.user.CompanyMapper;
-import org.softwareretards.lobotomisedapp.repository.user.CompanyRepository;
 import org.softwareretards.lobotomisedapp.service.CompanyService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,11 +21,9 @@ import java.util.Optional;
 public class CompanyController {
 
     private final CompanyService companyService;
-    private final CompanyRepository companyRepository;
 
-    public CompanyController(CompanyService companyService, CompanyRepository companyRepository) {
+    public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
-        this.companyRepository = companyRepository;
     }
 
     // Display all companies
@@ -200,18 +195,6 @@ public class CompanyController {
         return "companies/dashboard";
     }
 
-    @PostMapping("/{username}/traineeships/new")
-    public String handleNewPosition(
-            @PathVariable String username,
-            @ModelAttribute TraineeshipPositionDto positionDto
-    ) {
-        Company company = companyRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
-
-        positionDto.setCompany(CompanyMapper.toDto(company));
-        companyService.announceTraineeship(positionDto);
-        return "redirect:/companies/" + username + "/dashboard";
-    }
 
     // Show profile form
     @GetMapping("/{username}/profile")
