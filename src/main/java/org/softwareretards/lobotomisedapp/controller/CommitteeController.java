@@ -5,22 +5,8 @@ import org.softwareretards.lobotomisedapp.dto.traineeship.TraineeshipPositionDto
 import org.softwareretards.lobotomisedapp.dto.user.CommitteeDto;
 import org.softwareretards.lobotomisedapp.dto.user.ProfessorDto;
 import org.softwareretards.lobotomisedapp.dto.user.StudentDto;
-import org.softwareretards.lobotomisedapp.entity.Evaluation;
 import org.softwareretards.lobotomisedapp.entity.enums.FinalMark;
-import org.softwareretards.lobotomisedapp.entity.enums.TraineeshipStatus;
-import org.softwareretards.lobotomisedapp.entity.traineeship.TraineeshipPosition;
-import org.softwareretards.lobotomisedapp.entity.user.Committee;
 import org.softwareretards.lobotomisedapp.entity.user.User;
-import org.softwareretards.lobotomisedapp.mapper.EvaluationMapper;
-import org.softwareretards.lobotomisedapp.mapper.traineeship.TraineeshipPositionMapper;
-import org.softwareretards.lobotomisedapp.mapper.user.ProfessorMapper;
-import org.softwareretards.lobotomisedapp.mapper.user.StudentMapper;
-import org.softwareretards.lobotomisedapp.repository.EvaluationRepository;
-import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipApplicationRepository;
-import org.softwareretards.lobotomisedapp.repository.traineeship.TraineeshipPositionRepository;
-import org.softwareretards.lobotomisedapp.repository.user.ProfessorRepository;
-import org.softwareretards.lobotomisedapp.repository.user.StudentRepository;
-import org.softwareretards.lobotomisedapp.repository.user.UserRepository;
 import org.softwareretards.lobotomisedapp.service.CommitteeService;
 import org.softwareretards.lobotomisedapp.service.RecommendationsService;
 import org.softwareretards.lobotomisedapp.service.SearchService;
@@ -35,47 +21,27 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/committees")
 public class CommitteeController {
 
     private final CommitteeService committeeService;
-    private final TraineeshipPositionRepository traineeshipPositionRepository;
-    private final ProfessorRepository professorRepository;
-    private final StudentRepository studentRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final RecommendationsService recommendationsService;
-    private final TraineeshipApplicationRepository traineeshipApplicationRepository;
     private final SearchService searchService;
-    private final EvaluationRepository evaluationRepository;
 
     @Autowired
     public CommitteeController(CommitteeService committeeService,
-                               TraineeshipPositionRepository traineeshipPositionRepository,
-                               ProfessorRepository professorRepository,
-                               StudentRepository studentRepository,
                                UserService userService,
-                               UserRepository userRepository,
                                RecommendationsService recommendationsService,
-                               TraineeshipApplicationRepository traineeshipApplicationRepository,
-                               SearchService searchService,
-                               EvaluationRepository evaluationRepository) {
+                               SearchService searchService) {
         this.committeeService = committeeService;
-        this.traineeshipPositionRepository = traineeshipPositionRepository;
-        this.professorRepository = professorRepository;
-        this.studentRepository = studentRepository;
         this.userService = userService;
-        this.userRepository = userRepository;
         this.recommendationsService = recommendationsService;
-        this.traineeshipApplicationRepository = traineeshipApplicationRepository;
         this.searchService = searchService;
-        this.evaluationRepository = evaluationRepository;
     }
 
     @GetMapping("/list")
@@ -123,14 +89,6 @@ public class CommitteeController {
         return "redirect:/committee/list";
     }
 
-    @PostMapping("/assignTraineeship")
-    public String assignTraineeshipToStudent(@RequestParam Long committeeId,
-                                             @RequestParam Long studentId,
-                                             @RequestParam Long traineeshipId) {
-        committeeService.assignTraineeshipToStudent(committeeId, studentId, traineeshipId);
-        return "redirect:/committee/list";
-    }
-
     @PostMapping("/assignProfessor")
     public String assignSupervisingProfessor(
             @RequestParam Long committeeId,
@@ -147,8 +105,7 @@ public class CommitteeController {
     }
 
     @GetMapping("/monitorEvaluations/{traineeshipId}")
-    public String monitorTraineeshipEvaluations(@PathVariable Long traineeshipId,
-                                                Model model) {
+    public String monitorTraineeshipEvaluations(@PathVariable Long traineeshipId, Model model) {
         committeeService.monitorTraineeshipEvaluations(null, traineeshipId);
         model.addAttribute("traineeshipId", traineeshipId);
         return "committee/monitorEvaluations";
@@ -160,19 +117,15 @@ public class CommitteeController {
             @AuthenticationPrincipal User user,
             Model model) {
 
-        // Authorization check
         if (!user.getUsername().equals(username)) {
             return "redirect:/access-denied";
         }
 
         CommitteeDto committeeDto = committeeService.getCommitteeById(user.getId());
-        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findAll().stream()
-                .map(TraineeshipPositionMapper::toDto)
-                .collect(Collectors.toList());
+        List<TraineeshipPositionDto> positions = committeeService.getAllTraineeshipPositions();
 
         model.addAttribute("committee", committeeDto);
         model.addAttribute("positions", positions);
-
         return "committees/dashboard";
     }
 
@@ -183,36 +136,17 @@ public class CommitteeController {
             Model model,
             Authentication authentication) {
 
-        // Get committee
         String username = authentication.getName();
-        CommitteeDto committeeDto = committeeService.getCommitteeById(
-                userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
-                        .getId()
-        );
+        CommitteeDto committeeDto = committeeService.getCommitteeByUsername(username);
         model.addAttribute("committee", committeeDto);
 
-        // Get all Assigned positions
-        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findAssignedPositions().stream()
-                .map(TraineeshipPositionMapper::toDto)
-                .collect(Collectors.toList());
+        List<TraineeshipPositionDto> positions = committeeService.getAssignedTraineeshipPositions();
         model.addAttribute("positions", positions);
 
         if (positionId != null) {
-            TraineeshipPositionDto selectedPosition = traineeshipPositionRepository.findById(positionId)
-                    .map(TraineeshipPositionMapper::toDto)
-                    .orElse(null);
-
-            // Get recommended professors
-            List<ProfessorDto> recommendations =
-                    searchService.recommend(positionId, strategy);
-
-            // Calculate workloads for each professor
-            Map<Long, Integer> professorWorkloads = new HashMap<>();
-            recommendations.forEach(prof -> {
-                int workload = traineeshipPositionRepository.countPositionsByProfessorId(prof.getUserDto().getId());
-                professorWorkloads.put(prof.getUserDto().getId(), workload);
-            });
+            TraineeshipPositionDto selectedPosition = committeeService.getTraineeshipPositionById(positionId);
+            List<ProfessorDto> recommendations = searchService.recommend(positionId, strategy);
+            Map<Long, Integer> professorWorkloads = committeeService.getProfessorWorkloads(recommendations);
 
             model.addAttribute("selectedPosition", selectedPosition);
             model.addAttribute("recommendations", recommendations);
@@ -230,32 +164,16 @@ public class CommitteeController {
             Model model,
             Authentication authentication) {
 
-        // Get the currently logged-in committee
         String username = authentication.getName();
-        CommitteeDto committeeDto = committeeService.getCommitteeById(
-                userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
-                        .getId()
-        );
-
-        // Add committee to model
+        CommitteeDto committeeDto = committeeService.getCommitteeByUsername(username);
         model.addAttribute("committee", committeeDto);
 
-        // Get all students with applications
-        List<Long> studentIds = traineeshipApplicationRepository.findDistinctStudentIds();
-        List<StudentDto> students = studentRepository.findAllById(studentIds).stream()
-                .map(StudentMapper::toDto)
-                .collect(Collectors.toList());
-
+        List<StudentDto> students = committeeService.getStudentsWithApplications();
         model.addAttribute("students", students);
 
         if (studentId != null) {
-            StudentDto selectedStudent = studentRepository.findById(studentId)
-                    .map(StudentMapper::toDto)
-                    .orElse(null);
-
-            List<TraineeshipPositionDto> recommendations =
-                    recommendationsService.recommend(studentId, strategy);
+            StudentDto selectedStudent = committeeService.getStudentById(studentId);
+            List<TraineeshipPositionDto> recommendations = recommendationsService.recommend(studentId, strategy);
 
             model.addAttribute("selectedStudent", selectedStudent);
             model.addAttribute("recommendations", recommendations);
@@ -267,11 +185,7 @@ public class CommitteeController {
 
     @GetMapping("/{username}/profile")
     public String showProfileForm(@PathVariable String username, Model model) {
-        CommitteeDto committeeDto = committeeService.getCommitteeById(
-                userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
-                        .getId()
-        );
+        CommitteeDto committeeDto = committeeService.getCommitteeByUsername(username);
         model.addAttribute("committee", committeeDto);
         return "committees/profile-form";
     }
@@ -282,20 +196,7 @@ public class CommitteeController {
             @ModelAttribute("committee") CommitteeDto committeeDto,
             Model model) {
 
-        // Get existing profile to preserve UserDto
-        CommitteeDto existingProfile = committeeService.getCommitteeById(
-                userRepository.findByUsername(username)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
-                        .getId()
-        );
-
-        // Merge changes
-        committeeDto.setUserDto(existingProfile.getUserDto());
-
-        CommitteeDto savedProfile = committeeService.updateCommittee(
-                existingProfile.getUserDto().getId(),
-                committeeDto
-        );
+        CommitteeDto savedProfile = committeeService.updateCommitteeProfile(username, committeeDto);
         model.addAttribute("committee", savedProfile);
         return "redirect:/committees/" + username + "/profile";
     }
@@ -322,15 +223,12 @@ public class CommitteeController {
                                     @RequestParam Long traineeshipId,
                                     RedirectAttributes redirectAttributes) {
         try {
-            // Call your existing service method
             committeeService.assignTraineeshipToStudent(committeeId, studentId, traineeshipId);
             committeeService.acceptApplication(studentId);
             redirectAttributes.addFlashAttribute("success", "Traineeship assigned successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to assign traineeship: " + e.getMessage());
         }
-
-
         return "redirect:/committees/student-list?studentId=" + studentId;
     }
 
@@ -341,28 +239,18 @@ public class CommitteeController {
             @AuthenticationPrincipal User user,
             Model model) {
 
-        // Authorization check
         if (!user.getUsername().equals(username)) {
             return "redirect:/access-denied";
         }
 
-        // Get required data
         CommitteeDto committeeDto = committeeService.getCommitteeById(user.getId());
-        List<TraineeshipPositionDto> positions = traineeshipPositionRepository.findAll().stream()
-                .map(TraineeshipPositionMapper::toDto)
-                .collect(Collectors.toList());
+        List<TraineeshipPositionDto> positions = committeeService.getAllTraineeshipPositions();
+        EvaluationDto evaluation = committeeService.getEvaluationByPositionId(positionId);
 
-        // Get evaluation data
-        Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
-                .orElse(null);
-
-        // Add all required attributes
         model.addAttribute("committee", committeeDto);
-        model.addAttribute("positions", traineeshipPositionRepository.findAll().stream()
-                .map(TraineeshipPositionMapper::toDto)
-                .collect(Collectors.toList()));
+        model.addAttribute("positions", positions);
         model.addAttribute("evaluation", evaluation);
-        model.addAttribute("position", traineeshipPositionRepository.findById(positionId).orElseThrow());
+        model.addAttribute("position", committeeService.getTraineeshipPositionById(positionId));
 
         return "committees/dashboard";
     }
@@ -373,21 +261,7 @@ public class CommitteeController {
                                   @RequestParam FinalMark finalMark,
                                   RedirectAttributes redirectAttributes) {
         try {
-            Evaluation evaluation = evaluationRepository.findByTraineeshipPositionId(positionId)
-                    .orElseThrow(() -> new RuntimeException("Evaluation not found"));
-
-            evaluation.setFinalMark(finalMark);
-
-            TraineeshipPosition position = evaluation.getTraineeshipPosition();
-            if (finalMark.equals(FinalMark.PASS) || finalMark.equals(FinalMark.FAIL)){
-                position.setStatus(TraineeshipStatus.COMPLETED);
-            } else if (finalMark.equals(FinalMark.PENDING)) {
-                position.setStatus(TraineeshipStatus.IN_PROGRESS);
-            } else {
-                throw new RuntimeException("What kind of final mark is this?");
-            }
-            evaluationRepository.save(evaluation);
-
+            committeeService.updateFinalMark(positionId, finalMark);
             redirectAttributes.addFlashAttribute("success", "Final mark updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error updating final mark: " + e.getMessage());
@@ -398,8 +272,6 @@ public class CommitteeController {
     @GetMapping("/committees/evaluations/{positionId}")
     @ResponseBody
     public EvaluationDto getEvaluationData(@PathVariable Long positionId) {
-        return evaluationRepository.findByTraineeshipPositionId(positionId)
-                .map(EvaluationMapper::toDto)
-                .orElse(null);
+        return committeeService.getEvaluationByPositionId(positionId);
     }
 }

@@ -186,14 +186,6 @@ class CommitteeControllerTest {
     }
 
     @Test
-    void assignTraineeshipToStudent_ShouldRedirectToList() {
-        String viewName = committeeController.assignTraineeshipToStudent(1L, 1L, 1L);
-
-        assertEquals("redirect:/committee/list", viewName);
-        verify(committeeService).assignTraineeshipToStudent(1L, 1L, 1L);
-    }
-
-    @Test
     void assignSupervisingProfessor_Failure_ShouldRedirectWithErrorMessage() {
         RuntimeException exception = new RuntimeException("Error message");
         doThrow(exception).when(committeeService).assignSupervisingProfessor(1L, 1L, 1L);
