@@ -44,24 +44,6 @@ public class CommitteeController {
         this.searchService = searchService;
     }
 
-    @GetMapping("/list")
-    public String getAllCommittees(Model model) {
-        model.addAttribute("committees", committeeService.getAllCommittees());
-        return "committee/list";
-    }
-
-    @GetMapping("/view/{id}")
-    public String getCommitteeById(@PathVariable Long id, Model model) {
-        CommitteeDto committee = committeeService.getCommitteeById(id);
-        model.addAttribute("committee", committee);
-        return "committee/view";
-    }
-
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
-        model.addAttribute("committeeDto", new CommitteeDto());
-        return "committee/create";
-    }
 
     @PostMapping("/create")
     public String createCommittee(@ModelAttribute CommitteeDto committeeDto) {
@@ -69,12 +51,6 @@ public class CommitteeController {
         return "redirect:/committee/list";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showUpdateForm(@PathVariable Long id, Model model) {
-        CommitteeDto committee = committeeService.getCommitteeById(id);
-        model.addAttribute("committeeDto", committee);
-        return "committee/edit";
-    }
 
     @PostMapping("/edit/{id}")
     public String updateCommittee(@PathVariable Long id,
@@ -104,12 +80,6 @@ public class CommitteeController {
         return "redirect:/committees/professor-list?professorId=" + professorId;
     }
 
-    @GetMapping("/monitorEvaluations/{traineeshipId}")
-    public String monitorTraineeshipEvaluations(@PathVariable Long traineeshipId, Model model) {
-        committeeService.monitorTraineeshipEvaluations(null, traineeshipId);
-        model.addAttribute("traineeshipId", traineeshipId);
-        return "committee/monitorEvaluations";
-    }
 
     @GetMapping("/{username}/dashboard")
     public String showDashboard(

@@ -14,6 +14,6 @@ public interface TraineeshipApplicationRepository extends JpaRepository<Trainees
     List<TraineeshipApplication> findByStatus(ApplicationStatus status);
     boolean existsByStudentId(Long studentId);
 
-    @Query("SELECT DISTINCT a.student.id FROM TraineeshipApplication a")
+    @Query("SELECT DISTINCT a.student.id FROM TraineeshipApplication a WHERE a.status = 'PENDING'")
     List<Long> findDistinctStudentIds();
 }
