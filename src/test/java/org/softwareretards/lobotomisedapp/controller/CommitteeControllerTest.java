@@ -92,10 +92,6 @@ class CommitteeControllerTest {
     private CommitteeController committeeController;
 
     private CommitteeDto committeeDto;
-    private User user;
-    private TraineeshipPositionDto positionDto;
-    private Evaluation evaluation;
-    private EvaluationDto evaluationDto;
 
     @BeforeEach
     void setUp() {
@@ -107,18 +103,18 @@ class CommitteeControllerTest {
         committeeDto = new CommitteeDto();
         committeeDto.setUserDto(userDto);
 
-        user = new User();
+        User user = new User();
         user.setId(1L);
         user.setUsername("committee1");
 
-        positionDto = new TraineeshipPositionDto();
+        TraineeshipPositionDto positionDto = new TraineeshipPositionDto();
         positionDto.setId(1L);
 
-        evaluation = new Evaluation();
+        Evaluation evaluation = new Evaluation();
         evaluation.setId(1L);
         evaluation.setFinalMark(FinalMark.PENDING);
 
-        evaluationDto = new EvaluationDto();
+        EvaluationDto evaluationDto = new EvaluationDto();
         evaluationDto.setId(1L);
         evaluationDto.setFinalMark(FinalMark.PENDING);
     }
@@ -215,43 +211,14 @@ class CommitteeControllerTest {
     }
 
     @Test
-    void showStudentList_WithStudentId_ShouldReturnStudentListView() {
-        when(authentication.getName()).thenReturn("committee1");
-        when(userRepository.findByUsername("committee1")).thenReturn(Optional.of(user));
-        when(committeeService.getCommitteeById(1L)).thenReturn(committeeDto);
-        when(traineeshipApplicationRepository.findDistinctStudentIds()).thenReturn(Collections.singletonList(1L));
-        when(studentRepository.findAllById(anyList())).thenReturn(Collections.emptyList());
-        when(studentRepository.findById(1L)).thenReturn(Optional.empty());
-        when(recommendationsService.recommend(1L, RecommendationType.NONE)).thenReturn(Collections.emptyList());
+    void monitorTraineeshipEvaluationsShouldCallServiceAndAddTraineeshipIdToModel() {
+        Model model = mock(Model.class);
 
-        String viewName = committeeController.showStudentList(1L, RecommendationType.NONE, model, authentication);
+        String viewName = committeeController.monitorTraineeshipEvaluations(5L, model);
 
-        assertEquals("committees/student-list", viewName);
-        verify(model).addAttribute("committee", committeeDto);
-        verify(model).addAttribute("students", Collections.emptyList());
-    }
-
-    @Test
-    void showProfileForm_ShouldReturnProfileFormView() {
-        when(userRepository.findByUsername("committee1")).thenReturn(Optional.of(user));
-        when(committeeService.getCommitteeById(1L)).thenReturn(committeeDto);
-
-        String viewName = committeeController.showProfileForm("committee1", model);
-
-        assertEquals("committees/profile-form", viewName);
-        verify(model).addAttribute("committee", committeeDto);
-    }
-
-    @Test
-    void saveProfile_ShouldRedirectToProfile() {
-        when(userRepository.findByUsername("committee1")).thenReturn(Optional.of(user));
-        when(committeeService.getCommitteeById(1L)).thenReturn(committeeDto);
-        when(committeeService.updateCommittee(anyLong(), any())).thenReturn(committeeDto);
-
-        String viewName = committeeController.saveProfile("committee1", committeeDto, model);
-
-        assertEquals("redirect:/committees/committee1/profile", viewName);
-        verify(model).addAttribute("committee", committeeDto);
+        verify(committeeService).monitorTraineeshipEvaluations(null, 5L);
+        verify(model).addAttribute("traineeshipId", 5L);
+        assertEquals("committee/monitorEvaluations", viewName);
     }
 
     @Test

@@ -51,7 +51,6 @@ class CompanyServiceImplTest {
     private Company company;
     private CompanyDto companyDto;
     private TraineeshipPosition position;
-    private TraineeshipPositionDto positionDto;
     private Evaluation evaluation;
 
     @BeforeEach
@@ -77,7 +76,7 @@ class CompanyServiceImplTest {
         position.setCompany(company);
         position.setStatus(TraineeshipStatus.CLOSED);
 
-        positionDto = new TraineeshipPositionDto();
+        TraineeshipPositionDto positionDto = new TraineeshipPositionDto();
         positionDto.setId(1L);
         positionDto.setStatus(TraineeshipStatus.CLOSED);
 
@@ -175,4 +174,83 @@ class CompanyServiceImplTest {
         assertThrows(EntityNotFoundException.class, () ->
                 companyService.deleteTraineeshipPosition(1L, "company1"));
     }
+
+    @Test
+    void announceTraineeshipShouldSetStatusClosedAndReturnDto() {
+        TraineeshipPositionDto inputDto = new TraineeshipPositionDto();
+        TraineeshipPosition entity = new TraineeshipPosition();
+        entity.setStatus(TraineeshipStatus.CLOSED);
+        TraineeshipPosition savedEntity = new TraineeshipPosition();
+        savedEntity.setStatus(TraineeshipStatus.CLOSED);
+        TraineeshipPositionDto outputDto = new TraineeshipPositionDto();
+        outputDto.setStatus(TraineeshipStatus.CLOSED);
+
+        try (var mockedMapper = mockStatic(TraineeshipPositionMapper.class)) {
+            mockedMapper.when(() -> TraineeshipPositionMapper.toEntity(inputDto)).thenReturn(entity);
+            mockedMapper.when(() -> TraineeshipPositionMapper.toDto(savedEntity)).thenReturn(outputDto);
+
+            when(traineeshipPositionRepository.save(entity)).thenReturn(savedEntity);
+
+            TraineeshipPositionDto result = companyService.announceTraineeship(inputDto);
+
+            assertEquals(TraineeshipStatus.CLOSED, result.getStatus());
+        }
+    }
+
+    @Test
+    void updateTraineeshipPositionShouldUpdateAllowedFieldsAndReturnDto() {
+        TraineeshipPositionDto inputDto = new TraineeshipPositionDto();
+        inputDto.setId(1L);
+        inputDto.setStatus(TraineeshipStatus.OPEN);
+
+        TraineeshipPosition existing = new TraineeshipPosition();
+        existing.setId(1L);
+        existing.setStatus(TraineeshipStatus.CLOSED);
+
+        TraineeshipPosition updated = new TraineeshipPosition();
+        updated.setId(1L);
+        updated.setStatus(TraineeshipStatus.OPEN);
+
+        TraineeshipPositionDto outputDto = new TraineeshipPositionDto();
+        outputDto.setId(1L);
+        outputDto.setStatus(TraineeshipStatus.OPEN);
+
+        when(traineeshipPositionRepository.findByIdAndCompanyUsername(1L, "company1")).thenReturn(Optional.of(existing));
+        when(traineeshipPositionRepository.save(existing)).thenReturn(updated);
+
+        try (var mockedMapper = mockStatic(TraineeshipPositionMapper.class)) {
+            mockedMapper.when(() -> TraineeshipPositionMapper.toDto(updated)).thenReturn(outputDto);
+
+            TraineeshipPositionDto result = companyService.updateTraineeshipPosition(inputDto, "company1");
+
+            assertEquals(TraineeshipStatus.OPEN, result.getStatus());
+        }
+    }
+
+    @Test
+    void updateTraineeshipPositionShouldThrowWhenPositionNotFound() {
+        TraineeshipPositionDto inputDto = new TraineeshipPositionDto();
+        inputDto.setId(99L);
+
+        when(traineeshipPositionRepository.findByIdAndCompanyUsername(99L, "company1")).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> companyService.updateTraineeshipPosition(inputDto, "company1"));
+    }
+
+    @Test
+    void updateTraineeshipPositionShouldThrowWhenTryingToCloseWithAssignedStudentOrProfessor() {
+        TraineeshipPositionDto inputDto = new TraineeshipPositionDto();
+        inputDto.setId(1L);
+        inputDto.setStatus(TraineeshipStatus.CLOSED);
+
+        TraineeshipPosition existing = new TraineeshipPosition();
+        existing.setId(1L);
+        existing.setStatus(TraineeshipStatus.OPEN);
+        existing.setStudent(new org.softwareretards.lobotomisedapp.entity.user.Student());
+
+        when(traineeshipPositionRepository.findByIdAndCompanyUsername(1L, "company1")).thenReturn(Optional.of(existing));
+
+        assertThrows(IllegalStateException.class, () -> companyService.updateTraineeshipPosition(inputDto, "company1"));
+    }
+
 }

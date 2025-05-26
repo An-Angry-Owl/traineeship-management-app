@@ -111,18 +111,6 @@ class ProfessorControllerTest {
     }
 
     @Test
-    void showEvaluationForm_WithoutExistingEvaluation_ShouldReturnDashboardView() {
-        when(evaluationRepository.findByTraineeshipPositionId(1L))
-                .thenReturn(Optional.empty());
-
-        String viewName = professorController.showEvaluationForm("prof1", 1L, model);
-
-        assertEquals("professors/dashboard", viewName);
-        verify(model).addAttribute(eq("evaluation"), any(EvaluationDto.class));
-        verify(model).addAttribute("positionId", 1L);
-    }
-
-    @Test
     void submitEvaluation_Success_ShouldRedirectWithSuccessMessage() {
         when(professorService.saveEvaluation("prof1", 1L, evaluationDto))
                 .thenReturn(evaluationDto);
@@ -132,6 +120,57 @@ class ProfessorControllerTest {
 
         assertEquals("redirect:/professors/prof1/dashboard", viewName);
         verify(redirectAttributes).addFlashAttribute("success", "Evaluation submitted successfully!");
+    }
+
+    @Test
+    void showEvaluationForm_ShouldReturnDashboardViewWithExistingEvaluation() {
+        EvaluationDto evaluationDto = new EvaluationDto();
+        when(professorService.getOrCreateEvaluation(1L)).thenReturn(evaluationDto);
+
+        String viewName = professorController.showEvaluationForm("prof1", 1L, model);
+
+        assertEquals("professors/dashboard", viewName);
+        verify(model).addAttribute("evaluation", evaluationDto);
+        verify(model).addAttribute("positionId", 1L);
+    }
+
+    @Test
+    void showEvaluationForm_ShouldReturnDashboardViewWithNullEvaluation() {
+        when(professorService.getOrCreateEvaluation(1L)).thenReturn(null);
+
+        String viewName = professorController.showEvaluationForm("prof1", 1L, model);
+
+        assertEquals("professors/dashboard", viewName);
+        verify(model).addAttribute("evaluation", null);
+        verify(model).addAttribute("positionId", 1L);
+    }
+
+    @Test
+    void saveProfile_ShouldPreserveUserDtoAndRedirect() {
+        ProfessorDto inputDto = new ProfessorDto();
+        ProfessorDto existingDto = new ProfessorDto();
+        UserDto userDto = new UserDto();
+        existingDto.setUserDto(userDto);
+        ProfessorDto savedDto = new ProfessorDto();
+        savedDto.setUserDto(userDto);
+
+        when(professorService.getProfile("prof1")).thenReturn(existingDto);
+        when(professorService.saveProfile(any())).thenReturn(savedDto);
+
+        String viewName = professorController.saveProfile("prof1", inputDto, model);
+
+        assertEquals("redirect:/professors/prof1/profile", viewName);
+        verify(model).addAttribute("professor", savedDto);
+    }
+
+    @Test
+    void submitEvaluation_ShouldRedirectWithErrorMessageOnException() {
+        doThrow(new RuntimeException("fail")).when(professorService).saveEvaluation(eq("prof1"), eq(1L), any());
+
+        String viewName = professorController.submitEvaluation("prof1", 1L, new EvaluationDto(), redirectAttributes);
+
+        assertEquals("redirect:/professors/prof1/dashboard", viewName);
+        verify(redirectAttributes).addFlashAttribute("error", "fail");
     }
 
     @Test

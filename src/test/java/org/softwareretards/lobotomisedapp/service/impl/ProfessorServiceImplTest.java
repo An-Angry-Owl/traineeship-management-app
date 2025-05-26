@@ -64,8 +64,8 @@ class ProfessorServiceImplTest {
     private User user;
     private ProfessorDto professorDto;
     private TraineeshipPosition position;
-    private Evaluation evaluation;
     private EvaluationDto evaluationDto;
+    private Evaluation evaluation;
 
     @BeforeEach
     void setUp() {
@@ -90,7 +90,7 @@ class ProfessorServiceImplTest {
         position.setId(1L);
         position.setProfessor(professor);
 
-        evaluation = new Evaluation();
+        Evaluation evaluation = new Evaluation();
         evaluation.setId(1L);
         evaluation.setTraineeshipPosition(position);
         evaluation.setFinalMark(FinalMark.PENDING);
@@ -133,19 +133,6 @@ class ProfessorServiceImplTest {
         when(professorRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> professorService.getProfile("prof1"));
-    }
-
-    @Test
-    void getSupervisedPositions_NoPositions_ShouldReturnEmptyList() {
-        when(userRepository.findByUsername("prof1")).thenReturn(Optional.of(user));
-        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
-        when(traineeshipPositionRepository.findByProfessor(professor))
-                .thenReturn(Collections.emptyList());
-
-        List<TraineeshipPositionDto> result = professorService.getSupervisedPositions("prof1");
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -195,4 +182,64 @@ class ProfessorServiceImplTest {
         assertThrows(RuntimeException.class,
                 () -> professorService.saveEvaluation("prof1", 1L, evaluationDto));
     }
+
+    @Test
+    void getProfile_ReturnsProfessorDtoWhenFound() {
+        when(userRepository.findByUsername("prof1")).thenReturn(Optional.of(user));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        try (var mockedMapper = mockStatic(ProfessorMapper.class)) {
+            mockedMapper.when(() -> ProfessorMapper.toDto(professor)).thenReturn(professorDto);
+
+            ProfessorDto result = professorService.getProfile("prof1");
+
+            assertEquals("Professor Name", result.getFullName());
+        }
+    }
+
+    @Test
+    void getSupervisedPositions_ReturnsListOfDtos() {
+        when(userRepository.findByUsername("prof1")).thenReturn(Optional.of(user));
+        when(professorRepository.findById(1L)).thenReturn(Optional.of(professor));
+        when(traineeshipPositionRepository.findByProfessor(professor)).thenReturn(List.of(position));
+        try (var mockedMapper = mockStatic(TraineeshipPositionMapper.class)) {
+            TraineeshipPositionDto dto = new TraineeshipPositionDto();
+            dto.setId(1L);
+            mockedMapper.when(() -> TraineeshipPositionMapper.toDto(position)).thenReturn(dto);
+
+            List<TraineeshipPositionDto> result = professorService.getSupervisedPositions("prof1");
+
+            assertEquals(1, result.size());
+            assertEquals(1L, result.get(0).getId());
+        }
+    }
+
+    @Test
+    void saveEvaluation_CreatesNewEvaluationIfNotExists() {
+        when(userRepository.findByUsername("prof1")).thenReturn(Optional.of(user));
+        when(traineeshipPositionRepository.findById(1L)).thenReturn(Optional.of(position));
+        when(evaluationRepository.findByTraineeshipPositionId(1L)).thenReturn(Optional.empty());
+        when(evaluationRepository.save(any(Evaluation.class))).thenAnswer(invocation -> {
+            Evaluation eval = invocation.getArgument(0);
+            eval.setId(99L);
+            return eval;
+        });
+        when(traineeshipPositionRepository.save(any(TraineeshipPosition.class))).thenReturn(position);
+        try (var mockedMapper = mockStatic(EvaluationMapper.class)) {
+            mockedMapper.when(() -> EvaluationMapper.toDto(any(Evaluation.class))).thenReturn(evaluationDto);
+
+            EvaluationDto result = professorService.saveEvaluation("prof1", 1L, evaluationDto);
+
+            assertEquals(FinalMark.PASS, result.getFinalMark());
+        }
+    }
+
+    @Test
+    void getOrCreateEvaluation_ReturnsNewEvaluationDtoIfNotExists() {
+        when(evaluationRepository.findByTraineeshipPositionId(1L)).thenReturn(Optional.empty());
+
+        EvaluationDto result = professorService.getOrCreateEvaluation(1L);
+
+        assertNull(result.getId());
+    }
+
 }

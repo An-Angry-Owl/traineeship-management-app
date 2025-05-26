@@ -60,4 +60,40 @@ class UserAndAuthControllerTest {
 
         assertThrows(RuntimeException.class, () -> userAndAuthController.showUserProfile(username, model));
     }
+
+    @Test
+    void registerUserShouldAddCreatedUserToModelAndReturnConfirmationView() {
+        Model model = mock(Model.class);
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        UserDto userDto = new UserDto();
+        UserDto createdUser = new UserDto();
+        when(userService.createUser(userDto)).thenReturn(createdUser);
+
+        String viewName = userAndAuthController.registerUser(userDto, model, redirectAttributes);
+
+        verify(model).addAttribute("user", createdUser);
+        assertEquals("user/registration-confirmation", viewName);
+    }
+
+    @Test
+    void registerUserShouldRedirectWithErrorAndUserOnException() {
+        Model model = mock(Model.class);
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        UserDto userDto = new UserDto();
+        when(userService.createUser(userDto)).thenThrow(new RuntimeException("Registration failed"));
+
+        String viewName = userAndAuthController.registerUser(userDto, model, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute("error", "Registration failed");
+        verify(redirectAttributes).addFlashAttribute("user", userDto);
+        assertEquals("redirect:/register", viewName);
+    }
+
+    @Test
+    void showLogoutConfirmationShouldReturnLogoutConfirmationView() {
+        String viewName = userAndAuthController.showLogoutConfirmation();
+
+        assertEquals("logout-confirmation", viewName);
+    }
+
 }
