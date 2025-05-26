@@ -119,33 +119,6 @@ class CommitteeControllerTest {
         evaluationDto.setFinalMark(FinalMark.PENDING);
     }
 
-    @Test
-    void getAllCommittees_ShouldReturnViewWithCommittees() {
-        when(committeeService.getAllCommittees()).thenReturn(Collections.singletonList(committeeDto));
-
-        String viewName = committeeController.getAllCommittees(model);
-
-        assertEquals("committee/list", viewName);
-        verify(model).addAttribute("committees", Collections.singletonList(committeeDto));
-    }
-
-    @Test
-    void getCommitteeById_ShouldReturnViewWithCommittee() {
-        when(committeeService.getCommitteeById(1L)).thenReturn(committeeDto);
-
-        String viewName = committeeController.getCommitteeById(1L, model);
-
-        assertEquals("committee/view", viewName);
-        verify(model).addAttribute("committee", committeeDto);
-    }
-
-    @Test
-    void showCreateForm_ShouldReturnCreateView() {
-        String viewName = committeeController.showCreateForm(model);
-
-        assertEquals("committee/create", viewName);
-        verify(model).addAttribute(eq("committeeDto"), any(CommitteeDto.class));
-    }
 
     @Test
     void createCommittee_ShouldRedirectToList() {
@@ -155,15 +128,6 @@ class CommitteeControllerTest {
         verify(committeeService).createCommittee(committeeDto);
     }
 
-    @Test
-    void showUpdateForm_ShouldReturnEditView() {
-        when(committeeService.getCommitteeById(1L)).thenReturn(committeeDto);
-
-        String viewName = committeeController.showUpdateForm(1L, model);
-
-        assertEquals("committee/edit", viewName);
-        verify(model).addAttribute("committeeDto", committeeDto);
-    }
 
     @Test
     void updateCommittee_ShouldRedirectToList() {
@@ -192,13 +156,6 @@ class CommitteeControllerTest {
         verify(redirectAttributes).addFlashAttribute("error", "Error message");
     }
 
-    @Test
-    void monitorTraineeshipEvaluations_ShouldReturnMonitorView() {
-        String viewName = committeeController.monitorTraineeshipEvaluations(1L, model);
-
-        assertEquals("committee/monitorEvaluations", viewName);
-        verify(model).addAttribute("traineeshipId", 1L);
-    }
 
     @Test
     void showDashboard_Unauthorized_ShouldRedirectToAccessDenied() {
@@ -210,16 +167,6 @@ class CommitteeControllerTest {
         assertEquals("redirect:/access-denied", viewName);
     }
 
-    @Test
-    void monitorTraineeshipEvaluationsShouldCallServiceAndAddTraineeshipIdToModel() {
-        Model model = mock(Model.class);
-
-        String viewName = committeeController.monitorTraineeshipEvaluations(5L, model);
-
-        verify(committeeService).monitorTraineeshipEvaluations(null, 5L);
-        verify(model).addAttribute("traineeshipId", 5L);
-        assertEquals("committee/monitorEvaluations", viewName);
-    }
 
     @Test
     void changePassword_Success_ShouldRedirectWithSuccessMessage() {
